@@ -6,20 +6,22 @@
         <span class="web-title">5S PORTAL</span>
     </div>
     <div class="col-md-6 right-div">
+        <div class="div-logo">
+            <img src="{{ asset('img/lafil-logo.png')}}">
+        </div>
         <div class="row right-div-inner">
             <div class="col-md-8">
                 <div style="height:50%"></div>
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <div class="card-title">
-                            <div class="title">{{ __('5S PORTAL') }}</div>
+                            <div class="title">{{ __('Sign in your account') }}</div>
                         </div>
                     </div>
                     <div class="panel-body">
                         <form method="POST" action="{{ route('login') }}">
                             @csrf 
                             <div class="form-group">
-                                {{-- <label for="email">{{ __('E-Mail Address') }}</label> --}}
                                 <div>
                                     <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus placeholder="Email Address">
                                     @error('email')
@@ -30,7 +32,6 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                {{-- <label for="password">{{ __('Password') }}</label> --}}
                                 <div>
                                     <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password" placeholder="Password">
                                     @error('password')

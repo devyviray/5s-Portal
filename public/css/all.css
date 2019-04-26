@@ -557,7 +557,7 @@ color: #F36A5A;
 	background: #3E3E3E;
 }
 .top-navbar {
-	background: #FFFFFF;
+    background-color: #616161;
 	border-bottom:none;
 }
 .top-navbar .nav > li > a > i {
@@ -687,7 +687,7 @@ body, #app, .py-4, .wrap-div {
 }
 .left-div{
     height: 100%;
-    background-color: rgb(4, 112, 62);
+    background-color: #418d43;
     text-align: center;
     display: table;
 }
@@ -712,8 +712,61 @@ body, #app, .py-4, .wrap-div {
 }
 .btn-submit{
     width: 100%;
-    background-color: #616161;
+    background-color: #7d8494;
     color: #000
+}
+.navbar-right{
+    margin-right: 15px;
+}
+.span-username{
+    float: right;
+    font-size: 17px;
+    color: #FFFF;
+    margin-top: 20px;
+}
+.nav > li > a > i {
+    margin-right: 10px;
+    color: #FFFF;
+}
+.breadcrumb {
+    background-color: #616161;
+}
+.breadcrumb > li > a {
+    color: #FFFF;
+}
+.breadcrumb>li {
+    width: 19%;
+    text-align: center;
+}
+.breadcrumb>li+li:before {
+    content: " ";
+}
+.page-header{
+     background-color: #A8C897;
+     padding: 12px 2px 12px 0;
+}
+.div-spacing{
+    min-height: 35px;
+    background-color: transparent;
+}
+.lafil-logo{
+    height: 60px;
+    margin-left: 15px;
+}
+.carousel-inner>.item>img {
+    height: 650px;
+}
+.div-logo{
+    position: absolute;
+    left: -12%;
+    top: 50%;
+    margin-top: -50px
+}
+.div-logo > img {
+    height: 200px;
+}
+.right-div { 
+    position: relative;
 }
 /*!
  *  Font Awesome 4.0.3 by @davegandy - http://fontawesome.io - @fontawesome
