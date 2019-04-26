@@ -11,5 +11,21 @@ const mix = require('laravel-mix');
  |
  */
 
-mix.js('resources/js/app.js', 'public/js')
-   .sass('resources/sass/app.scss', 'public/css');
+mix.styles([
+    'public/css/style.css',
+    // 'public/css/app.css',
+    'public/css/bootstrap.css',
+    'public/css/custom-styles.css',
+    'public/css/font-awesome.css',
+
+], 'public/css/all.css')
+.js([
+    'public/js/script.js',
+    'resources/js/app.js',
+
+], 'public/js/all.js')
+.browserSync('http://5s-Portal.local');
+
+
+// mix.js('resources/js/app.js', 'public/js')
+//    .sass('resources/sass/app.scss', 'public/css');
