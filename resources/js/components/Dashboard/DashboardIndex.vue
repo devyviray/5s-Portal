@@ -17,7 +17,7 @@
                                 <li> <a href="#"><i class="fa fa-users fa-fw"></i> Users</a> </li>
                                 <li> <a href="#"><i class="fa fa-building-o fa-fw"></i> Companies</a> </li>
                                 <li> <a href="#"><i class="fa fa-globe fa-fw"></i> Locations</a> </li>
-                                <li> <a href="#"><i class="fa fa-trello fa-fw"></i> Departments</a> </li>
+                                <li> <a :href="departmentLink"><i class="fa fa-trello fa-fw"></i> Departments</a> </li>
                                 <li> <a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a> </li>
                                 <li class="divider"></li>
                                 <li> <a href="#" @click="logoutForm"><i class="fa fa-sign-out fa-fw"></i> Logout</a> </li>
@@ -80,33 +80,36 @@
 </template>
 
 <script>
-export default {
-    data(){
-        return { 
-            errors: [],
-        }
-    },
-    created(){
+    export default {
+        data(){
+            return { 
+                errors: [],
+            }
+        },
+        created(){
 
-    },
-    methods:{
-       logoutForm(){
-           axios.post('/logout')
-           .then(response =>{
-               if(response.status == 200){
-                   window.location.href = window.location.origin+'/login';
-               }
-           })
-           .catch(error => { 
-               this.errors = error.response.data.errors;
-           })
-       }
-    },  
-    computed:{
-        logoLink(){
-            return window.location.origin+'/img/lafil-logo.png';
+        },
+        methods:{
+        logoutForm(){
+            axios.post('/logout')
+            .then(response =>{
+                if(response.status == 200){
+                    window.location.href = window.location.origin+'/login';
+                }
+            })
+            .catch(error => { 
+                this.errors = error.response.data.errors;
+            })
+        }
+        },  
+        computed:{
+            logoLink(){
+                return window.location.origin+'/img/lafil-logo.png';
+            },
+            departmentLink(){
+                return window.location.origin+'/departments'
+            }
         }
     }
-}
 </script>
 

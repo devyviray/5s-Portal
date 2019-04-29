@@ -27,7 +27,7 @@ body {
     margin:10px 20px 10px 0px;
     background-color:transparent;
     padding: 15px 30px;
-    min-height:1200px;
+    /* min-height:1200px; */
 }
 .header .container-fluid{
 padding:0;
@@ -84,7 +84,6 @@ position: fixed;
 }
 #page-wrapper {
   position: relative;
-  top: 55px;
   box-shadow: 0 0 10px #757575;
   -moz-box-shadow: 0 0 10px #757575;
   -webkit-box-shadow: 0 0 10px #757575;
@@ -724,7 +723,8 @@ body, #app, .py-4, .wrap-div {
     color: #FFFF;
 }
 .breadcrumb {
-    background-color: #616161;
+    background-color: #616161 !important;
+    border-radius: 0em !important;
 }
 .breadcrumb > li > a {
     color: #FFFF;
@@ -762,4 +762,19 @@ body, #app, .py-4, .wrap-div {
 }
 .right-div { 
     position: relative;
+}
+.row{
+    width: 100%
+}
+.navbar{
+    padding: 0rem 0rem !important;
+}
+.dropdown-toggle::after {
+    border-top: 0em !important;
+}
+.main-content{
+    height: 100%;
+}
+tbody{
+    background-color: #fff;
 }

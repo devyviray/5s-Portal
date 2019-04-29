@@ -9,10 +9,6 @@
 
     <title>{{ config('app.name', 'Laravel') }}</title>
 
-    <!-- Scripts -->
-    <script src="{{ asset('js/all.js') }}" defer></script>
-    
-
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet" type="text/css">
@@ -22,9 +18,14 @@
 </head>
 <body>
     <div id="app">
-        <main class="py-4">
+        <main class="main-content">
             @yield('content')
         </main>
     </div>
+
+    @stack('js')
+    <!-- Scripts -->
+    <script src="{{ asset('js/all.js') }}" defer></script>
+    
 </body>
 </html>

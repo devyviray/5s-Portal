@@ -11,20 +11,21 @@ const mix = require('laravel-mix');
  |
  */
 
-mix.autoload({
-    jquery: ['$', 'window.jQuery',"jQuery","window.$","jquery","window.jquery"]
-})
-.styles([
+// mix.autoload({
+//     jquery: ['$', 'window.jQuery',"jQuery","window.$","jquery","window.jquery"]
+// })
+mix.styles([
     'public/css/style.css',
-    'public/css/bootstrap.css',
+    // 'public/css/bootstrap.css',
     'public/css/custom-styles.css',
     'public/css/font-awesome.css',
+    'public/css/argon.min.css',
 
 ], 'public/css/all.css')
 .js([
     'public/js/script.js',
-    'public/js/jquery-1.10.2.js',
-    'public/js/bootstrap.min.js',
+    // 'public/js/jquery-1.10.2.js',
+    // 'public/js/bootstrap.min.js',
     'resources/js/app.js',
 
 ], 'public/js/all.js')

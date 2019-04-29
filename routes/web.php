@@ -18,3 +18,10 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+
+// Departments
+Route::get('/departments', 'DepartmentController@index')->name('departments');
+Route::get('/departments-all', 'DepartmentController@indexData');
+Route::post('/department', 'DepartmentController@store');
+Route::patch('/department/{department}', 'DepartmentController@update');
+Route::delete('/department/{department}', 'DepartmentController@destroy');
