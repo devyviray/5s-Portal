@@ -28,6 +28,9 @@ Vue.component('dashboard-index', require('./components/Dashboard/DashboardIndex.
 // Department
 Vue.component('department-index', require('./components/Department/DepartmentIndex.vue').default);
 
+// Location
+Vue.component('location-index', require('./components/Location/LocationIndex.vue').default);
+
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application

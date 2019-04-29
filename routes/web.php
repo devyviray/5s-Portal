@@ -25,3 +25,10 @@ Route::get('/departments-all', 'DepartmentController@indexData');
 Route::post('/department', 'DepartmentController@store');
 Route::patch('/department/{department}', 'DepartmentController@update');
 Route::delete('/department/{department}', 'DepartmentController@destroy');
+
+// locations
+Route::get('/locations', 'LocationController@index')->name('locations');
+Route::get('/locations-all', 'LocationController@indexData');
+Route::post('/location', 'LocationController@store');
+Route::patch('/location/{location}', 'LocationController@update');
+Route::delete('/location/{location}', 'LocationController@destroy');

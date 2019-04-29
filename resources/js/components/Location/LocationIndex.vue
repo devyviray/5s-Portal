@@ -32,7 +32,7 @@
             <div class="header">
                 <h1 class="page-header">
                     <img class="lafil-logo" :src="logoLink">
-                    <b>5S PORTAL - DEPARTMENT</b>
+                    <b>5S PORTAL - LOCATION</b>
                 </h1>
                 <ol class="breadcrumb">
                     <li><a href="#">Home</a></li><span style="color: #FFFF">|</span>
@@ -46,7 +46,7 @@
                 <div class="card-header border-0">
                     <div class="row align-items-center">
                         <div class="col">
-                            <h3 class="mb-0">Department List</h3>
+                            <h3 class="mb-0">Location List</h3>
                         </div> 
                         <div class="col text-right">
                             <a href="javascript.void(0)" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#addModal">Add new</a>
@@ -58,7 +58,7 @@
                         </div> 
                     </div>
                 </div>
-                <!-- Departments table -->
+                <!-- Locations table -->
                 <table class="table align-items-center table-flush">
                     <thead class="thead-light">
                         <tr>
@@ -69,7 +69,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(department, d) in filteredQueues" v-bind:key="d">
+                        <tr v-for="(location, l) in filteredQueues" v-bind:key="l">
                             <td class="text-right">
                                 <div class="dropdown">
                                     <a class="btn btn-sm btn-icon-only text-light" href="#" role="button"
@@ -77,14 +77,14 @@
                                         <i class="fas fa-ellipsis-v"></i>
                                     </a>
                                     <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
-                                        <a class="dropdown-item" data-toggle="modal" data-target="#editModal" style="cursor: pointer" @click="copyObject(department)">Edit</a>
-                                        <a class="dropdown-item" data-toggle="modal" data-target="#deleteModal" style="cursor: pointer" @click="copyObject(department)">Delete</a>
+                                        <a class="dropdown-item" data-toggle="modal" data-target="#editModal" style="cursor: pointer" @click="copyObject(location)">Edit</a>
+                                        <a class="dropdown-item" data-toggle="modal" data-target="#deleteModal" style="cursor: pointer" @click="copyObject(location)">Delete</a>
                                     </div>
                                 </div>
                             </td>
-                            <td scope="row">{{ department.id }}</td>
-                            <td>{{ department.name }}</td>
-                            <td>{{ department.created_at }}</td>
+                            <td scope="row">{{ location.id }}</td>
+                            <td>{{ location.name }}</td>
+                            <td>{{ location.created_at }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -96,12 +96,12 @@
                     <button :disabled="!showNextLink()" class="btn btn-default btn-sm btn-fill" v-on:click="setPage(currentPage + 1)"> Next </button>
                 </div>
                 <div class="col-6 text-right">
-                    <span>{{ filteredQueues.length }} Filtered Department(s)</span><br>
-                    <span>{{ departments.length }} Total Department(s)</span>
+                    <span>{{ filteredQueues.length }} Filtered Location(s)</span><br>
+                    <span>{{ locations.length }} Total Location(s)</span>
                 </div>
             </div>
         </div>
-        <!-- Add Department Modal -->
+        <!-- Add Location Modal -->
         <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
             <span class="closed" data-dismiss="modal">&times;</span>
             <div class="modal-dialog modal-dialog-centered" role="document">
@@ -112,30 +112,30 @@
                         </button>
                     </div>
                     <div class="modal-header">
-                        <h2 class="col-12 modal-title" id="addCompanyLabel">Add Department</h2>
+                        <h2 class="col-12 modal-title" id="addCompanyLabel">Add Location</h2>
                     </div>
                     <div class="modal-body">
-                        <div class="alert alert-success" v-if="department_added">
-                            <strong>Success!</strong> Department succesfully added
+                        <div class="alert alert-success" v-if="location_added">
+                            <strong>Success!</strong> Location succesfully added
                         </div>
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="role">Name*</label> 
-                                    <input type="text" id="department_name" class="form-control" v-model="department.name" placeholder="Department name">
-                                    <span class="text-danger" v-if="errors.department_name">{{ errors.department_name[0] }}</span>
+                                    <input type="text" id="location_name" class="form-control" v-model="location.name" placeholder="Location name">
+                                    <span class="text-danger" v-if="errors.location_name">{{ errors.location_name[0] }}</span>
                                 </div>
                             </div>  
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button id="add_btn" type="button" class="btn btn-primary btn-round btn-fill" @click="addDepartment(department)">Save</button>
+                        <button id="add_btn" type="button" class="btn btn-primary btn-round btn-fill" @click="addLocation(location)">Save</button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Edit Department Modal -->
+        <!-- Edit Location Modal -->
         <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
             <span class="closed" data-dismiss="modal">&times;</span>
             <div class="modal-dialog modal-dialog-centered" role="document">
@@ -146,36 +146,36 @@
                         </button>
                     </div>
                     <div class="modal-header">
-                        <h2 class="col-12 modal-title" id="addCompanyLabel">Update Department</h2>
+                        <h2 class="col-12 modal-title" id="addCompanyLabel">Update Location</h2>
                     </div>
                     <div class="modal-body">
-                        <div class="alert alert-success" v-if="department_updated">
-                            <strong>Success!</strong> Department succesfully added
+                        <div class="alert alert-success" v-if="location_updated">
+                            <strong>Success!</strong> Location succesfully added
                         </div>
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="role">Name*</label> 
-                                    <input type="text" id="department_name" class="form-control" v-model="department_copied.name" placeholder="Department name">
-                                    <span class="text-danger" v-if="errors.department_name">{{ errors.department_name[0] }}</span>
+                                    <input type="text" id="location_name" class="form-control" v-model="location_copied.name" placeholder="Location name">
+                                    <span class="text-danger" v-if="errors.location_name">{{ errors.location_name[0] }}</span>
                                 </div>
                             </div>  
-                        </div>
+                        </div> 
                     </div>
                     <div class="modal-footer">
-                        <button id="edit_btn" type="button" class="btn btn-primary btn-round btn-fill" @click="updateDepartment(department_copied)">Save</button>
+                        <button id="edit_btn" type="button" class="btn btn-primary btn-round btn-fill" @click="updateLocation(location_copied)">Save</button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Delete Department Modal -->
+        <!-- Delete Location Modal -->
         <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
             <span class="closed" data-dismiss="modal">&times;</span>
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addCompanyLabel">Delete Department</h5>
+                    <h5 class="modal-title" id="addCompanyLabel">Delete Location</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -184,14 +184,14 @@
                    <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
-                                Are you sure you want to delete this Department?
+                                Are you sure you want to delete this Location?
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" data-dismiss='modal'>Close</button>
-                    <button class="btn btn-warning" @click="deleteDepartment">Delete</button>
+                    <button class="btn btn-warning" @click="deleteLocation">Delete</button>
                 </div>
                 </div>
             </div>
@@ -204,12 +204,12 @@
     export default {
         data(){
             return {
-                departments : [],
-                department: [],
-                department_copied: [],
-                department_id: '',
-                department_added: false,
-                department_updated: false, 
+                locations : [],
+                location: [],
+                location_copied: [],
+                location_id: '',
+                location_added: false,
+                location_updated: false, 
                 errors: [],
                 currentPage: 0,
                 itemsPerPage: 50,
@@ -217,13 +217,13 @@
             }
         },
         created(){
-            this.fetchDepartments();
+            this.fetchLocations();
         },
         methods:{
-            copyObject(department){
-                this.department_updated = false;
-                this.department_id = department.id;
-                this.department_copied = Object.assign({}, department);
+            copyObject(location){
+                this.location_updated = false;
+                this.location_id = location.id;
+                this.location_copied = Object.assign({}, location);
             },
             logoutForm(){
                 axios.post('/logout')
@@ -236,61 +236,61 @@
                     this.errors = error.response.data.errors;
                 })
             },
-            fetchDepartments(){
-                axios.get('departments-all')
+            fetchLocations(){
+                axios.get('locations-all')
                 .then(response => {
-                    this.departments = response.data;
+                    this.locations = response.data;
                 })
                 .catch(error => { 
                     this.errors = error.response.data.errors;
                 })
             },
-            addDepartment(department){
+            addLocation(location){
                 document.getElementById('add_btn').disabled = true;
                 this.errors = [];
-                axios.post('/department', {
-                    name: department.name
+                axios.post('/location', {
+                    name: location.name
                 })
                 .then(response => {
-                    this.departments.unshift(response.data);
-                    this.department_added = true;
+                    this.locations.unshift(response.data);
+                    this.location_added = true;
                     document.getElementById('add_btn').disabled = false;
                 })
                 .catch(error => {
                     this.errors = error.response.data.errors;
-                    this.department_added = false;
+                    this.location_added = false;
                     document.getElementById('add_btn').disabled = false;
                 })
             },
-            updateDepartment(department_copied){
+            updateLocation(location_copied){
                 document.getElementById('edit_btn').disabled = true;
-                this.department_updated = false;
+                this.location_updated = false;
                 this.errors = [];
-                var index = this.departments.findIndex(item => item.id == department_copied.id);
-                axios.post(`/department/${department_copied.id}`, {
-                    name: department_copied.name,
+                var index = this.locations.findIndex(item => item.id == location_copied.id);
+                axios.post(`/location/${location_copied.id}`, {
+                    name: location_copied.name,
                     _method: 'PATCH'
                 })
                 .then(response => {
-                    this.department_updated = true;
-                    this.departments.splice(index,1,response.data);
+                    this.location_updated = true;
+                    this.locations.splice(index,1,response.data);
                     document.getElementById('edit_btn').disabled = false;
                     // this.loading = false;
                 })
                 .catch(error => {
-                    this.department_updated = false;
+                    this.location_updated = false;
                     this.errors = error.response.data.errors;
                     document.getElementById('edit_btn').disabled = false;
                     this.loading = false;
                 })
             },
-            deleteDepartment(){
-                var index = this.departments.findIndex(item => item.id == this.department_id);
-                axios.delete(`/department/${this.department_id}`)
+            deleteLocation(){
+                var index = this.locations.findIndex(item => item.id == this.location_id);
+                axios.delete(`/location/${this.location_id}`)
                 .then(response => {
                     $('#deleteModal').modal('hide');
-                    alert('Department successfully deleted');
-                    this.departments.splice(index,1);
+                    alert('Location successfully deleted');
+                    this.locations.splice(index,1);
                 })
                 .catch(error => {
                     this.errors = error.response.data.errors;
@@ -310,21 +310,21 @@
 
             showNextLink() {
                 return this.currentPage == (this.totalPages - 1) ? false : true;
-            } 
+            }   
         },  
         computed:{
-            filteredDepartments(){
+            filteredLocations(){
                 let self = this;
-                return self.departments.filter(department => {
-                    return department.name.toLowerCase().includes(this.keywords.toLowerCase())
+                return self.locations.filter(location => {
+                    return location.name.toLowerCase().includes(this.keywords.toLowerCase())
                 });
             },
             totalPages() {
-                return Math.ceil(this.departments.length / this.itemsPerPage);
+                return Math.ceil(this.locations.length / this.itemsPerPage);
             },
             filteredQueues() {
                 var index = this.currentPage * this.itemsPerPage;
-                var queues_array = this.filteredDepartments.slice(index, index + this.itemsPerPage);
+                var queues_array = this.filteredLocations.slice(index, index + this.itemsPerPage);
 
                 if(this.currentPage >= this.totalPages) {
                     this.currentPage = this.totalPages - 1
@@ -344,7 +344,7 @@
             },
             locationLink(){
                 return window.location.origin+'/locations'
-            }
+            },
         }
     }
 </script>

@@ -16,7 +16,7 @@
                                 <li> <a href="#"><i class="fa fa-user fa-fw"></i> User Profile</a> </li>
                                 <li> <a href="#"><i class="fa fa-users fa-fw"></i> Users</a> </li>
                                 <li> <a href="#"><i class="fa fa-building-o fa-fw"></i> Companies</a> </li>
-                                <li> <a href="#"><i class="fa fa-globe fa-fw"></i> Locations</a> </li>
+                                <li> <a :href="locationLink"><i class="fa fa-globe fa-fw"></i> Locations</a> </li>
                                 <li> <a :href="departmentLink"><i class="fa fa-trello fa-fw"></i> Departments</a> </li>
                                 <li> <a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a> </li>
                                 <li class="divider"></li>
@@ -108,6 +108,9 @@
             },
             departmentLink(){
                 return window.location.origin+'/departments'
+            },
+            departmentLink(){
+                return window.location.origin+'/locations'   
             }
         }
     }

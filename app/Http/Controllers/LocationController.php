@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\{
-    Department
+    Location
 };
 
-class DepartmentController extends Controller
+class LocationController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,18 +16,19 @@ class DepartmentController extends Controller
      */
     public function index()
     {
-        return view('department.index');
+        return view('location.index');
     }
 
     /**
-     * Fetch all department
+     * Fetch all location
      *
      * @return \Illuminate\Http\Response
      */
 
     public function indexData(){
-        return Department::orderBy('id','desc')->get();
+        return Location::orderBy('id','desc')->get();
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -40,7 +41,7 @@ class DepartmentController extends Controller
         $request->validate([
             'name' => 'required'
         ]);
-        return Department::create($request->all());
+        return Location::create($request->all());
     }
 
     /**
@@ -50,14 +51,14 @@ class DepartmentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Department $department)
+    public function update(Request $request, Location $location)
     {
         $request->validate([
             'name' => 'required'
         ]);
         
-        if($department->update($request->all())){
-            return Department::findOrFail($department->id);
+        if($location->update($request->all())){
+            return Location::findOrFail($location->id);
         }
     }
 
@@ -67,10 +68,10 @@ class DepartmentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Department $department)
+    public function destroy(Location $location)
     {
-        if($department->delete()){
-            return $department;
+        if($location->delete()){
+            return $location;
         }
     }
 }
