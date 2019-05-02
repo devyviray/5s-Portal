@@ -15,7 +15,7 @@
                             <ul class="dropdown-menu dropdown-user">
                                 <li> <a href="#"><i class="fa fa-user fa-fw"></i> User Profile</a> </li>
                                 <li> <a href="#"><i class="fa fa-users fa-fw"></i> Users</a> </li>
-                                <li> <a href="#"><i class="fa fa-building-o fa-fw"></i> Companies</a> </li>
+                                <li> <a :href="companyLink"><i class="fa fa-building-o fa-fw"></i> Companies</a> </li>
                                 <li> <a :href="locationLink"><i class="fa fa-globe fa-fw"></i> Locations</a> </li>
                                 <li> <a :href="departmentLink"><i class="fa fa-trello fa-fw"></i> Departments</a> </li>
                                 <li> <a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a> </li>
@@ -65,7 +65,7 @@
                             <th></th>
                             <th scope="col">ID</th>
                             <th scope="col">Name</th>
-                            <th scope="col">Creaeted date</th>
+                            <th scope="col">Created date</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -344,7 +344,10 @@
             },
             locationLink(){
                 return window.location.origin+'/locations'
-            }
+            },
+            companyLink(){
+                return window.location.origin+'/companies'
+            },
         }
     }
 </script>

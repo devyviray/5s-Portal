@@ -15,7 +15,7 @@
                             <ul class="dropdown-menu dropdown-user">
                                 <li> <a href="#"><i class="fa fa-user fa-fw"></i> User Profile</a> </li>
                                 <li> <a href="#"><i class="fa fa-users fa-fw"></i> Users</a> </li>
-                                <li> <a :href="companyLink"><i class="fa fa-building-o fa-fw"></i> Companies</a> </li>
+                                <li> <a href="#"><i class="fa fa-building-o fa-fw"></i> Companies</a> </li>
                                 <li> <a :href="locationLink"><i class="fa fa-globe fa-fw"></i> Locations</a> </li>
                                 <li> <a :href="departmentLink"><i class="fa fa-trello fa-fw"></i> Departments</a> </li>
                                 <li> <a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a> </li>
@@ -32,7 +32,7 @@
             <div class="header">
                 <h1 class="page-header">
                     <img class="lafil-logo" :src="logoLink">
-                    <b>5S PORTAL - LOCATION</b>
+                    <b>5S PORTAL - COMPANY</b>
                 </h1>
                 <ol class="breadcrumb">
                     <li><a href="#">Home</a></li><span style="color: #FFFF">|</span>
@@ -46,7 +46,7 @@
                 <div class="card-header border-0">
                     <div class="row align-items-center">
                         <div class="col">
-                            <h3 class="mb-0">Location List</h3>
+                            <h3 class="mb-0">Compamy List</h3>
                         </div> 
                         <div class="col text-right">
                             <a href="javascript.void(0)" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#addModal">Add new</a>
@@ -65,11 +65,12 @@
                             <th></th>
                             <th scope="col">ID</th>
                             <th scope="col">Name</th>
+                            <th scope="col">Location</th>
                             <th scope="col">Created date</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(location, l) in filteredQueues" v-bind:key="l">
+                        <tr v-for="(company, c) in filteredQueues" v-bind:key="c">
                             <td class="text-right">
                                 <div class="dropdown">
                                     <a class="btn btn-sm btn-icon-only text-light" href="#" role="button"
@@ -77,14 +78,19 @@
                                         <i class="fas fa-ellipsis-v"></i>
                                     </a>
                                     <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
-                                        <a class="dropdown-item" data-toggle="modal" data-target="#editModal" style="cursor: pointer" @click="copyObject(location)">Edit</a>
-                                        <a class="dropdown-item" data-toggle="modal" data-target="#deleteModal" style="cursor: pointer" @click="copyObject(location)">Delete</a>
+                                        <a class="dropdown-item" data-toggle="modal" data-target="#editModal" style="cursor: pointer" @click="copyObject(company)">Edit</a>
+                                        <a class="dropdown-item" data-toggle="modal" data-target="#deleteModal" style="cursor: pointer" @click="copyObject(company)">Delete</a>
                                     </div>
                                 </div>
                             </td>
-                            <td scope="row">{{ location.id }}</td>
-                            <td>{{ location.name }}</td>
-                            <td>{{ location.created_at }}</td>
+                            <td scope="row">{{ company.id }}</td>
+                            <td>{{ company.name }}</td>
+                            <td>
+                                <span v-for="(location, l) in company.locations" :key="l">
+                                    {{ location.name }} <br/>
+                                </span>
+                            </td>
+                            <td>{{ company.created_at }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -96,12 +102,12 @@
                     <button :disabled="!showNextLink()" class="btn btn-default btn-sm btn-fill" v-on:click="setPage(currentPage + 1)"> Next </button>
                 </div>
                 <div class="col-6 text-right">
-                    <span>{{ filteredQueues.length }} Filtered Location(s)</span><br>
-                    <span>{{ locations.length }} Total Location(s)</span>
+                    <span>{{ filteredQueues.length }} Filtered Company(s)</span><br>
+                    <span>{{ companies.length }} Total Company(s)</span>
                 </div>
             </div>
         </div>
-        <!-- Add Location Modal -->
+        <!-- Add Company Modal -->
         <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
             <span class="closed" data-dismiss="modal">&times;</span>
             <div class="modal-dialog modal-dialog-centered" role="document">
@@ -112,30 +118,46 @@
                         </button>
                     </div>
                     <div class="modal-header">
-                        <h2 class="col-12 modal-title" id="addCompanyLabel">Add Location</h2>
+                        <h2 class="col-12 modal-title" id="addCompanyLabel">Add Company</h2>
                     </div>
                     <div class="modal-body">
-                        <div class="alert alert-success" v-if="location_added">
-                            <strong>Success!</strong> Location succesfully added
+                        <div class="alert alert-success" v-if="company_added">
+                            <strong>Success!</strong> Company succesfully added
                         </div>
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="role">Name*</label> 
-                                    <input type="text" id="location_name" class="form-control" v-model="location.name" placeholder="Location name">
+                                    <input type="text" id="name" class="form-control" v-model="company.name" placeholder="Company name">
                                     <span class="text-danger" v-if="errors.name">{{ errors.name[0] }}</span>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="role">Location*</label>
+                                      <multiselect
+                                            v-model="company.location"
+                                            :options="locations"
+                                            :multiple="true"
+                                            track-by="id"
+                                            :custom-label="customLabelLocation"
+                                            placeholder="Select Location"
+                                            id="selected_location"
+                                        >
+                                    </multiselect> 
+                                    <span class="text-danger" v-if="errors.location">The location field is required.</span>
                                 </div>
                             </div>  
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button id="add_btn" type="button" class="btn btn-primary btn-round btn-fill" @click="addLocation(location)">Save</button>
+                        <button id="add_btn" type="button" class="btn btn-primary btn-round btn-fill" @click="addCompany(company)">Save</button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Edit Location Modal -->
+        <!-- Edit Company Modal -->
         <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
             <span class="closed" data-dismiss="modal">&times;</span>
             <div class="modal-dialog modal-dialog-centered" role="document">
@@ -146,36 +168,52 @@
                         </button>
                     </div>
                     <div class="modal-header">
-                        <h2 class="col-12 modal-title" id="addCompanyLabel">Edit Location</h2>
+                        <h2 class="col-12 modal-title" id="addCompanyLabel">Edit Company</h2>
                     </div>
                     <div class="modal-body">
-                        <div class="alert alert-success" v-if="location_updated">
-                            <strong>Success!</strong> Location succesfully added
+                        <div class="alert alert-success" v-if="company_updated">
+                            <strong>Success!</strong> Company succesfully added
                         </div>
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="role">Name*</label> 
-                                    <input type="text" id="location_name" class="form-control" v-model="location_copied.name" placeholder="Location name">
-                                    <span class="text-danger" v-if="errors.location_name">{{ errors.location_name[0] }}</span>
+                                    <input type="text" id="name" class="form-control" v-model="company_copied.name" placeholder="Company name">
+                                    <span class="text-danger" v-if="errors.name">{{ errors.name[0] }}</span>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="role">Location*</label>
+                                      <multiselect
+                                            v-model="company_copied.locations"
+                                            :options="locations"
+                                            :multiple="true"
+                                            track-by="id"
+                                            :custom-label="customLabelLocation"
+                                            placeholder="Select Location"
+                                            id="selected_location"
+                                        >
+                                    </multiselect> 
+                                    <span class="text-danger" v-if="errors.location">The location field is required.</span>
                                 </div>
                             </div>  
                         </div> 
                     </div>
                     <div class="modal-footer">
-                        <button id="edit_btn" type="button" class="btn btn-primary btn-round btn-fill" @click="updateLocation(location_copied)">Save</button>
+                        <button id="edit_btn" type="button" class="btn btn-primary btn-round btn-fill" @click="updateCompany(company_copied)">Save</button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Delete Location Modal -->
+        <!-- Delete Company Modal -->
         <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
             <span class="closed" data-dismiss="modal">&times;</span>
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addCompanyLabel">Delete Location</h5>
+                    <h5 class="modal-title" id="addCompanyLabel">Delete Company</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -184,14 +222,14 @@
                    <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
-                                Are you sure you want to delete this Location?
+                                Are you sure you want to delete this Company?
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" data-dismiss='modal'>Close</button>
-                    <button class="btn btn-warning" @click="deleteLocation">Delete</button>
+                    <button class="btn btn-warning" @click="deleteCompany">Delete</button>
                 </div>
                 </div>
             </div>
@@ -199,17 +237,24 @@
 
 </div>
 </template>
+<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
 
 <script>
+    import Multiselect from 'vue-multiselect';
     export default {
+        components:{
+            Multiselect
+        },
         data(){
             return {
-                locations : [],
-                location: [],
-                location_copied: [],
-                location_id: '',
-                location_added: false,
-                location_updated: false, 
+                companies : [],
+                company: [],
+                company_copied: [],
+                company_id: '',
+                company_added: false,
+                company_updated: false,
+                locations: [],
+                location:[], 
                 errors: [],
                 currentPage: 0,
                 itemsPerPage: 50,
@@ -217,13 +262,18 @@
             }
         },
         created(){
+            this.fetchCompanies();
             this.fetchLocations();
         },
         methods:{
-            copyObject(location){
-                this.location_updated = false;
-                this.location_id = location.id;
-                this.location_copied = Object.assign({}, location);
+            customLabelLocation (location) {
+                return `${location.name  }`
+            },
+            copyObject(company){
+                this.errors = [];
+                this.company_updated = false;
+                this.company_id = company.id;
+                this.company_copied = Object.assign({}, company);
             },
             logoutForm(){
                 axios.post('/logout')
@@ -236,61 +286,86 @@
                     this.errors = error.response.data.errors;
                 })
             },
-            fetchLocations(){
-                axios.get('locations-all')
+            fetchCompanies(){
+                axios.get('companies-all')
                 .then(response => {
+                    this.companies = response.data;
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.errors;
+                })
+            },
+            fetchLocations(){
+                axios.get('/locations-all')
+                .then(response => { 
                     this.locations = response.data;
                 })
                 .catch(error => { 
                     this.errors = error.response.data.errors;
                 })
             },
-            addLocation(location){
+            addCompany(company){
+                var locationIds = [];
+                if(company.location){
+                    company.location.forEach((location) => {
+                        locationIds.push(location.id);
+                    });  
+                }
+
                 document.getElementById('add_btn').disabled = true;
                 this.errors = [];
-                axios.post('/location', {
-                    name: location.name
+                axios.post('/company', {
+                    name: company.name,
+                    location: locationIds
                 })
                 .then(response => {
-                    this.locations.unshift(response.data);
-                    this.location_added = true;
+                    this.companies.unshift(response.data);
+                    this.company_added = true;
                     document.getElementById('add_btn').disabled = false;
                 })
                 .catch(error => {
                     this.errors = error.response.data.errors;
-                    this.location_added = false;
+                    this.company_added = false;
                     document.getElementById('add_btn').disabled = false;
                 })
             },
-            updateLocation(location_copied){
+            updateCompany(company_copied){
+                var locationIds = [];
+                if(company_copied.locations){
+                    company_copied.locations.forEach((location) => {
+                        locationIds.push(location.id);
+                    });  
+                }
+                
                 document.getElementById('edit_btn').disabled = true;
-                this.location_updated = false;
+                this.company_updated = false;
                 this.errors = [];
-                var index = this.locations.findIndex(item => item.id == location_copied.id);
-                axios.post(`/location/${location_copied.id}`, {
-                    name: location_copied.name,
+                var index = this.companies.findIndex(item => item.id == company_copied.id);
+                axios.post(`/company/${company_copied.id}`, {
+                    name: company_copied.name,
+                    location: locationIds,
                     _method: 'PATCH'
                 })
                 .then(response => {
-                    this.location_updated = true;
-                    this.locations.splice(index,1,response.data);
+                    this.company_updated = true;
+                    this.companies.splice(index,1,response.data);
                     document.getElementById('edit_btn').disabled = false;
                     // this.loading = false;
                 })
                 .catch(error => {
-                    this.location_updated = false;
+                    this.company_updated = false;
                     this.errors = error.response.data.errors;
                     document.getElementById('edit_btn').disabled = false;
                     this.loading = false;
                 })
             },
-            deleteLocation(){
-                var index = this.locations.findIndex(item => item.id == this.location_id);
-                axios.delete(`/location/${this.location_id}`)
+            deleteCompany(){
+                var index = this.companies.findIndex(item => item.id == this.company_id);
+                axios.delete(`/company/${this.company_id}`)
                 .then(response => {
                     $('#deleteModal').modal('hide');
-                    alert('Location successfully deleted');
-                    this.locations.splice(index,1);
+                    alert('Company successfully deleted');
+                    this.companies.splice(index,1);
                 })
                 .catch(error => {
                     this.errors = error.response.data.errors;
@@ -313,18 +388,18 @@
             }   
         },  
         computed:{
-            filteredLocations(){
+            filteredCompanies(){
                 let self = this;
-                return self.locations.filter(location => {
-                    return location.name.toLowerCase().includes(this.keywords.toLowerCase())
+                return self.companies.filter(company => {
+                    return company.name.toLowerCase().includes(this.keywords.toLowerCase())
                 });
             },
             totalPages() {
-                return Math.ceil(this.locations.length / this.itemsPerPage);
+                return Math.ceil(this.companies.length / this.itemsPerPage);
             },
             filteredQueues() {
                 var index = this.currentPage * this.itemsPerPage;
-                var queues_array = this.filteredLocations.slice(index, index + this.itemsPerPage);
+                var queues_array = this.filteredCompanies.slice(index, index + this.itemsPerPage);
 
                 if(this.currentPage >= this.totalPages) {
                     this.currentPage = this.totalPages - 1
@@ -344,9 +419,6 @@
             },
             locationLink(){
                 return window.location.origin+'/locations'
-            },
-            companyLink(){
-                return window.location.origin+'/companies'
             },
         }
     }

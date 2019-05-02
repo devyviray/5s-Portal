@@ -32,3 +32,10 @@ Route::get('/locations-all', 'LocationController@indexData');
 Route::post('/location', 'LocationController@store');
 Route::patch('/location/{location}', 'LocationController@update');
 Route::delete('/location/{location}', 'LocationController@destroy');
+
+// companies
+Route::get('/companies', 'CompanyController@index')->name('companies');
+Route::get('/companies-all', 'CompanyController@indexData');
+Route::post('/company', 'CompanyController@store');
+Route::patch('/company/{company}', 'CompanyController@update');
+Route::delete('/company/{company}', 'CompanyController@destroy');
