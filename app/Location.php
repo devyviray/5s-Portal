@@ -17,4 +17,9 @@ class Location extends Model
     protected $fillable = [
         'name',
     ];
+
+    // Relation
+    public function company() {
+        return $this->belongsTo(Company::class);
+    }
 }

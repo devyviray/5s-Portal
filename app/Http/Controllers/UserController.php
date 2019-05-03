@@ -5,11 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use DB;
 use App\{
-    Company,
-    Location
+    User
 };
 
-class CompanyController extends Controller
+class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,19 +17,18 @@ class CompanyController extends Controller
      */
     public function index()
     {
-        return view('company.index');
+        return view('user.index');
     }
 
      /**
-     * Fetch all company
+     * Fetch all user
      *
      * @return \Illuminate\Http\Response
      */
 
     public function indexData(){
-        return Company::with('locations')->orderBy('id','desc')->get();
+        return User::with('companies', 'location')->orderBy('id','desc')->get();
     }
-
 
     /**
      * Store a newly created resource in storage.
@@ -41,19 +39,21 @@ class CompanyController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|unique:companies,name',
-            'location' => 'required'
+            'name' => 'required',
+            'email' => 'required|unique:users,email',
+            'company' => 'required',
+            'company_location' => 'required'
         ]);
 
         DB::beginTransaction();
         try {
-            if($company = Company::create($request->all())){
-                // Assigning of locations
-                $company->locations()->sync( (array) $request->location);
+            if($user = User::create(['password' => 'password'] + $request->all())){
+                // Assigning of company
+                $user->companies()->sync( (array) $request->company);
 
                 DB::commit();
 
-                return Company::with('locations')->where('id', $company->id)->first();
+                return User::with('companies')->where('id', $user->id)->first();
            }
         } catch (Exception $e) {
             DB::rollBack();
@@ -67,24 +67,25 @@ class CompanyController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Company $company)
+    public function update(Request $request, User $user)
     {
         $request->validate([
             'name' => 'required',
-            'location' => 'required'
+            'email' => 'required|unique:users,email,'.  $user->id,
+            'company' => 'required',
+            'company_location' => 'required'
         ]);
 
         DB::beginTransaction();
         try {
-            if($company->update($request->all())){
-                // Assigning of locations
-                $company->locations()->sync([]);
-                $company->locations()->sync( (array) $request->location);
+            if($user->update($request->all())){
+                // Assigning of company
+                $user->companies()->sync( (array) $request->company);
 
                 DB::commit();
 
-                return Company::with('locations')->where('id', $company->id)->first();
-            }
+                return User::with('companies')->where('id', $user->id)->first();
+           }
         } catch (Exception $e) {
             DB::rollBack();
         }
@@ -96,21 +97,10 @@ class CompanyController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Company $company)
+    public function destroy(User $user)
     {
-        if($company->delete()){
-            return $company;
+        if($user->delete()){
+            return $user;
         }
-    }
-
-     /**
-     * Gwt company location
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function companyLocation($id){
-
-        return Company::with('locations')->where('id', $id)->first();
     }
 }

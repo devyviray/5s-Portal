@@ -34,6 +34,9 @@ Vue.component('location-index', require('./components/Location/LocationIndex.vue
 // Company
 Vue.component('company-index', require('./components/Company/CompanyIndex.vue').default);
 
+// User
+Vue.component('user-index', require('./components/User/UserIndex.vue').default);
+
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application

@@ -17,7 +17,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'password', 'company_location',
     ];
 
     /**
@@ -37,4 +37,13 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    // Relationship
+    public function companies() {
+        return $this->belongsToMany(Company::class);
+    }
+
+    public function location(){
+        return $this->belongsTo(Location::class, 'company_location');
+    }
 }

@@ -39,3 +39,13 @@ Route::get('/companies-all', 'CompanyController@indexData');
 Route::post('/company', 'CompanyController@store');
 Route::patch('/company/{company}', 'CompanyController@update');
 Route::delete('/company/{company}', 'CompanyController@destroy');
+Route::get('/company-location/{id}', 'CompanyController@companyLocation');
+
+
+// users
+Route::get('/users', 'UserController@index')->name('users');
+Route::get('/users-all', 'UserController@indexData');
+Route::post('/user', 'UserController@store');
+Route::patch('/user/{user}', 'UserController@update');
+Route::delete('/user/{user}', 'UserController@destroy');
+
