@@ -18,6 +18,7 @@
                                 <li> <a :href="companyLink"><i class="fa fa-building-o fa-fw"></i> Companies</a> </li>
                                 <li> <a :href="locationLink"><i class="fa fa-globe fa-fw"></i> Locations</a> </li>
                                 <li> <a :href="departmentLink"><i class="fa fa-trello fa-fw"></i> Departments</a> </li>
+                                <li> <a :href="roleLink"><i class="fa fa-trello fa-fw"></i> Roles</a> </li>
                                 <li> <a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a> </li>
                                 <li class="divider"></li>
                                 <li> <a href="#" @click="logoutForm"><i class="fa fa-sign-out fa-fw"></i> Logout</a> </li>
@@ -350,6 +351,9 @@
             },
             userLink(){
                 return window.location.origin+'/users'    
+            },
+            roleLink(){
+                return window.location.origin+'/roles'     
             }
         }
     }

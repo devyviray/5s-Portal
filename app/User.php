@@ -5,11 +5,12 @@ namespace App;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use jeremykenedy\LaravelRoles\Traits\HasRoleAndPermission;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
-    use Notifiable,SoftDeletes;
+    use Notifiable,SoftDeletes,HasRoleAndPermission;
 
     /**
      * The attributes that are mass assignable.

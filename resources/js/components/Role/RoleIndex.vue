@@ -33,7 +33,7 @@
             <div class="header">
                 <h1 class="page-header">
                     <img class="lafil-logo" :src="logoLink">
-                    <b>5S PORTAL - COMPANY</b>
+                    <b>5S PORTAL - ROLE</b>
                 </h1>
                 <ol class="breadcrumb">
                     <li><a href="#">Home</a></li><span style="color: #FFFF">|</span>
@@ -47,7 +47,7 @@
                 <div class="card-header border-0">
                     <div class="row align-items-center">
                         <div class="col">
-                            <h3 class="mb-0">Compamy List</h3>
+                            <h3 class="mb-0">Role List</h3>
                         </div> 
                         <div class="col text-right">
                             <a href="javascript.void(0)" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#addModal">Add new</a>
@@ -59,19 +59,19 @@
                         </div> 
                     </div>
                 </div>
-                <!-- Locations table -->
+                <!-- Roles table -->
                 <table class="table align-items-center table-flush">
                     <thead class="thead-light">
                         <tr>
                             <th></th>
                             <th scope="col">ID</th>
                             <th scope="col">Name</th>
-                            <th scope="col">Location</th>
+                            <th scope="col">LEvel</th>
                             <th scope="col">Created date</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(company, c) in filteredQueues" v-bind:key="c">
+                        <tr v-for="(role, r) in filteredQueues" v-bind:key="r">
                             <td class="text-right">
                                 <div class="dropdown">
                                     <a class="btn btn-sm btn-icon-only text-light" href="#" role="button"
@@ -79,19 +79,15 @@
                                         <i class="fas fa-ellipsis-v"></i>
                                     </a>
                                     <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
-                                        <a class="dropdown-item" data-toggle="modal" data-target="#editModal" style="cursor: pointer" @click="copyObject(company)">Edit</a>
-                                        <a class="dropdown-item" data-toggle="modal" data-target="#deleteModal" style="cursor: pointer" @click="copyObject(company)">Delete</a>
+                                        <a class="dropdown-item" data-toggle="modal" data-target="#editModal" style="cursor: pointer" @click="copyObject(role)">Edit</a>
+                                        <a class="dropdown-item" data-toggle="modal" data-target="#deleteModal" style="cursor: pointer" @click="copyObject(role)">Delete</a>
                                     </div>
                                 </div>
                             </td>
-                            <td scope="row">{{ company.id }}</td>
-                            <td>{{ company.name }}</td>
-                            <td>
-                                <span v-for="(location, l) in company.locations" :key="l">
-                                    {{ location.name }} <br/>
-                                </span>
-                            </td>
-                            <td>{{ company.created_at }}</td>
+                            <td scope="row">{{ role.id }}</td>
+                            <td>{{ role.name }}</td>
+                            <td>{{ role.level }}</td>
+                            <td>{{ role.created_at }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -103,12 +99,12 @@
                     <button :disabled="!showNextLink()" class="btn btn-default btn-sm btn-fill" v-on:click="setPage(currentPage + 1)"> Next </button>
                 </div>
                 <div class="col-6 text-right">
-                    <span>{{ filteredQueues.length }} Filtered Company(s)</span><br>
-                    <span>{{ companies.length }} Total Company(s)</span>
+                    <span>{{ filteredQueues.length }} Filtered Role(s)</span><br>
+                    <span>{{ roles.length }} Total Role(s)</span>
                 </div>
             </div>
         </div>
-        <!-- Add Company Modal -->
+        <!-- Add Role Modal -->
         <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
             <span class="closed" data-dismiss="modal">&times;</span>
             <div class="modal-dialog modal-dialog-centered" role="document">
@@ -119,46 +115,39 @@
                         </button>
                     </div>
                     <div class="modal-header">
-                        <h2 class="col-12 modal-title" id="addCompanyLabel">Add Company</h2>
+                        <h2 class="col-12 modal-title" id="addCompanyLabel">Add Role</h2>
                     </div>
                     <div class="modal-body">
-                        <div class="alert alert-success" v-if="company_added">
-                            <strong>Success!</strong> Company succesfully added
+                        <div class="alert alert-success" v-if="role_added">
+                            <strong>Success!</strong> Role succesfully added
                         </div>
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="role">Name*</label> 
-                                    <input type="text" id="name" class="form-control" v-model="company.name" placeholder="Company name">
+                                    <input type="text" id="role_name" class="form-control" v-model="role.name" placeholder="Role name">
                                     <span class="text-danger" v-if="errors.name">{{ errors.name[0] }}</span>
                                 </div>
-                            </div>
+                            </div>  
+                        </div>
+                        <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label for="role">Location*</label>
-                                      <multiselect
-                                            v-model="company.location"
-                                            :options="locations"
-                                            :multiple="true"
-                                            track-by="id"
-                                            :custom-label="customLabelLocation"
-                                            placeholder="Select Location"
-                                            id="selected_location"
-                                        >
-                                    </multiselect> 
-                                    <span class="text-danger" v-if="errors.location">The location field is required.</span>
+                                    <label for="role">Name*</label> 
+                                    <input type="text" id="role_name" class="form-control" v-model="role.level" placeholder="Role level">
+                                    <span class="text-danger" v-if="errors.level">{{ errors.level[0] }}</span>
                                 </div>
                             </div>  
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button id="add_btn" type="button" class="btn btn-primary btn-round btn-fill" @click="addCompany(company)">Save</button>
+                        <button id="add_btn" type="button" class="btn btn-primary btn-round btn-fill" @click="addRole(role)">Save</button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Edit Company Modal -->
+        <!-- Edit Role Modal -->
         <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
             <span class="closed" data-dismiss="modal">&times;</span>
             <div class="modal-dialog modal-dialog-centered" role="document">
@@ -169,52 +158,45 @@
                         </button>
                     </div>
                     <div class="modal-header">
-                        <h2 class="col-12 modal-title" id="addCompanyLabel">Edit Company</h2>
+                        <h2 class="col-12 modal-title" id="addCompanyLabel">Edit Role</h2>
                     </div>
                     <div class="modal-body">
-                        <div class="alert alert-success" v-if="company_updated">
-                            <strong>Success!</strong> Company succesfully added
+                        <div class="alert alert-success" v-if="role_updated">
+                            <strong>Success!</strong> Role succesfully updated
                         </div>
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="role">Name*</label> 
-                                    <input type="text" id="name" class="form-control" v-model="company_copied.name" placeholder="Company name">
-                                    <span class="text-danger" v-if="errors.name">{{ errors.name[0] }}</span>
+                                    <input type="text" id="role_name" class="form-control" v-model="role_copied.name" placeholder="Role name">
+                                    <span class="text-danger" v-if="errors.role_name">{{ errors.role_name[0] }}</span>
                                 </div>
-                            </div>
+                            </div>  
+                        </div>
+                        <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label for="role">Location*</label>
-                                      <multiselect
-                                            v-model="company_copied.locations"
-                                            :options="locations"
-                                            :multiple="true"
-                                            track-by="id"
-                                            :custom-label="customLabelLocation"
-                                            placeholder="Select Location"
-                                            id="selected_location"
-                                        >
-                                    </multiselect> 
-                                    <span class="text-danger" v-if="errors.location">The location field is required.</span>
+                                    <label for="role">Name*</label> 
+                                    <input type="text" id="role_name" class="form-control" v-model="role_copied.level" placeholder="Role level">
+                                    <span class="text-danger" v-if="errors.level">{{ errors.level[0] }}</span>
                                 </div>
                             </div>  
                         </div> 
                     </div>
                     <div class="modal-footer">
-                        <button id="edit_btn" type="button" class="btn btn-primary btn-round btn-fill" @click="updateCompany(company_copied)">Save</button>
+                        <button id="edit_btn" type="button" class="btn btn-primary btn-round btn-fill" @click="updateRole(role_copied)">Save</button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Delete Company Modal -->
+        <!-- Delete Role Modal -->
         <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
             <span class="closed" data-dismiss="modal">&times;</span>
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addCompanyLabel">Delete Company</h5>
+                    <h5 class="modal-title" id="addCompanyLabel">Delete Role</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -223,14 +205,14 @@
                    <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
-                                Are you sure you want to delete this Company?
+                                Are you sure you want to delete this Role?
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" data-dismiss='modal'>Close</button>
-                    <button class="btn btn-warning" @click="deleteCompany">Delete</button>
+                    <button class="btn btn-warning" @click="deleteRole">Delete</button>
                 </div>
                 </div>
             </div>
@@ -238,24 +220,17 @@
 
 </div>
 </template>
-<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
 
 <script>
-    import Multiselect from 'vue-multiselect';
     export default {
-        components:{
-            Multiselect
-        },
         data(){
             return {
-                companies : [],
-                company: [],
-                company_copied: [],
-                company_id: '',
-                company_added: false,
-                company_updated: false,
-                locations: [],
-                location:[], 
+                roles : [],
+                role: [],
+                role_copied: [],
+                role_id: '',
+                role_added: false,
+                role_updated: false, 
                 errors: [],
                 currentPage: 0,
                 itemsPerPage: 50,
@@ -263,18 +238,13 @@
             }
         },
         created(){
-            this.fetchCompanies();
-            this.fetchLocations();
+            this.fetchRoles();
         },
         methods:{
-            customLabelLocation (location) {
-                return `${location.name  }`
-            },
-            copyObject(company){
-                this.errors = [];
-                this.company_updated = false;
-                this.company_id = company.id;
-                this.company_copied = Object.assign({}, company);
+            copyObject(role){
+                this.role_updated = false;
+                this.role_id = role.id;
+                this.role_copied = Object.assign({}, role);
             },
             logoutForm(){
                 axios.post('/logout')
@@ -287,86 +257,63 @@
                     this.errors = error.response.data.errors;
                 })
             },
-            fetchCompanies(){
-                axios.get('companies-all')
+            fetchRoles(){
+                axios.get('roles-all')
                 .then(response => {
-                    this.companies = response.data;
+                    this.roles = response.data;
                 })
                 .catch(error => { 
                     this.errors = error.response.data.errors;
                 })
             },
-            fetchLocations(){
-                axios.get('/locations-all')
-                .then(response => { 
-                    this.locations = response.data;
-                })
-                .catch(error => { 
-                    this.errors = error.response.data.errors;
-                })
-            },
-            addCompany(company){
-                var locationIds = [];
-                if(company.location){
-                    company.location.forEach((location) => {
-                        locationIds.push(location.id);
-                    });  
-                }
-
+            addRole(role){
                 document.getElementById('add_btn').disabled = true;
                 this.errors = [];
-                axios.post('/company', {
-                    name: company.name,
-                    location: locationIds
+                axios.post('/role', {
+                    name: role.name,
+                    level: role.level
                 })
                 .then(response => {
-                    this.companies.unshift(response.data);
-                    this.company_added = true;
+                    this.roles.unshift(response.data);
+                    this.role_added = true;
                     document.getElementById('add_btn').disabled = false;
                 })
                 .catch(error => {
                     this.errors = error.response.data.errors;
-                    this.company_added = false;
+                    this.role_added = false;
                     document.getElementById('add_btn').disabled = false;
                 })
             },
-            updateCompany(company_copied){
-                var locationIds = [];
-                if(company_copied.locations){
-                    company_copied.locations.forEach((location) => {
-                        locationIds.push(location.id);
-                    });  
-                }
-                
+            updateRole(role_copied){
                 document.getElementById('edit_btn').disabled = true;
-                this.company_updated = false;
+                this.role_updated = false;
                 this.errors = [];
-                var index = this.companies.findIndex(item => item.id == company_copied.id);
-                axios.post(`/company/${company_copied.id}`, {
-                    name: company_copied.name,
-                    location: locationIds,
+                var index = this.roles.findIndex(item => item.id == role_copied.id);
+                axios.post(`/role/${role_copied.id}`, {
+                    name: role_copied.name,
+                    level: role_copied.level,
                     _method: 'PATCH'
                 })
                 .then(response => {
-                    this.company_updated = true;
-                    this.companies.splice(index,1,response.data);
+                    this.role_updated = true;
+                    this.roles.splice(index,1,response.data);
                     document.getElementById('edit_btn').disabled = false;
                     // this.loading = false;
                 })
                 .catch(error => {
-                    this.company_updated = false;
+                    this.role_updated = false;
                     this.errors = error.response.data.errors;
                     document.getElementById('edit_btn').disabled = false;
                     this.loading = false;
                 })
             },
-            deleteCompany(){
-                var index = this.companies.findIndex(item => item.id == this.company_id);
-                axios.delete(`/company/${this.company_id}`)
+            deleteRole(){
+                var index = this.roles.findIndex(item => item.id == this.role_id);
+                axios.delete(`/role/${this.role_id}`)
                 .then(response => {
                     $('#deleteModal').modal('hide');
-                    alert('Company successfully deleted');
-                    this.companies.splice(index,1);
+                    alert('Location successfully deleted');
+                    this.roles.splice(index,1);
                 })
                 .catch(error => {
                     this.errors = error.response.data.errors;
@@ -389,18 +336,18 @@
             }   
         },  
         computed:{
-            filteredCompanies(){
+            filteredRoles(){
                 let self = this;
-                return self.companies.filter(company => {
-                    return company.name.toLowerCase().includes(this.keywords.toLowerCase())
+                return self.roles.filter(role => {
+                    return role.name.toLowerCase().includes(this.keywords.toLowerCase())
                 });
             },
             totalPages() {
-                return Math.ceil(this.companies.length / this.itemsPerPage);
+                return Math.ceil(this.roles.length / this.itemsPerPage);
             },
             filteredQueues() {
                 var index = this.currentPage * this.itemsPerPage;
-                var queues_array = this.filteredCompanies.slice(index, index + this.itemsPerPage);
+                var queues_array = this.filteredRoles.slice(index, index + this.itemsPerPage);
 
                 if(this.currentPage >= this.totalPages) {
                     this.currentPage = this.totalPages - 1
@@ -428,7 +375,7 @@
                 return window.location.origin+'/users'
             },
             roleLink(){
-                return window.location.origin+'/roles'     
+               return window.location.origin+'/roles'
             }
         }
     }

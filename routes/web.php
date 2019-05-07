@@ -41,11 +41,18 @@ Route::patch('/company/{company}', 'CompanyController@update');
 Route::delete('/company/{company}', 'CompanyController@destroy');
 Route::get('/company-location/{id}', 'CompanyController@companyLocation');
 
-
 // users
 Route::get('/users', 'UserController@index')->name('users');
 Route::get('/users-all', 'UserController@indexData');
 Route::post('/user', 'UserController@store');
 Route::patch('/user/{user}', 'UserController@update');
 Route::delete('/user/{user}', 'UserController@destroy');
+
+// roles
+Route::get('/roles', 'RoleController@index')->name('roles');
+Route::get('/roles-all', 'RoleController@indexData');
+Route::post('/role', 'RoleController@store');
+Route::patch('/role/{role}', 'RoleController@update');
+Route::delete('/role/{role}', 'RoleController@destroy');
+
 
