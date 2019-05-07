@@ -18,7 +18,7 @@
                                 <li> <a :href="companyLink"><i class="fa fa-building-o fa-fw"></i> Companies</a> </li>
                                 <li> <a :href="locationLink"><i class="fa fa-globe fa-fw"></i> Locations</a> </li>
                                 <li> <a :href="departmentLink"><i class="fa fa-trello fa-fw"></i> Departments</a> </li>
-                                <li> <a :href="roleLink"><i class="fa fa-trello fa-fw"></i> Roles</a> </li>
+                                <li> <a :href="roleLink"><i class="fa fa-user-md fa-fw"></i> Roles</a> </li>
                                 <li> <a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a> </li>
                                 <li class="divider"></li>
                                 <li> <a href="#" @click="logoutForm"><i class="fa fa-sign-out fa-fw"></i> Logout</a> </li>
@@ -36,7 +36,7 @@
                     <b>5S PORTAL - USER</b>
                 </h1>
                 <ol class="breadcrumb">
-                    <li><a href="#">Home</a></li><span style="color: #FFFF">|</span>
+                    <li><a :href="homeLink">Home</a></li><span style="color: #FFFF">|</span>
                     <li><a href="#">Report & Rating</a></li> <span  style="color: #FFFF">|</span>
                     <li><a href="#">Orientation</a></li><span style="color: #FFFF">|</span>
                     <li><a href="#">Exam</a></li><span style="color: #FFFF">|</span>
@@ -67,6 +67,7 @@
                             <th scope="col">ID</th>
                             <th scope="col">Name</th>
                             <th scope="col">Email</th>
+                            <th scope="col">Role</th>
                             <th scope="col">Company</th>
                         </tr>
                     </thead>
@@ -87,6 +88,11 @@
                             <td scope="row">{{ user.id }}</td>
                             <td>{{ user.name }}</td>
                             <td>{{ user.email }}</td>
+                            <td>
+                                <span v-for="(role, r) in user.roles" :key="r">
+                                    {{ role.name }} <br/>
+                                </span>
+                            </td>
                             <td>
                                 <span v-for="(company, c) in user.companies" :key="c">
                                     {{ company.name + ' - ' + user.location.name }} <br/>
@@ -167,6 +173,15 @@
                                     <span class="text-danger" v-if="errors.company_location">{{ errors.company_location[0] }}</span>
                                 </div>
                             </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="role">Role*</label> 
+                                    <select class="form-control" v-model="user.role">
+                                        <option v-for="(role,r) in roles" v-bind:key="r" :value="role.id"> {{ role.name }}</option>
+                                    </select>
+                                    <span class="text-danger" v-if="errors.role">{{ errors.role[0] }}</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -191,7 +206,7 @@
                     </div>
                     <div class="modal-body">
                         <div class="alert alert-success" v-if="user_updated">
-                            <strong>Success!</strong> User succesfully added
+                            <strong>Success!</strong> User succesfully updated
                         </div>
                         <div class="row">
                             <div class="col-md-12">
@@ -224,6 +239,15 @@
                                         <option v-for="(location,l) in locations" v-bind:key="l" :value="location.id"> {{ location.name }}</option>
                                     </select>
                                     <span class="text-danger" v-if="errors.company_location">{{ errors.company_location[0] }}</span>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="role">Role*</label> 
+                                    <select class="form-control" v-model="user_copied.role_id">
+                                        <option v-for="(role,r) in roles" v-bind:key="r" :value="role.id"> {{ role.name }}</option>
+                                    </select>
+                                    <span class="text-danger" v-if="errors.role">{{ errors.role[0] }}</span>
                                 </div>
                             </div>
                         </div> 
@@ -286,7 +310,9 @@
                 companies: [],
                 company:[],
                 locations: [],
-                location: [], 
+                location: [],
+                roles: [],
+                role: [], 
                 errors: [],
                 currentPage: 0,
                 itemsPerPage: 50,
@@ -309,6 +335,7 @@
                 this.user_copied = Object.assign({}, user);
                 this.user_copied.company_id = user.companies[0].id;
                 this.user_copied.location_id = user.location.id;
+                this.user_copied.role_id = user.roles[0].id
                 this.fetchCompanyLocation(user.location.id);
             },
             logoutForm(){
@@ -341,7 +368,13 @@
                 })
             },
             fetchRoles(){
-
+                axios.get('roles-all')
+                .then(response => {
+                    this.roles = response.data;
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.errors;
+                })
             },
             addUser(user){
                 document.getElementById('add_btn').disabled = true;
@@ -350,7 +383,8 @@
                     name: user.name,
                     email: user.email,
                     company: user.company,
-                    company_location: user.company_location
+                    company_location: user.company_location,
+                    role: user.role
                 })
                 .then(response => {
                     this.users.unshift(response.data);
@@ -373,6 +407,7 @@
                     email: user_copied.email,
                     company: user_copied.company_id,
                     company_location: user_copied.location_id,
+                    role: user_copied.role_id,
                     _method: 'PATCH'
                 })
                 .then(response => {
@@ -451,6 +486,9 @@
             },
             logoLink(){
                 return window.location.origin+'/img/lafil-logo.png';
+            },
+            homeLink(){
+                return window.location.origin+'/home'
             },
             departmentLink(){
                 return window.location.origin+'/departments'

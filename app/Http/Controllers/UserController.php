@@ -27,7 +27,7 @@ class UserController extends Controller
      */
 
     public function indexData(){
-        return User::with('companies', 'location')->orderBy('id','desc')->get();
+        return User::with('companies', 'location', 'roles')->orderBy('id','desc')->get();
     }
 
     /**
@@ -50,10 +50,11 @@ class UserController extends Controller
             if($user = User::create(['password' => 'password'] + $request->all())){
                 // Assigning of company
                 $user->companies()->sync( (array) $request->company);
-
+                // Assigning of role
+                $user->syncRoles($request->role);
                 DB::commit();
 
-                return User::with('companies')->where('id', $user->id)->first();
+                return User::with('companies','location', 'roles')->where('id', $user->id)->first();
            }
         } catch (Exception $e) {
             DB::rollBack();
@@ -73,7 +74,8 @@ class UserController extends Controller
             'name' => 'required',
             'email' => 'required|unique:users,email,'.  $user->id,
             'company' => 'required',
-            'company_location' => 'required'
+            'company_location' => 'required',
+            'role' => 'required'
         ]);
 
         DB::beginTransaction();
@@ -81,10 +83,12 @@ class UserController extends Controller
             if($user->update($request->all())){
                 // Assigning of company
                 $user->companies()->sync( (array) $request->company);
+                // Assigning of role
+                $user->syncRoles($request->role);
 
                 DB::commit();
 
-                return User::with('companies')->where('id', $user->id)->first();
+                return User::with('companies','roles', 'location')->where('id', $user->id)->first();
            }
         } catch (Exception $e) {
             DB::rollBack();
