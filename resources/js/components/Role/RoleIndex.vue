@@ -76,7 +76,7 @@
                                 <div class="dropdown">
                                     <a class="btn btn-sm btn-icon-only text-light" href="#" role="button"
                                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <i class="fas fa-ellipsis-v"></i>
+                                        <i class="fa fa-ellipsis-v"></i>
                                     </a>
                                     <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
                                         <a class="dropdown-item" data-toggle="modal" data-target="#editModal" style="cursor: pointer" @click="copyObject(role)">Edit</a>
@@ -133,7 +133,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label for="role">Name*</label> 
+                                    <label for="role">Level*</label> 
                                     <input type="text" id="role_name" class="form-control" v-model="role.level" placeholder="Role level">
                                     <span class="text-danger" v-if="errors.level">{{ errors.level[0] }}</span>
                                 </div>
@@ -176,7 +176,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label for="role">Name*</label> 
+                                    <label for="role">Level*</label> 
                                     <input type="text" id="role_name" class="form-control" v-model="role_copied.level" placeholder="Role level">
                                     <span class="text-danger" v-if="errors.level">{{ errors.level[0] }}</span>
                                 </div>

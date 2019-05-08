@@ -40796,7 +40796,7 @@ var staticRenderFns = [
           "aria-expanded": "false"
         }
       },
-      [_c("i", { staticClass: "fas fa-ellipsis-v" })]
+      [_c("i", { staticClass: "fa fa-ellipsis-v" })]
     )
   },
   function() {
@@ -41888,7 +41888,7 @@ var staticRenderFns = [
           "aria-expanded": "false"
         }
       },
-      [_c("i", { staticClass: "fas fa-ellipsis-v" })]
+      [_c("i", { staticClass: "fa fa-ellipsis-v" })]
     )
   },
   function() {
@@ -42745,7 +42745,7 @@ var staticRenderFns = [
           "aria-expanded": "false"
         }
       },
-      [_c("i", { staticClass: "fas fa-ellipsis-v" })]
+      [_c("i", { staticClass: "fa fa-ellipsis-v" })]
     )
   },
   function() {
@@ -43230,7 +43230,7 @@ var render = function() {
                   _c("div", { staticClass: "col-md-12" }, [
                     _c("div", { staticClass: "form-group" }, [
                       _c("label", { attrs: { for: "role" } }, [
-                        _vm._v("Name*")
+                        _vm._v("Level*")
                       ]),
                       _vm._v(" "),
                       _c("input", {
@@ -43382,7 +43382,7 @@ var render = function() {
                   _c("div", { staticClass: "col-md-12" }, [
                     _c("div", { staticClass: "form-group" }, [
                       _c("label", { attrs: { for: "role" } }, [
-                        _vm._v("Name*")
+                        _vm._v("Level*")
                       ]),
                       _vm._v(" "),
                       _c("input", {
@@ -43643,7 +43643,7 @@ var staticRenderFns = [
           "aria-expanded": "false"
         }
       },
-      [_c("i", { staticClass: "fas fa-ellipsis-v" })]
+      [_c("i", { staticClass: "fa fa-ellipsis-v" })]
     )
   },
   function() {
@@ -44917,7 +44917,7 @@ var staticRenderFns = [
           "aria-expanded": "false"
         }
       },
-      [_c("i", { staticClass: "fas fa-ellipsis-v" })]
+      [_c("i", { staticClass: "fa fa-ellipsis-v" })]
     )
   },
   function() {
