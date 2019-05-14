@@ -5,7 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Company extends Model
+class Checklist extends Model
 {
     use SoftDeletes;
 
@@ -14,10 +14,5 @@ class Company extends Model
      *
      * @var array
      */
-    protected $fillable = [ 'name'];
-
-    // Relation
-    public function locations() {
-        return $this->belongsToMany(Location::class)->withTimestamps();
-    }
+    protected $fillable = ['requirement', 'description', 'batch'];
 }

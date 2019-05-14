@@ -34,7 +34,7 @@
             <div class="header">
                 <h1 class="page-header">
                     <img class="lafil-logo" :src="logoLink">
-                    <b>5S PORTAL - COMPANY</b>
+                    <b>5S PORTAL - CHECKLIST</b>
                 </h1>
                 <ol class="breadcrumb">
                     <li><a :href="homeLink">Home</a></li><span style="color: #FFFF">|</span>
@@ -48,7 +48,7 @@
                 <div class="card-header border-0">
                     <div class="row align-items-center">
                         <div class="col">
-                            <h3 class="mb-0">Compamy List</h3>
+                            <h3 class="mb-0">Checklist List</h3>
                         </div> 
                         <div class="col text-right">
                             <a href="javascript.void(0)" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#addModal">Add new</a>
@@ -60,19 +60,18 @@
                         </div> 
                     </div>
                 </div>
-                <!-- Locations table -->
+                <!-- Checklst table -->
                 <table class="table align-items-center table-flush">
                     <thead class="thead-light">
                         <tr>
                             <th></th>
-                            <th scope="col">ID</th>
+                            <!-- <th scope="col">ID</th> -->
                             <th scope="col">Name</th>
-                            <th scope="col">Location</th>
-                            <th scope="col">Created date</th>
+                            <th scope="col">Batch</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(company, c) in filteredQueues" v-bind:key="c">
+                        <tr v-for="(checklist, c) in filteredQueues" v-bind:key="c">
                             <td class="text-right">
                                 <div class="dropdown">
                                     <a class="btn btn-sm btn-icon-only text-light" href="#" role="button"
@@ -80,19 +79,14 @@
                                         <i class="fa fa-ellipsis-v"></i>
                                     </a>
                                     <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
-                                        <a class="dropdown-item" data-toggle="modal" data-target="#editModal" style="cursor: pointer" @click="copyObject(company)">Edit</a>
-                                        <a class="dropdown-item" data-toggle="modal" data-target="#deleteModal" style="cursor: pointer" @click="copyObject(company)">Delete</a>
+                                        <a class="dropdown-item" data-toggle="modal" data-target="#editModal" style="cursor: pointer" @click="copyObject(checklist)">Edit</a>
+                                        <a class="dropdown-item" data-toggle="modal" data-target="#deleteModal" style="cursor: pointer" @click="copyObject(checklist)">Delete</a>
                                     </div>
                                 </div>
                             </td>
-                            <td scope="row">{{ company.id }}</td>
-                            <td>{{ company.name }}</td>
-                            <td>
-                                <span v-for="(location, l) in company.locations" :key="l">
-                                    {{ location.name }} <br/>
-                                </span>
-                            </td>
-                            <td>{{ company.created_at }}</td>
+                            <!-- <td scope="row">{{ c + 1 }}</td> -->
+                            <td>{{ "CHECKLIST - "+ checklist[0].created_at }}</td>
+                            <td>{{ checklist[0].batch }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -104,15 +98,15 @@
                     <button :disabled="!showNextLink()" class="btn btn-default btn-sm btn-fill" v-on:click="setPage(currentPage + 1)"> Next </button>
                 </div>
                 <div class="col-6 text-right">
-                    <span>{{ filteredQueues.length }} Filtered Company(s)</span><br>
-                    <span>{{ companies.length }} Total Company(s)</span>
+                    <span>{{ filteredQueues.length }} Filtered User(s)</span><br>
+                    <span>{{ checklists.length }} Total User(s)</span>
                 </div>
             </div>
         </div>
-        <!-- Add Company Modal -->
+        <!-- Add User Modal -->
         <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
             <span class="closed" data-dismiss="modal">&times;</span>
-            <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div>
                         <button type="button" class="close mt-2 mr-2" data-dismiss="modal" aria-label="Close">
@@ -120,49 +114,51 @@
                         </button>
                     </div>
                     <div class="modal-header">
-                        <h2 class="col-12 modal-title" id="addCompanyLabel">Add Company</h2>
+                        <h2 class="col-12 modal-title" id="addCompanyLabel">Add Checklist</h2>
                     </div>
                     <div class="modal-body">
-                        <div class="alert alert-success" v-if="company_added">
-                            <strong>Success!</strong> Company succesfully added
+                        <div class="alert alert-success" v-if="checklist_added">
+                            <strong>Success!</strong> Checklist succesfully added
                         </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label for="role">Name*</label> 
-                                    <input type="text" id="name" class="form-control" v-model="company.name" placeholder="Company name">
-                                    <span class="text-danger" v-if="errors.name">{{ errors.name[0] }}</span>
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label for="role">Location*</label>
-                                      <multiselect
-                                            v-model="company.location"
-                                            :options="locations"
-                                            :multiple="true"
-                                            track-by="id"
-                                            :custom-label="customLabelLocation"
-                                            placeholder="Select Location"
-                                            id="selected_location"
-                                        >
-                                    </multiselect> 
-                                    <span class="text-danger" v-if="errors.location">The location field is required.</span>
-                                </div>
-                            </div>  
+                        <div class="form-group">
+                            <i @click="addRow('Add')" class="fa fa-plus-circle text-green" style="font-size:30px;cursor:pointer; margin-right:5px"></i>
+                            <table class="table table-hover table-striped">
+                                <thead>
+                                    <th>ID</th>
+                                    <th>Requirements</th>
+                                    <th>Descriptions</th>
+                                    <th>Action</th>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="(checklistAdd, c) in checklistAdds" v-bind:key="c">
+                                        <td>{{ c + 1 }}</td>
+                                        <td>
+                                            <input type="text" class="form-control" placeholder="Requirement" v-model="checklistAdd.requirement">
+                                            <span class="text-danger" v-if="errors['checklistAdds.'+c+'.requirement']">This field is required</span>
+                                        </td>
+                                        <td>
+                                            <input type="text" class="form-control" placeholder="Description" v-model="checklistAdd.description">
+                                            <span class="text-danger" v-if="errors['checklistAdds.'+c+'.description']">This field is required</span>
+                                        </td>
+                                        <td>
+                                            <i @click="deleteRow(c,'','Add')" class="fa fa-times-circle text-red" style="font-size:30px;cursor:pointer"></i>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button id="add_btn" type="button" class="btn btn-primary btn-round btn-fill" @click="addCompany(company)">Save</button>
+                        <button id="add_btn" type="button" class="btn btn-primary btn-round btn-fill" @click="addChecklist(checklistAdds)">Save</button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Edit Company Modal -->
+        <!-- Edit Checklist Modal -->
         <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
             <span class="closed" data-dismiss="modal">&times;</span>
-            <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div>
                         <button type="button" class="close mt-2 mr-2" data-dismiss="modal" aria-label="Close">
@@ -170,52 +166,54 @@
                         </button>
                     </div>
                     <div class="modal-header">
-                        <h2 class="col-12 modal-title" id="addCompanyLabel">Edit Company</h2>
+                        <h2 class="col-12 modal-title" id="addCompanyLabel">Edit Checklist</h2>
                     </div>
                     <div class="modal-body">
-                        <div class="alert alert-success" v-if="company_updated">
-                            <strong>Success!</strong> Company succesfully added
+                        <div class="alert alert-success" v-if="checklist_updated">
+                            <strong>Success!</strong> Checklist succesfully updated
                         </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label for="role">Name*</label> 
-                                    <input type="text" id="name" class="form-control" v-model="company_copied.name" placeholder="Company name">
-                                    <span class="text-danger" v-if="errors.name">{{ errors.name[0] }}</span>
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label for="role">Location*</label>
-                                      <multiselect
-                                            v-model="company_copied.locations"
-                                            :options="locations"
-                                            :multiple="true"
-                                            track-by="id"
-                                            :custom-label="customLabelLocation"
-                                            placeholder="Select Location"
-                                            id="selected_location"
-                                        >
-                                    </multiselect> 
-                                    <span class="text-danger" v-if="errors.location">The location field is required.</span>
-                                </div>
-                            </div>  
-                        </div> 
+                        <div class="form-group">
+                            <i @click="addRow('Update')" class="fa fa-plus-circle text-green" style="font-size:30px;cursor:pointer; margin-right:5px"></i>
+                            <table class="table table-hover table-striped">
+                                <thead>
+                                    <th>ID</th>
+                                    <th>Requirements</th>
+                                    <th>Descriptions</th>
+                                    <th>Action</th>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="(checklist_copied, c) in checklist_copieds" v-bind:key="c">
+                                        <td>{{ parseInt(c) + parseInt(1) }}</td>
+                                        <td>
+                                            <input type="text" class="form-control" placeholder="Requirement" v-model="checklist_copied.requirement">
+                                            <span class="text-danger" v-if="errors['checklist_copieds.'+c+'.requirement']">This field is required</span>
+                                        </td>
+                                        <td>
+                                            <input type="text" class="form-control" placeholder="Description" v-model="checklist_copied.description">
+                                            <span class="text-danger" v-if="errors['checklist_copieds.'+c+'.description']">This field is required</span>
+                                        </td>
+                                        <td>
+                                            <i @click="deleteRow(c,checklist_copied.id,'Update')" class="fa fa-times-circle text-red" style="font-size:30px;cursor:pointer"></i>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                     <div class="modal-footer">
-                        <button id="edit_btn" type="button" class="btn btn-primary btn-round btn-fill" @click="updateCompany(company_copied)">Save</button>
+                        <button id="edit_btn" type="button" class="btn btn-primary btn-round btn-fill" @click="updateChecklist(checklist_copieds)">Save</button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Delete Company Modal -->
-        <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
+        <!-- Delete User Modal -->
+        <!-- <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
             <span class="closed" data-dismiss="modal">&times;</span>
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addCompanyLabel">Delete Company</h5>
+                    <h5 class="modal-title" id="addCompanyLabel">Delete User</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -224,18 +222,18 @@
                    <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
-                                Are you sure you want to delete this Company?
+                                Are you sure you want to delete this User?
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" data-dismiss='modal'>Close</button>
-                    <button class="btn btn-warning" @click="deleteCompany">Delete</button>
+                    <button class="btn btn-warning" @click="deleteUser">Delete</button>
                 </div>
                 </div>
             </div>
-        </div>
+        </div> -->
 
 </div>
 </template>
@@ -243,21 +241,36 @@
 
 <script>
     import Multiselect from 'vue-multiselect';
+    import vSelect from 'vue-select'
     export default {
         props: ['userName'],
         components:{
-            Multiselect
+            Multiselect,
+            vSelect
         },
         data(){
             return {
-                companies : [],
-                company: [],
-                company_copied: [],
-                company_id: '',
-                company_added: false,
-                company_updated: false,
+                checklists : [],
+                checklist: [],
+                checklists_copied: [],
+                default_checklists_id: [],
+                checklists_id: '',
+                checklist_added: false,
+                checklist_updated: false,
+                checklistAdds: [{
+                    requirement: '',
+                    description: '',
+                }],
+                checklist_copieds: [{
+                    requirement: '',
+                    description: '',
+                }], 
+                companies: [],
+                company:[],
                 locations: [],
-                location:[], 
+                location: [],
+                roles: [],
+                role: [], 
                 errors: [],
                 currentPage: 0,
                 itemsPerPage: 50,
@@ -265,18 +278,106 @@
             }
         },
         created(){
-            this.fetchCompanies();
-            this.fetchLocations();
+            this.fetchChecklists();
         },
         methods:{
-            customLabelLocation (location) {
-                return `${location.name  }`
-            },
-            copyObject(company){
+            copyObject(checklist){
+                this.default_checklists_id = [];
                 this.errors = [];
-                this.company_updated = false;
-                this.company_id = company.id;
-                this.company_copied = Object.assign({}, company);
+                this.checklist_add = false;
+                this.checklist_updated = false;
+                this.checklist_copieds =  checklist;              
+                this.checklist_copieds_batch = checklist[0].batch;
+
+                checklist.forEach((item) => {
+                    this.default_checklists_id.push(item.id);
+                });  
+
+            },
+            addRow(action){
+                if(action == 'Add'){
+                    // this.checklistAdds.splice(c + 1, 0,{
+                    //     requirement: '',
+                    //     description: ''
+                    // })
+                    this.checklistAdds.push({
+                        requirement: '',
+                        description: ''
+                    });s
+                }else{
+                    this.checklist_copieds.push({
+                        requirement: '',
+                        description: ''
+                    });
+                }
+            },
+            deleteRow(index,id,action) {
+                const ids = []
+                if(action == 'Add'){
+                    this.checklistAdds.length < 2 ? alert('Unable to delete all row') : this.checklistAdds.splice(index,1);
+                }else{
+                    if(this.checklist_copieds.length < 2){
+                        alert('Unable to delete all row')
+                    }else{
+                        this.checklist_copieds.splice(index,1);
+                        ids.unshift(id);
+                    }
+                }
+            },
+            addChecklist(checklistAdds){
+                document.getElementById('add_btn').disabled = true;
+                this.checklist_added = false;
+                this.errors = [];
+                axios.post('/checklist', {
+                    checklistAdds: checklistAdds
+                })
+                .then(response => {
+                    this.checklists.unshift(response.data);
+                    this.checklist_added = true;
+                    document.getElementById('add_btn').disabled = false;
+                })
+                .catch(error => {
+                    this.errors = error.response.data.errors;
+                    this.checklist_added = false;
+                    document.getElementById('add_btn').disabled = false;
+                })
+            },
+            updateChecklist(checklist_copieds){
+                var batch = checklist_copieds.length == 1 ? checklist_copieds[0].batch : checklist_copieds[1].batch;
+                document.getElementById('edit_btn').disabled = true;
+                this.checklist_updated = false;
+                this.errors = [];
+                var remained_id = [];
+                 checklist_copieds.forEach((item) => {
+                     if(item.id){
+                        remained_id.push(item.id);
+                     }
+                });
+
+                axios.post(`/checklist/${batch}`, {
+                    checklist_copieds: checklist_copieds,
+                    default_checklists_id: this.default_checklists_id,
+                    remained_id: remained_id,
+                    _method: 'PATCH'
+                })
+                .then(response => {
+                    this.checklist_updated = true;
+                    document.getElementById('edit_btn').disabled = false;
+                })
+                .catch(error => {
+                    this.checklist_updated = false;
+                    this.errors = error.response.data.errors;
+                    document.getElementById('edit_btn').disabled = false;
+                })
+            },
+            fetchChecklists (){
+                axios.get('/checklists-all')
+                .then(response => { 
+                    this.checklists = response.data;
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.errors;
+                })
             },
             logoutForm(){
                 axios.post('/logout')
@@ -286,91 +387,6 @@
                     }
                 })
                 .catch(error => { 
-                    this.errors = error.response.data.errors;
-                })
-            },
-            fetchCompanies(){
-                axios.get('companies-all')
-                .then(response => {
-                    this.companies = response.data;
-                })
-                .catch(error => { 
-                    this.errors = error.response.data.errors;
-                })
-            },
-            fetchLocations(){
-                axios.get('/locations-all')
-                .then(response => { 
-                    this.locations = response.data;
-                })
-                .catch(error => { 
-                    this.errors = error.response.data.errors;
-                })
-            },
-            addCompany(company){
-                var locationIds = [];
-                if(company.location){
-                    company.location.forEach((location) => {
-                        locationIds.push(location.id);
-                    });  
-                }
-
-                document.getElementById('add_btn').disabled = true;
-                this.errors = [];
-                axios.post('/company', {
-                    name: company.name,
-                    location: locationIds
-                })
-                .then(response => {
-                    this.companies.unshift(response.data);
-                    this.company_added = true;
-                    document.getElementById('add_btn').disabled = false;
-                })
-                .catch(error => {
-                    this.errors = error.response.data.errors;
-                    this.company_added = false;
-                    document.getElementById('add_btn').disabled = false;
-                })
-            },
-            updateCompany(company_copied){
-                var locationIds = [];
-                if(company_copied.locations){
-                    company_copied.locations.forEach((location) => {
-                        locationIds.push(location.id);
-                    });  
-                }
-                
-                document.getElementById('edit_btn').disabled = true;
-                this.company_updated = false;
-                this.errors = [];
-                var index = this.companies.findIndex(item => item.id == company_copied.id);
-                axios.post(`/company/${company_copied.id}`, {
-                    name: company_copied.name,
-                    location: locationIds,
-                    _method: 'PATCH'
-                })
-                .then(response => {
-                    this.company_updated = true;
-                    this.companies.splice(index,1,response.data);
-                    document.getElementById('edit_btn').disabled = false;
-                    // this.loading = false;
-                })
-                .catch(error => {
-                    this.company_updated = false;
-                    this.errors = error.response.data.errors;
-                    document.getElementById('edit_btn').disabled = false;
-                    this.loading = false;
-                })
-            },
-            deleteCompany(){
-                var index = this.companies.findIndex(item => item.id == this.company_id);
-                axios.delete(`/company/${this.company_id}`)
-                .then(response => {
-                    $('#deleteModal').modal('hide');
-                    alert('Company successfully deleted');
-                    this.companies.splice(index,1);
-                })
-                .catch(error => {
                     this.errors = error.response.data.errors;
                 })
             },
@@ -391,18 +407,12 @@
             }   
         },  
         computed:{
-            filteredCompanies(){
-                let self = this;
-                return self.companies.filter(company => {
-                    return company.name.toLowerCase().includes(this.keywords.toLowerCase())
-                });
-            },
             totalPages() {
-                return Math.ceil(this.companies.length / this.itemsPerPage);
+                return Math.ceil(Object.values(this.checklists).length / this.itemsPerPage);
             },
             filteredQueues() {
                 var index = this.currentPage * this.itemsPerPage;
-                var queues_array = this.filteredCompanies.slice(index, index + this.itemsPerPage);
+                var queues_array = Object.values(this.checklists).slice(index, index + this.itemsPerPage);
 
                 if(this.currentPage >= this.totalPages) {
                     this.currentPage = this.totalPages - 1
@@ -436,7 +446,7 @@
                 return window.location.origin+'/roles'     
             },
             checklistLink(){
-               return window.location.origin+'/checklists'
+               return window.location.origin+'/checklist' 
             }
         }
     }

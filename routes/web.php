@@ -55,4 +55,10 @@ Route::post('/role', 'RoleController@store');
 Route::patch('/role/{role}', 'RoleController@update');
 Route::delete('/role/{role}', 'RoleController@destroy');
 
+// checklist
+Route::get('/checklists', 'ChecklistController@index')->name('checklists');
+Route::get('/checklists-all', 'ChecklistController@indexData');
+Route::post('/checklist', 'ChecklistController@store');
+Route::patch('/checklist/{checklist}', 'ChecklistController@update');
+Route::delete('/checklist/{checklist}', 'ChecklistController@destroy');
 

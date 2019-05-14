@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-    <dashboard-index></dashboard-index>
+    <dashboard-index :user-name="'{{ Auth::user()->name }}'"></dashboard-index>
 @endsection
     

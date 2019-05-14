@@ -4,7 +4,7 @@
             <div class="row">
                 <div class="col-md-9"></div>
                 <div class="col-md-2">
-                    <span class="span-username">Hi, Devy Viray</span>
+                    <span class="span-username">Hi, {{ this.userName }}</span>
                 </div>
                 <div class="col-md-1">
                     <ul class="nav navbar-top-links navbar-right">
@@ -19,6 +19,7 @@
                                 <li> <a :href="locationLink"><i class="fa fa-globe fa-fw"></i> Locations</a> </li>
                                 <li> <a :href="departmentLink"><i class="fa fa-trello fa-fw"></i> Departments</a> </li>
                                 <li> <a :href="roleLink"><i class="fa fa-user-md fa-fw"></i> Roles</a> </li>
+                                <li> <a :href="checklistLink"><i class="fa fa-list-ol"></i> Checklist</a> </li>
                                 <li> <a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a> </li>
                                 <li class="divider"></li>
                                 <li> <a href="#" @click="logoutForm"><i class="fa fa-sign-out fa-fw"></i> Logout</a> </li>
@@ -223,6 +224,7 @@
 
 <script>
     export default {
+        props: ['userName'],
         data(){
             return {
                 roles : [],
@@ -379,6 +381,9 @@
             },
             roleLink(){
                return window.location.origin+'/roles'
+            },
+            checklistLink(){
+               return window.location.origin+'/checklists'
             }
         }
     }
