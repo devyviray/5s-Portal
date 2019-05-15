@@ -70,4 +70,11 @@ Route::group(['middleware' => 'auth'], function(){
     Route::patch('/faq/{faq}', 'FaqController@update');
     Route::delete('/faq/{faq}', 'FaqController@destroy');
     Route::get('/faqs-page', 'FaqController@indexPage');
+
+    // checklist
+    Route::get('/reports', 'ReportController@index')->name('reports');
+    Route::get('/reports-all', 'ReportController@indexData');
+    Route::post('/report', 'ReportController@store');
+    Route::patch('/report/{report}', 'ReportController@update');
+    Route::delete('/report/{report}', 'ReportController@destroy');
 });

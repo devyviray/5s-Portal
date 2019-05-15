@@ -723,7 +723,7 @@ body, #app, .py-4, .wrap-div {
     color: #FFFF;
 }
 .breadcrumb {
-    background-color: #616161 !important;
+    background-color: #302d2d !important;
     border-radius: 0em !important;
 }
 .breadcrumb > li > a {

@@ -49,6 +49,9 @@ Vue.component('faq-index', require('./components/Faq/FaqIndex.vue').default);
 // Faq front page
 Vue.component('faq-index-page', require('./components/Faq/FaqIndexPage.vue').default);
 
+// Faq front page
+Vue.component('report-index', require('./components/Report/ReportIndex.vue').default);
+
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
