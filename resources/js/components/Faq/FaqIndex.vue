@@ -34,7 +34,7 @@
             <div class="header">
                 <h1 class="page-header">
                     <img class="lafil-logo" :src="logoLink">
-                    <b>5S PORTAL - COMPANY</b>
+                    <b>5S PORTAL - FAQs</b>
                 </h1>
                 <ol class="breadcrumb">
                     <li><a :href="homeLink">Home</a></li><span style="color: #FFFF">|</span>
@@ -48,7 +48,7 @@
                 <div class="card-header border-0">
                     <div class="row align-items-center">
                         <div class="col">
-                            <h3 class="mb-0">Compamy List</h3>
+                            <h3 class="mb-0">FAQs List</h3>
                         </div> 
                         <div class="col text-right">
                             <a href="javascript.void(0)" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#addModal">Add new</a>
@@ -66,13 +66,14 @@
                         <tr>
                             <th></th>
                             <th scope="col">ID</th>
-                            <th scope="col">Name</th>
-                            <th scope="col">Location</th>
+                            <th scope="col">Created by</th>
+                            <th scope="col">Question</th>
+                            <th scope="col">Answer</th>
                             <th scope="col">Created date</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(company, c) in filteredQueues" v-bind:key="c">
+                        <tr v-for="(faq, f) in filteredQueues" v-bind:key="f">
                             <td class="text-right">
                                 <div class="dropdown">
                                     <a class="btn btn-sm btn-icon-only text-light" href="#" role="button"
@@ -80,19 +81,16 @@
                                         <i class="fa fa-ellipsis-v"></i>
                                     </a>
                                     <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
-                                        <a class="dropdown-item" data-toggle="modal" data-target="#editModal" style="cursor: pointer" @click="copyObject(company)">Edit</a>
-                                        <a class="dropdown-item" data-toggle="modal" data-target="#deleteModal" style="cursor: pointer" @click="copyObject(company)">Delete</a>
+                                        <a class="dropdown-item" data-toggle="modal" data-target="#editModal" style="cursor: pointer" @click="copyObject(faq)">Edit</a>
+                                        <a class="dropdown-item" data-toggle="modal" data-target="#deleteModal" style="cursor: pointer" @click="copyObject(faq)">Delete</a>
                                     </div>
                                 </div>
                             </td>
-                            <td scope="row">{{ company.id }}</td>
-                            <td>{{ company.name }}</td>
-                            <td>
-                                <span v-for="(location, l) in company.locations" :key="l">
-                                    {{ location.name }} <br/>
-                                </span>
-                            </td>
-                            <td>{{ company.created_at }}</td>
+                            <td scope="row">{{ faq.id }}</td>
+                            <td>{{ faq.user.name }}</td>
+                            <td>{{ faq.question }} </td>
+                            <td>{{ faq.answer }} </td>
+                            <td>{{ faq.created_at }} </td>
                         </tr>
                     </tbody>
                 </table>
@@ -104,12 +102,12 @@
                     <button :disabled="!showNextLink()" class="btn btn-default btn-sm btn-fill" v-on:click="setPage(currentPage + 1)"> Next </button>
                 </div>
                 <div class="col-6 text-right">
-                    <span>{{ filteredQueues.length }} Filtered Company(s)</span><br>
-                    <span>{{ companies.length }} Total Company(s)</span>
+                    <span>{{ filteredQueues.length }} Filtered Faq(s)</span><br>
+                    <span>{{ faqs.length }} Total Faq(s)</span>
                 </div>
             </div>
         </div>
-        <!-- Add Company Modal -->
+        <!-- Add Faq Modal -->
         <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
             <span class="closed" data-dismiss="modal">&times;</span>
             <div class="modal-dialog modal-dialog-centered" role="document">
@@ -120,46 +118,37 @@
                         </button>
                     </div>
                     <div class="modal-header">
-                        <h2 class="col-12 modal-title" id="addCompanyLabel">Add Company</h2>
+                        <h2 class="col-12 modal-title" id="addCompanyLabel">Add FAQ</h2>
                     </div>
                     <div class="modal-body">
-                        <div class="alert alert-success" v-if="company_added">
-                            <strong>Success!</strong> Company succesfully added
+                        <div class="alert alert-success" v-if="faq_added">
+                            <strong>Success!</strong> FAQ succesfully added
                         </div>
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label for="role">Name*</label> 
-                                    <input type="text" id="name" class="form-control" v-model="company.name" placeholder="Company name">
-                                    <span class="text-danger" v-if="errors.name">{{ errors.name[0] }}</span>
+                                    <label for="question">Question*</label> 
+                                    <input type="text" id="question" class="form-control" v-model="faq.question" placeholder="Question">
+                                    <span class="text-danger" v-if="errors.question">{{ errors.question[0] }}</span>
                                 </div>
                             </div>
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label for="role">Location*</label>
-                                      <multiselect
-                                            v-model="company.location"
-                                            :options="locations"
-                                            :multiple="true"
-                                            track-by="id"
-                                            :custom-label="customLabelLocation"
-                                            placeholder="Select Location"
-                                            id="selected_location"
-                                        >
-                                    </multiselect> 
-                                    <span class="text-danger" v-if="errors.location">The location field is required.</span>
+                                    <label for="answer">Answer*</label> 
+                                    <input type="text" id="answer" class="form-control" v-model="faq.answer" placeholder="Answer">
+                                    <span class="text-danger" v-if="errors.answer">{{ errors.answer[0] }}</span>
                                 </div>
-                            </div>  
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button id="add_btn" type="button" class="btn btn-primary btn-round btn-fill" @click="addCompany(company)">Save</button>
+                        <button id="add_btn" type="button" class="btn btn-primary btn-round btn-fill" @click="addFaq(faq)">Save</button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Edit Company Modal -->
+        <!-- Edit Faq Modal -->
         <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
             <span class="closed" data-dismiss="modal">&times;</span>
             <div class="modal-dialog modal-dialog-centered" role="document">
@@ -170,52 +159,43 @@
                         </button>
                     </div>
                     <div class="modal-header">
-                        <h2 class="col-12 modal-title" id="addCompanyLabel">Edit Company</h2>
+                        <h2 class="col-12 modal-title" id="addCompanyLabel">Edit FAQ</h2>
                     </div>
                     <div class="modal-body">
-                        <div class="alert alert-success" v-if="company_updated">
-                            <strong>Success!</strong> Company succesfully updated
+                        <div class="alert alert-success" v-if="faq_updated">
+                            <strong>Success!</strong> FAQ succesfully updated
                         </div>
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label for="role">Name*</label> 
-                                    <input type="text" id="name" class="form-control" v-model="company_copied.name" placeholder="Company name">
-                                    <span class="text-danger" v-if="errors.name">{{ errors.name[0] }}</span>
+                                    <label for="question">Question*</label> 
+                                    <input type="text" id="question" class="form-control" v-model="faq_copied.question" placeholder="Question">
+                                    <span class="text-danger" v-if="errors.question">{{ errors.question[0] }}</span>
                                 </div>
                             </div>
-                            <div class="col-md-12">
+                           <div class="col-md-12">
                                 <div class="form-group">
-                                    <label for="role">Location*</label>
-                                      <multiselect
-                                            v-model="company_copied.locations"
-                                            :options="locations"
-                                            :multiple="true"
-                                            track-by="id"
-                                            :custom-label="customLabelLocation"
-                                            placeholder="Select Location"
-                                            id="selected_location"
-                                        >
-                                    </multiselect> 
-                                    <span class="text-danger" v-if="errors.location">The location field is required.</span>
+                                    <label for="answer">Answer*</label> 
+                                    <input type="text" id="answer" class="form-control" v-model="faq_copied.answer" placeholder="Answer">
+                                    <span class="text-danger" v-if="errors.answer">{{ errors.answer[0] }}</span>
                                 </div>
-                            </div>  
+                            </div>
                         </div> 
                     </div>
                     <div class="modal-footer">
-                        <button id="edit_btn" type="button" class="btn btn-primary btn-round btn-fill" @click="updateCompany(company_copied)">Save</button>
+                        <button id="edit_btn" type="button" class="btn btn-primary btn-round btn-fill" @click="updateFaq(faq_copied)">Save</button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Delete Company Modal -->
+        <!-- Delete FAQ Modal -->
         <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
             <span class="closed" data-dismiss="modal">&times;</span>
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addCompanyLabel">Delete Company</h5>
+                    <h5 class="modal-title" id="addCompanyLabel">Delete FAQ</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -224,14 +204,14 @@
                    <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
-                                Are you sure you want to delete this Company?
+                                Are you sure you want to delete this FAQ?
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" data-dismiss='modal'>Close</button>
-                    <button class="btn btn-warning" @click="deleteCompany">Delete</button>
+                    <button class="btn btn-warning" @click="deleteFaq">Delete</button>
                 </div>
                 </div>
             </div>
@@ -250,14 +230,12 @@
         },
         data(){
             return {
-                companies : [],
-                company: [],
-                company_copied: [],
-                company_id: '',
-                company_added: false,
-                company_updated: false,
-                locations: [],
-                location:[], 
+                faqs : [],
+                faq: [],
+                faq_copied: [],
+                faq_id: '',
+                faq_added: false,
+                faq_updated: false,
                 errors: [],
                 currentPage: 0,
                 itemsPerPage: 50,
@@ -265,18 +243,14 @@
             }
         },
         created(){
-            this.fetchCompanies();
-            this.fetchLocations();
+            this.fetchFAQs();
         },
         methods:{
-            customLabelLocation (location) {
-                return `${location.name  }`
-            },
-            copyObject(company){
+            copyObject(faq){
                 this.errors = [];
-                this.company_updated = false;
-                this.company_id = company.id;
-                this.company_copied = Object.assign({}, company);
+                this.faq_updated = false;
+                this.faq_id = faq.id;
+                this.faq_copied = Object.assign({}, faq);
             },
             logoutForm(){
                 axios.post('/logout')
@@ -289,86 +263,63 @@
                     this.errors = error.response.data.errors;
                 })
             },
-            fetchCompanies(){
-                axios.get('companies-all')
+            fetchFAQs(){
+                axios.get('faqs-all')
                 .then(response => {
-                    this.companies = response.data;
+                    this.faqs = response.data;
                 })
                 .catch(error => { 
                     this.errors = error.response.data.errors;
                 })
             },
-            fetchLocations(){
-                axios.get('/locations-all')
-                .then(response => { 
-                    this.locations = response.data;
-                })
-                .catch(error => { 
-                    this.errors = error.response.data.errors;
-                })
-            },
-            addCompany(company){
-                var locationIds = [];
-                if(company.location){
-                    company.location.forEach((location) => {
-                        locationIds.push(location.id);
-                    });  
-                }
-
+            addFaq(faq){
                 document.getElementById('add_btn').disabled = true;
                 this.errors = [];
-                axios.post('/company', {
-                    name: company.name,
-                    location: locationIds
+                axios.post('/faq', {
+                    question: faq.question,
+                    answer: faq.answer
                 })
                 .then(response => {
-                    this.companies.unshift(response.data);
-                    this.company_added = true;
+                    this.faqs.unshift(response.data);
+                    this.faq_added = true;
+                    this.faq = [];
                     document.getElementById('add_btn').disabled = false;
                 })
                 .catch(error => {
                     this.errors = error.response.data.errors;
-                    this.company_added = false;
+                    this.faq_added = false;
                     document.getElementById('add_btn').disabled = false;
                 })
             },
-            updateCompany(company_copied){
-                var locationIds = [];
-                if(company_copied.locations){
-                    company_copied.locations.forEach((location) => {
-                        locationIds.push(location.id);
-                    });  
-                }
-                
+            updateFaq(faq_copied){
+
                 document.getElementById('edit_btn').disabled = true;
-                this.company_updated = false;
+                this.faq_updated = false;
                 this.errors = [];
-                var index = this.companies.findIndex(item => item.id == company_copied.id);
-                axios.post(`/company/${company_copied.id}`, {
-                    name: company_copied.name,
-                    location: locationIds,
+                var index = this.faqs.findIndex(item => item.id == faq_copied.id);
+                axios.post(`/faq/${faq_copied.id}`, {
+                    question: faq_copied.question,
+                    answer: faq_copied.answer,
                     _method: 'PATCH'
                 })
                 .then(response => {
-                    this.company_updated = true;
-                    this.companies.splice(index,1,response.data);
+                    this.faq_updated = true;
+                    this.faqs.splice(index,1,response.data);
                     document.getElementById('edit_btn').disabled = false;
-                    // this.loading = false;
                 })
                 .catch(error => {
-                    this.company_updated = false;
+                    this.faq_updated = false;
                     this.errors = error.response.data.errors;
                     document.getElementById('edit_btn').disabled = false;
-                    this.loading = false;
                 })
             },
-            deleteCompany(){
-                var index = this.companies.findIndex(item => item.id == this.company_id);
-                axios.delete(`/company/${this.company_id}`)
+            deleteFaq(){
+                var index = this.faqs.findIndex(item => item.id == this.faq_id);
+                axios.delete(`/faq/${this.faq_id}`)
                 .then(response => {
                     $('#deleteModal').modal('hide');
-                    alert('Company successfully deleted');
-                    this.companies.splice(index,1);
+                    alert('FAQ successfully deleted');
+                    this.faqs.splice(index,1);
                 })
                 .catch(error => {
                     this.errors = error.response.data.errors;
@@ -391,18 +342,18 @@
             }   
         },  
         computed:{
-            filteredCompanies(){
+            filteredFaqs(){
                 let self = this;
-                return self.companies.filter(company => {
-                    return company.name.toLowerCase().includes(this.keywords.toLowerCase())
+                return self.faqs.filter(faq => {
+                    return faq.question.toLowerCase().includes(this.keywords.toLowerCase())
                 });
             },
             totalPages() {
-                return Math.ceil(this.companies.length / this.itemsPerPage);
+                return Math.ceil(this.faqs.length / this.itemsPerPage);
             },
             filteredQueues() {
                 var index = this.currentPage * this.itemsPerPage;
-                var queues_array = this.filteredCompanies.slice(index, index + this.itemsPerPage);
+                var queues_array = this.filteredFaqs.slice(index, index + this.itemsPerPage);
 
                 if(this.currentPage >= this.totalPages) {
                     this.currentPage = this.totalPages - 1

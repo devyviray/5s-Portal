@@ -43,6 +43,13 @@ Vue.component('role-index', require('./components/Role/RoleIndex.vue').default);
 // Checklist
 Vue.component('checklist-index', require('./components/Checklist/ChecklistIndex.vue').default);
 
+// Faq
+Vue.component('faq-index', require('./components/Faq/FaqIndex.vue').default);
+
+// Faq front page
+Vue.component('faq-index-page', require('./components/Faq/FaqIndexPage.vue').default);
+
+
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application

@@ -20,7 +20,7 @@
                                 <li> <a :href="departmentLink"><i class="fa fa-trello fa-fw"></i> Departments</a> </li>
                                 <li> <a :href="roleLink"><i class="fa fa-user-md fa-fw"></i> Roles</a> </li>
                                 <li> <a :href="checklistLink"><i class="fa fa-list-ol"></i> Checklist</a> </li>
-                                <li> <a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a> </li>
+                                <li> <a :href="faqLink"><i class="fa fa-info-circle"></i> FAQs</a> </li>
                                 <li class="divider"></li>
                                 <li> <a href="#" @click="logoutForm"><i class="fa fa-sign-out fa-fw"></i> Logout</a> </li>
                             </ul>
@@ -41,7 +41,7 @@
                     <li><a href="#">Report & Rating</a></li> <span  style="color: #FFFF">|</span>
                     <li><a href="#">Orientation</a></li><span style="color: #FFFF">|</span>
                     <li><a href="#">Exam</a></li><span style="color: #FFFF">|</span>
-                    <li><a href="#">FAQs</a></li>
+                    <li><a :href="faqPageLink">FAQs</a></li>
                 </ol>
             </div>
             <div id="page-inner">
@@ -446,7 +446,13 @@
                 return window.location.origin+'/roles'     
             },
             checklistLink(){
-               return window.location.origin+'/checklist' 
+               return window.location.origin+'/checklists' 
+            },
+            faqLink(){
+                return window.location.origin+'/faqs' 
+            },
+            faqPageLink(){
+                return window.location.origin+'/faqs-page' 
             }
         }
     }
