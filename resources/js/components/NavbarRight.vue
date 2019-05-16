@@ -13,7 +13,8 @@
                     <li> <a :href="departmentLink"><i class="fa fa-trello fa-fw"></i> Departments</a> </li>
                     <li> <a :href="roleLink"><i class="fa fa-user-md fa-fw"></i> Roles</a> </li>
                     <li> <a :href="checklistLink"><i class="fa fa-list-ol"></i> Checklist</a> </li>
-                    <li> <a :href="operationLink"><i class="fa fa-list-ol"></i> Operation Line</a> </li>
+                    <li> <a :href="operationLink"><i class="fa fa-road"></i> Operation Line</a> </li>
+                    <li> <a :href="categoryLink"><i class="fa fa-files-o"></i> Categories</a> </li>
                     <li> <a :href="faqLink"><i class="fa fa-info-circle"></i> FAQs</a> </li>
                     <li class="divider"></li>
                     <li> <a href="#" @click="logoutForm"><i class="fa fa-sign-out fa-fw"></i> Logout</a> </li>
@@ -66,6 +67,9 @@ export default {
         operationLink(){
             return window.location.origin+'/operation-lines' 
         },
+        categoryLink(){
+            return window.location.origin+'/categories'
+        }
     }
 }
 </script>

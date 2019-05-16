@@ -84,4 +84,11 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/operation-line', 'OperationLineController@store');
     Route::patch('/operation-line/{operationLine}', 'OperationLineController@update');
     Route::delete('/operation-line/{operationLine}', 'OperationLineController@destroy');
+
+    // operation line
+    Route::get('/categories', 'CategoryController@index')->name('categories');
+    Route::get('/categories-all', 'CategoryController@indexData');
+    Route::post('/category', 'CategoryController@store');
+    Route::patch('/category/{category}', 'CategoryController@update');
+    Route::delete('/category/{category}', 'CategoryController@destroy');
 });

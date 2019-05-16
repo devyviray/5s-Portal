@@ -55,6 +55,9 @@ Vue.component('report-index', require('./components/Report/ReportIndex.vue').def
 // operation line page
 Vue.component('operation-line-index', require('./components/Operation/OperationLineIndex.vue').default);
 
+// category page
+Vue.component('category-index', require('./components/Category/CategoryIndex.vue').default);
+
 
 // components
 Vue.component('navbarRight', require('./components/NavbarRight.vue').default);
