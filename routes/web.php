@@ -77,4 +77,11 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/report', 'ReportController@store');
     Route::patch('/report/{report}', 'ReportController@update');
     Route::delete('/report/{report}', 'ReportController@destroy');
+
+    // operation line
+    Route::get('/operation-lines', 'OperationLineController@index')->name('operation-lines');
+    Route::get('/operation-lines-all', 'OperationLineController@indexData');
+    Route::post('/operation-line', 'OperationLineController@store');
+    Route::patch('/operation-line/{operationLine}', 'OperationLineController@update');
+    Route::delete('/operation-line/{operationLine}', 'OperationLineController@destroy');
 });

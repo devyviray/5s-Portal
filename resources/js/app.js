@@ -52,7 +52,13 @@ Vue.component('faq-index-page', require('./components/Faq/FaqIndexPage.vue').def
 // Faq front page
 Vue.component('report-index', require('./components/Report/ReportIndex.vue').default);
 
+// operation line page
+Vue.component('operation-line-index', require('./components/Operation/OperationLineIndex.vue').default);
 
+
+// components
+Vue.component('navbarRight', require('./components/NavbarRight.vue').default);
+Vue.component('breadcrumb', require('./components/Breadcrumb.vue').default);
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application

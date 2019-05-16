@@ -7,25 +7,7 @@
                     <span class="span-username">Hi, {{ this.userName }}</span>
                 </div>
                 <div class="col-md-1">
-                    <ul class="nav navbar-top-links navbar-right">
-                        <li class="dropdown">
-                            <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
-                                <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
-                            </a>
-                            <ul class="dropdown-menu dropdown-user">
-                                <li> <a href="#"><i class="fa fa-user fa-fw"></i> User Profile</a> </li>
-                                <li> <a :href="userLink"><i class="fa fa-users fa-fw"></i> Users</a> </li>
-                                <li> <a :href="companyLink"><i class="fa fa-building-o fa-fw"></i> Companies</a> </li>
-                                <li> <a :href="locationLink"><i class="fa fa-globe fa-fw"></i> Locations</a> </li>
-                                <li> <a :href="departmentLink"><i class="fa fa-trello fa-fw"></i> Departments</a> </li>
-                                <li> <a :href="roleLink"><i class="fa fa-user-md fa-fw"></i> Roles</a> </li>
-                                <li> <a :href="checklistLink"><i class="fa fa-list-ol"></i> Checklist</a> </li>
-                                <li> <a :href="faqLink"><i class="fa fa-info-circle"></i> FAQs</a> </li>
-                                <li class="divider"></li>
-                                <li> <a href="#" @click="logoutForm"><i class="fa fa-sign-out fa-fw"></i> Logout</a> </li>
-                            </ul>
-                        </li>
-                    </ul>
+                    <navbarRight></navbarRight>
                 </div>
             </div>
         </nav>
@@ -36,13 +18,7 @@
                     <img class="lafil-logo" :src="logoLink">
                     <b>5S PORTAL - ROLE</b>
                 </h1>
-                <ol class="breadcrumb">
-                    <li><a :href="homeLink">Home</a></li><span style="color: #FFFF">|</span>
-                    <li><a :href="reportLink">Report & Rating</a></li> <span  style="color: #FFFF">|</span>
-                    <li><a href="#">Orientation</a></li><span style="color: #FFFF">|</span>
-                    <li><a href="#">Exam</a></li><span style="color: #FFFF">|</span>
-                    <li><a :href="faqPageLink">FAQs</a></li>
-                </ol>
+                <breadcrumb></breadcrumb>
             </div>
             <div id="page-inner">
                 <div class="card-header border-0">
@@ -223,8 +199,14 @@
 </template>
 
 <script>
+    import navbarRight from '../NavbarRight';
+    import breadcrumb from '../Breadcrumb';
     export default {
         props: ['userName'],
+        components:{
+            navbarRight,
+            breadcrumb
+        },
         data(){
             return {
                 roles : [],
@@ -247,17 +229,6 @@
                 this.role_updated = false;
                 this.role_id = role.id;
                 this.role_copied = Object.assign({}, role);
-            },
-            logoutForm(){
-                axios.post('/logout')
-                .then(response =>{
-                    if(response.status == 200){
-                        window.location.href = window.location.origin+'/login';
-                    }
-                })
-                .catch(error => { 
-                    this.errors = error.response.data.errors;
-                })
             },
             fetchRoles(){
                 axios.get('roles-all')
@@ -361,39 +332,9 @@
 
                 return queues_array;
             },
-            homeLink(){
-                return window.location.origin+'/home'
-            },
             logoLink(){
                 return window.location.origin+'/img/lafil-logo.png';
             },
-            departmentLink(){
-                return window.location.origin+'/departments'
-            },
-            locationLink(){
-                return window.location.origin+'/locations'
-            },
-            companyLink(){
-                return window.location.origin+'/companies'
-            },
-            userLink(){
-                return window.location.origin+'/users'
-            },
-            roleLink(){
-               return window.location.origin+'/roles'
-            },
-            checklistLink(){
-               return window.location.origin+'/checklists'
-            },
-            faqLink(){
-                return window.location.origin+'/faqs' 
-            },
-            faqPageLink(){
-                return window.location.origin+'/faqs-page' 
-            },
-            reportLink(){
-                return window.location.origin+'/reports' 
-            }
         }
     }
 </script>
