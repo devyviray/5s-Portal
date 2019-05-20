@@ -58,6 +58,12 @@ Vue.component('operation-line-index', require('./components/Operation/OperationL
 // category page
 Vue.component('category-index', require('./components/Category/CategoryIndex.vue').default);
 
+// area page
+Vue.component('area-index', require('./components/Area/AreaIndex.vue').default);
+
+// company area page
+Vue.component('company-area-index', require('./components/CompanyArea/CompanyAreaIndex.vue').default);
+
 
 // components
 Vue.component('navbarRight', require('./components/NavbarRight.vue').default);

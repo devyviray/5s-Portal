@@ -85,10 +85,24 @@ Route::group(['middleware' => 'auth'], function(){
     Route::patch('/operation-line/{operationLine}', 'OperationLineController@update');
     Route::delete('/operation-line/{operationLine}', 'OperationLineController@destroy');
 
-    // operation line
+    // categories
     Route::get('/categories', 'CategoryController@index')->name('categories');
     Route::get('/categories-all', 'CategoryController@indexData');
     Route::post('/category', 'CategoryController@store');
     Route::patch('/category/{category}', 'CategoryController@update');
     Route::delete('/category/{category}', 'CategoryController@destroy');
+
+    // areas
+    Route::get('/areas', 'AreaController@index')->name('categories');
+    Route::get('/areas-all', 'AreaController@indexData');
+    Route::post('/area', 'AreaController@store');
+    Route::patch('/area/{area}', 'AreaController@update');
+    Route::delete('/area/{area}', 'AreaController@destroy');
+
+    // company areas
+    Route::get('/company-areas', 'CompanyAreaController@index')->name('company-areas');
+    Route::get('/company-areas-all', 'CompanyAreaController@indexData');
+    Route::post('/company-area', 'CompanyAreaController@store');
+    Route::patch('/company-area/{companyArea}', 'CompanyAreaController@update');
+    Route::delete('/company-area/{companyArea}', 'CompanyAreaController@destroy');
 });

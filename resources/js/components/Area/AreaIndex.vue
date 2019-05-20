@@ -16,7 +16,7 @@
             <div class="header">
                 <h1 class="page-header">
                     <img class="lafil-logo" :src="logoLink">
-                    <b>5S PORTAL - LOCATION</b>
+                    <b>5S PORTAL - AREA</b>
                 </h1>
                 <breadcrumb></breadcrumb>
             </div>
@@ -24,7 +24,7 @@
                 <div class="card-header border-0">
                     <div class="row align-items-center">
                         <div class="col">
-                            <h3 class="mb-0">Location List</h3>
+                            <h3 class="mb-0">Area List</h3>
                         </div> 
                         <div class="col text-right">
                             <a href="javascript.void(0)" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#addModal">Add new</a>
@@ -47,7 +47,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(location, l) in filteredQueues" v-bind:key="l">
+                        <tr v-for="(area, a) in filteredQueues" v-bind:key="a">
                             <td class="text-right">
                                 <div class="dropdown">
                                     <a class="btn btn-sm btn-icon-only text-light" href="#" role="button"
@@ -55,14 +55,14 @@
                                         <i class="fa fa-ellipsis-v"></i>
                                     </a>
                                     <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
-                                        <a class="dropdown-item" data-toggle="modal" data-target="#editModal" style="cursor: pointer" @click="copyObject(location)">Edit</a>
-                                        <a class="dropdown-item" data-toggle="modal" data-target="#deleteModal" style="cursor: pointer" @click="copyObject(location)">Delete</a>
+                                        <a class="dropdown-item" data-toggle="modal" data-target="#editModal" style="cursor: pointer" @click="copyObject(area)">Edit</a>
+                                        <a class="dropdown-item" data-toggle="modal" data-target="#deleteModal" style="cursor: pointer" @click="copyObject(area)">Delete</a>
                                     </div>
                                 </div>
                             </td>
-                            <td scope="row">{{ location.id }}</td>
-                            <td>{{ location.name }}</td>
-                            <td>{{ location.created_at }}</td>
+                            <td scope="row">{{ area.id }}</td>
+                            <td>{{ area.name }}</td>
+                            <td>{{ area.created_at }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -74,12 +74,12 @@
                     <button :disabled="!showNextLink()" class="btn btn-default btn-sm btn-fill" v-on:click="setPage(currentPage + 1)"> Next </button>
                 </div>
                 <div class="col-6 text-right">
-                    <span>{{ filteredQueues.length }} Filtered Location(s)</span><br>
-                    <span>{{ locations.length }} Total Location(s)</span>
+                    <span>{{ filteredQueues.length }} Filtered Area(s)</span><br>
+                    <span>{{ areas.length }} Total Area(s)</span>
                 </div>
             </div>
         </div>
-        <!-- Add Location Modal -->
+        <!-- Add Area Modal -->
         <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
             <span class="closed" data-dismiss="modal">&times;</span>
             <div class="modal-dialog modal-dialog-centered" role="document">
@@ -90,30 +90,30 @@
                         </button>
                     </div>
                     <div class="modal-header">
-                        <h2 class="col-12 modal-title" id="addCompanyLabel">Add Location</h2>
+                        <h2 class="col-12 modal-title" id="addCompanyLabel">Add Area</h2>
                     </div>
                     <div class="modal-body">
-                        <div class="alert alert-success" v-if="location_added">
-                            <strong>Success!</strong> Location succesfully added
+                        <div class="alert alert-success" v-if="area_added">
+                            <strong>Success!</strong> Area succesfully added
                         </div>
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="role">Name*</label> 
-                                    <input type="text" id="location_name" class="form-control" v-model="location.name" placeholder="Location name">
+                                    <input type="text" id="area_name" class="form-control" v-model="area.name" placeholder="Area name">
                                     <span class="text-danger" v-if="errors.name">{{ errors.name[0] }}</span>
                                 </div>
                             </div>  
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button id="add_btn" type="button" class="btn btn-primary btn-round btn-fill" @click="addLocation(location)">Save</button>
+                        <button id="add_btn" type="button" class="btn btn-primary btn-round btn-fill" @click="addArea(area)">Save</button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Edit Location Modal -->
+        <!-- Edit Area Modal -->
         <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
             <span class="closed" data-dismiss="modal">&times;</span>
             <div class="modal-dialog modal-dialog-centered" role="document">
@@ -124,36 +124,36 @@
                         </button>
                     </div>
                     <div class="modal-header">
-                        <h2 class="col-12 modal-title" id="addCompanyLabel">Edit Location</h2>
+                        <h2 class="col-12 modal-title" id="addCompanyLabel">Edit Area</h2>
                     </div>
                     <div class="modal-body">
-                        <div class="alert alert-success" v-if="location_updated">
-                            <strong>Success!</strong> Location succesfully updated
+                        <div class="alert alert-success" v-if="area_updated">
+                            <strong>Success!</strong> Area succesfully updated
                         </div>
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="role">Name*</label> 
-                                    <input type="text" id="location_name" class="form-control" v-model="location_copied.name" placeholder="Location name">
-                                    <span class="text-danger" v-if="errors.location_name">{{ errors.location_name[0] }}</span>
+                                    <input type="text" id="name" class="form-control" v-model="area_copied.name" placeholder="Area name">
+                                    <span class="text-danger" v-if="errors.name">{{ errors.name[0] }}</span>
                                 </div>
                             </div>  
                         </div> 
                     </div>
                     <div class="modal-footer">
-                        <button id="edit_btn" type="button" class="btn btn-primary btn-round btn-fill" @click="updateLocation(location_copied)">Save</button>
+                        <button id="edit_btn" type="button" class="btn btn-primary btn-round btn-fill" @click="updateArea(area_copied)">Save</button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Delete Location Modal -->
+        <!-- Delete Area Modal -->
         <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
             <span class="closed" data-dismiss="modal">&times;</span>
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addCompanyLabel">Delete Location</h5>
+                    <h5 class="modal-title" id="addCompanyLabel">Delete Area</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -162,14 +162,14 @@
                    <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
-                                Are you sure you want to delete this Location?
+                                Are you sure you want to delete this Area?
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" data-dismiss='modal'>Close</button>
-                    <button class="btn btn-warning" @click="deleteLocation">Delete</button>
+                    <button class="btn btn-warning" @click="deleteArea">Delete</button>
                 </div>
                 </div>
             </div>
@@ -189,12 +189,12 @@
         },
         data(){
             return {
-                locations : [],
-                location: [],
-                location_copied: [],
-                location_id: '',
-                location_added: false,
-                location_updated: false, 
+                areas : [],
+                area: [],
+                area_copied: [],
+                area_id: '',
+                area_added: false,
+                area_updated: false, 
                 errors: [],
                 currentPage: 0,
                 itemsPerPage: 50,
@@ -202,69 +202,69 @@
             }
         },
         created(){
-            this.fetchLocations();
+            this.fetchAreas();
         },
         methods:{
-            copyObject(location){
-                this.location_updated = false;
-                this.location_id = location.id;
-                this.location_copied = Object.assign({}, location);
+            copyObject(area){
+                this.area_updated = false;
+                this.area_id = area.id;
+                this.area_copied = Object.assign({}, area);
             },
-            fetchLocations(){
-                axios.get('locations-all')
+            fetchAreas(){
+                axios.get('areas-all')
                 .then(response => {
-                    this.locations = response.data;
+                    this.areas = response.data;
                 })
                 .catch(error => { 
                     this.errors = error.response.data.errors;
                 })
             },
-            addLocation(location){
+            addArea(area){
                 document.getElementById('add_btn').disabled = true;
                 this.errors = [];
-                axios.post('/location', {
-                    name: location.name
+                axios.post('/area', {
+                    name: area.name
                 })
                 .then(response => {
-                    this.locations.unshift(response.data);
-                    this.location_added = true;
+                    this.areas.unshift(response.data);
+                    this.area_added = true;
                     document.getElementById('add_btn').disabled = false;
                 })
                 .catch(error => {
                     this.errors = error.response.data.errors;
-                    this.location_added = false;
+                    this.area_added = false;
                     document.getElementById('add_btn').disabled = false;
                 })
             },
-            updateLocation(location_copied){
+            updateArea(area_copied){
                 document.getElementById('edit_btn').disabled = true;
-                this.location_updated = false;
+                this.area_updated = false;
                 this.errors = [];
-                var index = this.locations.findIndex(item => item.id == location_copied.id);
-                axios.post(`/location/${location_copied.id}`, {
-                    name: location_copied.name,
+                var index = this.areas.findIndex(item => item.id == area_copied.id);
+                axios.post(`/area/${area_copied.id}`, {
+                    name: area_copied.name,
                     _method: 'PATCH'
                 })
                 .then(response => {
-                    this.location_updated = true;
-                    this.locations.splice(index,1,response.data);
+                    this.area_updated = true;
+                    this.areas.splice(index,1,response.data);
                     document.getElementById('edit_btn').disabled = false;
                     // this.loading = false;
                 })
                 .catch(error => {
-                    this.location_updated = false;
+                    this.area_updated = false;
                     this.errors = error.response.data.errors;
                     document.getElementById('edit_btn').disabled = false;
                     this.loading = false;
                 })
             },
-            deleteLocation(){
-                var index = this.locations.findIndex(item => item.id == this.location_id);
-                axios.delete(`/location/${this.location_id}`)
+            deleteArea(){
+                var index = this.areas.findIndex(item => item.id == this.area_id);
+                axios.delete(`/area/${this.area_id}`)
                 .then(response => {
                     $('#deleteModal').modal('hide');
-                    alert('Location successfully deleted');
-                    this.locations.splice(index,1);
+                    alert('Area successfully deleted');
+                    this.areas.splice(index,1);
                 })
                 .catch(error => {
                     this.errors = error.response.data.errors;
@@ -287,18 +287,18 @@
             }   
         },  
         computed:{
-            filteredLocations(){
+            filteredAreas(){
                 let self = this;
-                return self.locations.filter(location => {
-                    return location.name.toLowerCase().includes(this.keywords.toLowerCase())
+                return self.areas.filter(area => {
+                    return area.name.toLowerCase().includes(this.keywords.toLowerCase())
                 });
             },
             totalPages() {
-                return Math.ceil(this.locations.length / this.itemsPerPage);
+                return Math.ceil(this.areas.length / this.itemsPerPage);
             },
             filteredQueues() {
                 var index = this.currentPage * this.itemsPerPage;
-                var queues_array = this.filteredLocations.slice(index, index + this.itemsPerPage);
+                var queues_array = this.filteredAreas.slice(index, index + this.itemsPerPage);
 
                 if(this.currentPage >= this.totalPages) {
                     this.currentPage = this.totalPages - 1

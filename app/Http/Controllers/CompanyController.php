@@ -104,7 +104,7 @@ class CompanyController extends Controller
     }
 
      /**
-     * Gwt company location
+     * Get company location
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
