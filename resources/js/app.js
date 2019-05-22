@@ -49,7 +49,7 @@ Vue.component('faq-index', require('./components/Faq/FaqIndex.vue').default);
 // Faq front page
 Vue.component('faq-index-page', require('./components/Faq/FaqIndexPage.vue').default);
 
-// Faq front page
+// Report page
 Vue.component('report-index', require('./components/Report/ReportIndex.vue').default);
 
 // operation line page

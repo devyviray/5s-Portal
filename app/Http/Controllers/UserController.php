@@ -107,4 +107,20 @@ class UserController extends Controller
             return $user;
         }
     }
+
+
+     /**
+     * Get all process owner per company
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function getProcessOwnerPerCompany($companyId, $locationId){
+
+        return User::whereHas('companies', function ($q) use ($companyId){
+                $q->where('company_id',$companyId);
+            })->whereHas('roles', function ($q){
+                $q->where('role_id', 4); //Process owner
+            })->where('company_location', $locationId)->get();
+    }
 }

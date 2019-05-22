@@ -779,6 +779,11 @@ body, #app, .py-4, .wrap-div {
 tbody{
     background-color: #fff;
 }
+.card-report{
+    /* background-color: #ABAEB3 !important; */
+       background-color: #302d2d !important;
+       color: #fff;
+}
 
 /* vue-carousel css */
 .VueCarousel-slide{

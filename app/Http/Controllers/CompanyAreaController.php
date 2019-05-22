@@ -123,10 +123,22 @@ class CompanyAreaController extends Controller
                 DB::commit();
 
                 return $companyArea;
-            }
+                }
 
         } catch (Exception $e) {
             DB::rollBack();
         }
+    }
+
+    public function companyAreaPerCompany($companyId, $locationId, $operationLineId, $categoryId){
+        return CompanyArea::with('company', 'location', 'operationLine', 'category', 'area')->whereHas('company', function($q) use ($companyId){
+            $q->where('id', $companyId);
+        })->whereHas('location', function($q) use ($locationId){
+            $q->where('id',$locationId);
+        })->whereHas('operationLine', function($q) use ($operationLineId){
+            $q->where('id',$operationLineId);
+        })->whereHas('category', function($q) use ($categoryId){
+            $q->where('id', $categoryId);
+        })->get();
     }
 }

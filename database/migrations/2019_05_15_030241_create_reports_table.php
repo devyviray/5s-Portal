@@ -16,18 +16,20 @@ class CreateReportsTable extends Migration
         Schema::create('reports', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->integer('company_id');
-            $table->integer('company_location');
-            $table->string('category');
-            $table->string('area');
+            $table->integer('operation_line_id');
+            $table->integer('location_id');
+            $table->integer('category_id');
+            $table->integer('area_id');
+            $table->integer('process_owner');
             $table->integer('inspector');
             $table->date('date_of_inspection');
-            $table->time('time_of_inspection');
+            $table->string('time_of_inspection');
             $table->integer('checklist_id');
             $table->integer('checklist_batch');
-            $table->string('checklist_requirement');
-            $table->string('checklist_description', 1000);
-            $table->string('comment', 1000);
+            $table->string('name', 1000);
+            $table->string('comment', 1000)->nullable();
             $table->integer('points');
+            $table->integer('ratings')->nullable();
             $table->integer('status');
             $table->integer('validated_by')->nullable();
             $table->timestamps();

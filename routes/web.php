@@ -48,6 +48,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/user', 'UserController@store');
     Route::patch('/user/{user}', 'UserController@update');
     Route::delete('/user/{user}', 'UserController@destroy');
+    Route::get('/user-process-owner/{companyId}/{locationId}', 'UserController@getProcessOwnerPerCompany');
 
     // roles
     Route::get('/roles', 'RoleController@index')->name('roles');
@@ -71,12 +72,13 @@ Route::group(['middleware' => 'auth'], function(){
     Route::delete('/faq/{faq}', 'FaqController@destroy');
     Route::get('/faqs-page', 'FaqController@indexPage');
 
-    // checklist
+    // Reports
     Route::get('/reports', 'ReportController@index')->name('reports');
     Route::get('/reports-all', 'ReportController@indexData');
     Route::post('/report', 'ReportController@store');
     Route::patch('/report/{report}', 'ReportController@update');
     Route::delete('/report/{report}', 'ReportController@destroy');
+    Route::get('/reports-per-user/{companyId}/{locationId}/{operationLineId}/{categoryId}/{areaId}', 'ReportController@getReportsPerUser');
 
     // operation line
     Route::get('/operation-lines', 'OperationLineController@index')->name('operation-lines');
@@ -105,4 +107,5 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/company-area', 'CompanyAreaController@store');
     Route::patch('/company-area/{companyArea}', 'CompanyAreaController@update');
     Route::delete('/company-area/{companyArea}', 'CompanyAreaController@destroy');
+    Route::get('/company-areas-per-company/{companyId}/{locationId}/{operationLineId},{categoryId}', 'CompanyAreaController@companyAreaPerCompany');
 });

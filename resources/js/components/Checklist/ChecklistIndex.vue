@@ -283,7 +283,7 @@
                     this.checklistAdds.push({
                         requirement: '',
                         description: ''
-                    });s
+                    });
                 }else{
                     this.checklist_copieds.push({
                         requirement: '',
@@ -362,15 +362,12 @@
             setPage(pageNumber) {
                 this.currentPage = pageNumber;
             },
-
             resetStartRow() {
                 this.currentPage = 0;
             },
-
             showPreviousLink() {
                 return this.currentPage == 0 ? false : true;
             },
-
             showNextLink() {
                 return this.currentPage == (this.totalPages - 1) ? false : true;
             }   
