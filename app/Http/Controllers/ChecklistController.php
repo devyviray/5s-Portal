@@ -39,6 +39,7 @@ class ChecklistController extends Controller
     public function store(Request $request)
 {
         $request->validate([
+            'name' => 'required',
             "checklistAdds.*.requirement" => 'required',
             "checklistAdds.*.description" => 'required',
         ]);
@@ -51,7 +52,7 @@ class ChecklistController extends Controller
                 $batch = $searchBatch->batch + 1;
             }
             foreach($request->checklistAdds as $checklistAdd){
-                $checklist = Checklist::create(['requirement'=> $checklistAdd['requirement'], 'description' => $checklistAdd['description'], 'batch' => $batch]);
+                $checklist = Checklist::create(['requirement'=> $checklistAdd['requirement'], 'description' => $checklistAdd['description'], 'batch' => $batch, 'name' => $request->name]);
             }
             DB::commit();
             return $checklist;
@@ -72,6 +73,7 @@ class ChecklistController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
+            'name' => 'required',
             'default_checklists_id' => 'required',
             'remained_id' => 'required',
             "checklist_copieds.*.requirement" => 'required',
@@ -83,9 +85,9 @@ class ChecklistController extends Controller
             foreach($request->checklist_copieds as $checklist_copied){
                 if(array_key_exists('id', $checklist_copied)){
                     $checklist = Checklist::where('id',$checklist_copied['id'])->first();
-                    $checklist->update($checklist_copied);
+                    $checklist->update(['name' => $request->name] + $checklist_copied);
                 }else{
-                     $checklist = Checklist::create(['requirement'=> $checklist_copied['requirement'], 'description' => $checklist_copied['description'], 'batch' => $id]);
+                     $checklist = Checklist::create(['requirement'=> $checklist_copied['requirement'], 'description' => $checklist_copied['description'], 'batch' => $id, 'name' => $request->name]);
                 }
             }
             $array_differ = array_diff($request->default_checklists_id, $request->remained_id);
@@ -106,8 +108,19 @@ class ChecklistController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($batchId)
     {
-        //
+        DB::beginTransaction();
+        try {
+            $ids = Checklist::where('batch',$batchId)->get()->pluck('id');
+
+            $checklist = Checklist::whereIn('id',$ids)->delete();
+
+            DB::commit();
+            return $checklist;
+
+        } catch (Exception $e) {
+            DB::rollBack();
+        }
     }
 }

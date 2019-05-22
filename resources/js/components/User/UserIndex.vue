@@ -44,8 +44,9 @@
                             <th scope="col">ID</th>
                             <th scope="col">Name</th>
                             <th scope="col">Email</th>
-                            <th scope="col">Role</th>
                             <th scope="col">Company</th>
+                            <th scope="col">Department</th>
+                            <th scope="col">Role</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -66,14 +67,15 @@
                             <td>{{ user.name }}</td>
                             <td>{{ user.email }}</td>
                             <td>
-                                <span v-for="(role, r) in user.roles" :key="r">
-                                    {{ role.name }} <br/>
-                                </span>
-                            </td>
-                            <td>
                                 <span v-for="(company, c) in user.companies" :key="c">
                                     {{ company.name + ' - ' + user.location.name }} <br/>
                                 </span>
+                            </td>
+                            <td>{{ user.department.name }} </td>
+                            <td>
+                                <span v-for="(role, r) in user.roles" :key="r">
+                                    {{ role.name }} <br/>
+                                </span> 
                             </td>
                         </tr>
                     </tbody>
@@ -131,15 +133,6 @@
                                     </select>
                                     <span class="text-danger" v-if="errors.company">{{ errors.company[0] }}</span>
                                 </div>
-                                <!-- <v-select
-                                    style="width: 100%" 
-                                    v-model="user.company"
-                                    label="name"
-                                    :options="companies"
-                                    track-by="id"
-                                    placeholder="Select Company"
-                                >      
-                                </v-select> -->
                             </div>
                             <div class="col-md-12">
                                 <div class="form-group">
@@ -148,6 +141,15 @@
                                         <option v-for="(location,l) in locations" v-bind:key="l" :value="location.id"> {{ location.name }}</option>
                                     </select>
                                     <span class="text-danger" v-if="errors.company_location">{{ errors.company_location[0] }}</span>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="role">Department*</label> 
+                                    <select class="form-control" v-model="user.department">
+                                        <option v-for="(department,d) in departments" v-bind:key="d" :value="department.id"> {{ department.name }}</option>
+                                    </select>
+                                    <span class="text-danger" v-if="errors.department">{{ errors.department[0] }}</span>
                                 </div>
                             </div>
                             <div class="col-md-12">
@@ -216,6 +218,15 @@
                                         <option v-for="(location,l) in locations" v-bind:key="l" :value="location.id"> {{ location.name }}</option>
                                     </select>
                                     <span class="text-danger" v-if="errors.company_location">{{ errors.company_location[0] }}</span>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="role">Department*</label> 
+                                    <select class="form-control" v-model="user_copied.department_id">
+                                        <option v-for="(department,d) in departments" v-bind:key="d" :value="department.id"> {{ department.name }}</option>
+                                    </select>
+                                    <span class="text-danger" v-if="errors.department_id">{{ errors.department_id[0] }}</span>
                                 </div>
                             </div>
                             <div class="col-md-12">
@@ -293,6 +304,8 @@
                 company:[],
                 locations: [],
                 location: [],
+                departments: [],
+                department: '',
                 roles: [],
                 role: [], 
                 errors: [],
@@ -304,6 +317,7 @@
         created(){
             this.fetchUsers();
             this.fetchCompanies();
+            this.fetchDepartments();
             this.fetchRoles();
         },
         methods:{
@@ -338,6 +352,15 @@
                     this.errors = error.response.data.errors;
                 })
             },
+            fetchDepartments(){
+                axios.get('departments-all')
+                .then(response => {
+                    this.departments = response.data;
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.errors;
+                })
+            },
             fetchRoles(){
                 axios.get('roles-all')
                 .then(response => {
@@ -355,6 +378,7 @@
                     email: user.email,
                     company: user.company,
                     company_location: user.company_location,
+                    department_id: user.department,
                     role: user.role
                 })
                 .then(response => {
@@ -378,6 +402,7 @@
                     email: user_copied.email,
                     company: user_copied.company_id,
                     company_location: user_copied.location_id,
+                    department_id: user_copied.department_id,
                     role: user_copied.role_id,
                     _method: 'PATCH'
                 })

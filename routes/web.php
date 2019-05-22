@@ -62,7 +62,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/checklists-all', 'ChecklistController@indexData');
     Route::post('/checklist', 'ChecklistController@store');
     Route::patch('/checklist/{checklist}', 'ChecklistController@update');
-    Route::delete('/checklist/{checklist}', 'ChecklistController@destroy');
+    Route::delete('/checklist/{batchId}', 'ChecklistController@destroy');
 
     // faq
     Route::get('/faqs', 'FaqController@index')->name('faqs');

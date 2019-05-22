@@ -14,5 +14,5 @@ class Checklist extends Model
      *
      * @var array
      */
-    protected $fillable = ['requirement', 'description', 'batch'];
+    protected $fillable = ['requirement', 'description', 'batch' ,'name'];
 }

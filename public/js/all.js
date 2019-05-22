@@ -2696,6 +2696,34 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -2717,6 +2745,8 @@ __webpack_require__.r(__webpack_exports__);
       checklists_id: '',
       checklist_added: false,
       checklist_updated: false,
+      checklist_name: '',
+      checklist_name_copied: '',
       checklistAdds: [{
         requirement: '',
         description: ''
@@ -2725,6 +2755,7 @@ __webpack_require__.r(__webpack_exports__);
         requirement: '',
         description: ''
       }],
+      checklist_copieds_index: '',
       companies: [],
       company: [],
       locations: [],
@@ -2741,7 +2772,7 @@ __webpack_require__.r(__webpack_exports__);
     this.fetchChecklists();
   },
   methods: {
-    copyObject: function copyObject(checklist) {
+    copyObject: function copyObject(checklist, index) {
       var _this = this;
 
       this.default_checklists_id = [];
@@ -2749,7 +2780,9 @@ __webpack_require__.r(__webpack_exports__);
       this.checklist_add = false;
       this.checklist_updated = false;
       this.checklist_copieds = checklist;
+      this.checklist_copieds_index = index;
       this.checklist_copieds_batch = checklist[0].batch;
+      this.checklist_name_copied = checklist[0].name;
       checklist.forEach(function (item) {
         _this.default_checklists_id.push(item.id);
       });
@@ -2792,6 +2825,7 @@ __webpack_require__.r(__webpack_exports__);
       this.checklist_added = false;
       this.errors = [];
       axios.post('/checklist', {
+        name: this.checklist_name,
         checklistAdds: checklistAdds
       }).then(function (response) {
         _this2.checklists.unshift(response.data);
@@ -2821,23 +2855,35 @@ __webpack_require__.r(__webpack_exports__);
         checklist_copieds: checklist_copieds,
         default_checklists_id: this.default_checklists_id,
         remained_id: remained_id,
+        name: this.checklist_name_copied,
         _method: 'PATCH'
       }).then(function (response) {
         _this3.checklist_updated = true;
         document.getElementById('edit_btn').disabled = false;
+        window.location.reload();
       })["catch"](function (error) {
         _this3.checklist_updated = false;
-        _this3.errors = error.response.data.errors;
         document.getElementById('edit_btn').disabled = false;
       });
     },
-    fetchChecklists: function fetchChecklists() {
+    deleteChecklist: function deleteChecklist() {
       var _this4 = this;
 
-      axios.get('/checklists-all').then(function (response) {
-        _this4.checklists = response.data;
+      axios["delete"]("/checklist/".concat(this.checklist_copieds_batch)).then(function (response) {
+        $('#deleteModal').modal('hide');
+        alert('Checklist successfully deleted');
+        window.location.reload();
       })["catch"](function (error) {
         _this4.errors = error.response.data.errors;
+      });
+    },
+    fetchChecklists: function fetchChecklists() {
+      var _this5 = this;
+
+      axios.get('/checklists-all').then(function (response) {
+        _this5.checklists = response.data;
+      })["catch"](function (error) {
+        _this5.errors = error.response.data.errors;
       });
     },
     setPage: function setPage(pageNumber) {
@@ -6788,6 +6834,17 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -6812,6 +6869,8 @@ __webpack_require__.r(__webpack_exports__);
       company: [],
       locations: [],
       location: [],
+      departments: [],
+      department: '',
       roles: [],
       role: [],
       errors: [],
@@ -6823,6 +6882,7 @@ __webpack_require__.r(__webpack_exports__);
   created: function created() {
     this.fetchUsers();
     this.fetchCompanies();
+    this.fetchDepartments();
     this.fetchRoles();
   },
   methods: {
@@ -6857,17 +6917,26 @@ __webpack_require__.r(__webpack_exports__);
         _this2.errors = error.response.data.errors;
       });
     },
-    fetchRoles: function fetchRoles() {
+    fetchDepartments: function fetchDepartments() {
       var _this3 = this;
 
-      axios.get('roles-all').then(function (response) {
-        _this3.roles = response.data;
+      axios.get('departments-all').then(function (response) {
+        _this3.departments = response.data;
       })["catch"](function (error) {
         _this3.errors = error.response.data.errors;
       });
     },
-    addUser: function addUser(user) {
+    fetchRoles: function fetchRoles() {
       var _this4 = this;
+
+      axios.get('roles-all').then(function (response) {
+        _this4.roles = response.data;
+      })["catch"](function (error) {
+        _this4.errors = error.response.data.errors;
+      });
+    },
+    addUser: function addUser(user) {
+      var _this5 = this;
 
       document.getElementById('add_btn').disabled = true;
       this.errors = [];
@@ -6876,20 +6945,21 @@ __webpack_require__.r(__webpack_exports__);
         email: user.email,
         company: user.company,
         company_location: user.company_location,
+        department_id: user.department,
         role: user.role
       }).then(function (response) {
-        _this4.users.unshift(response.data);
+        _this5.users.unshift(response.data);
 
-        _this4.user_added = true;
+        _this5.user_added = true;
         document.getElementById('add_btn').disabled = false;
       })["catch"](function (error) {
-        _this4.errors = error.response.data.errors;
-        _this4.user_added = false;
+        _this5.errors = error.response.data.errors;
+        _this5.user_added = false;
         document.getElementById('add_btn').disabled = false;
       });
     },
     updateUser: function updateUser(user_copied) {
-      var _this5 = this;
+      var _this6 = this;
 
       document.getElementById('edit_btn').disabled = true;
       this.user_updated = false;
@@ -6902,43 +6972,44 @@ __webpack_require__.r(__webpack_exports__);
         email: user_copied.email,
         company: user_copied.company_id,
         company_location: user_copied.location_id,
+        department_id: user_copied.department_id,
         role: user_copied.role_id,
         _method: 'PATCH'
       }).then(function (response) {
-        _this5.user_updated = true;
+        _this6.user_updated = true;
 
-        _this5.users.splice(index, 1, response.data);
+        _this6.users.splice(index, 1, response.data);
 
         document.getElementById('edit_btn').disabled = false; // this.loading = false;
       })["catch"](function (error) {
-        _this5.user_updated = false;
-        _this5.errors = error.response.data.errors;
+        _this6.user_updated = false;
+        _this6.errors = error.response.data.errors;
         document.getElementById('edit_btn').disabled = false;
-        _this5.loading = false;
+        _this6.loading = false;
       });
     },
     deleteUser: function deleteUser() {
-      var _this6 = this;
+      var _this7 = this;
 
       var index = this.users.findIndex(function (item) {
-        return item.id == _this6.user_id;
+        return item.id == _this7.user_id;
       });
       axios["delete"]("/user/".concat(this.user_id)).then(function (response) {
         $('#deleteModal').modal('hide');
         alert('User successfully deleted');
 
-        _this6.users.splice(index, 1);
+        _this7.users.splice(index, 1);
       })["catch"](function (error) {
-        _this6.errors = error.response.data.errors;
+        _this7.errors = error.response.data.errors;
       });
     },
     fetchCompanyLocation: function fetchCompanyLocation(company) {
-      var _this7 = this;
+      var _this8 = this;
 
       axios.get("/company-location/".concat(company)).then(function (response) {
-        _this7.locations = response.data.locations;
+        _this8.locations = response.data.locations;
       })["catch"](function (error) {
-        _this7.errors = error.response.data.errors;
+        _this8.errors = error.response.data.errors;
       });
     },
     setPage: function setPage(pageNumber) {
@@ -6956,11 +7027,11 @@ __webpack_require__.r(__webpack_exports__);
   },
   computed: {
     filteredUsers: function filteredUsers() {
-      var _this8 = this;
+      var _this9 = this;
 
       var self = this;
       return self.users.filter(function (user) {
-        return user.name.toLowerCase().includes(_this8.keywords.toLowerCase());
+        return user.name.toLowerCase().includes(_this9.keywords.toLowerCase());
       });
     },
     totalPages: function totalPages() {
@@ -44425,7 +44496,7 @@ var render = function() {
                             },
                             on: {
                               click: function($event) {
-                                return _vm.copyObject(checklist)
+                                return _vm.copyObject(checklist, c)
                               }
                             }
                           },
@@ -44443,7 +44514,7 @@ var render = function() {
                             },
                             on: {
                               click: function($event) {
-                                return _vm.copyObject(checklist)
+                                return _vm.copyObject(checklist, c)
                               }
                             }
                           },
@@ -44454,9 +44525,7 @@ var render = function() {
                   ])
                 ]),
                 _vm._v(" "),
-                _c("td", [
-                  _vm._v(_vm._s("CHECKLIST - " + checklist[0].created_at))
-                ]),
+                _c("td", [_vm._v(_vm._s(checklist[0].name))]),
                 _vm._v(" "),
                 _c("td", [_vm._v(_vm._s(checklist[0].batch))])
               ])
@@ -44564,19 +44633,68 @@ var render = function() {
                   : _vm._e(),
                 _vm._v(" "),
                 _c("div", { staticClass: "form-group" }, [
-                  _c("i", {
-                    staticClass: "fa fa-plus-circle text-green",
-                    staticStyle: {
-                      "font-size": "30px",
-                      cursor: "pointer",
-                      "margin-right": "5px"
-                    },
-                    on: {
-                      click: function($event) {
-                        return _vm.addRow("Add")
-                      }
-                    }
-                  }),
+                  _c("div", { staticClass: "row" }, [
+                    _c("div", { staticClass: "col-md-8" }, [
+                      _c("div", { staticClass: "form-group row" }, [
+                        _c("span", { staticClass: "col-sm-2 " }, [
+                          _vm._v("Name:")
+                        ]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "col-sm-10" }, [
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.checklist_name,
+                                expression: "checklist_name"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            attrs: {
+                              type: "text",
+                              id: "checklist_name",
+                              placeholder: "Checklist name"
+                            },
+                            domProps: { value: _vm.checklist_name },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.checklist_name = $event.target.value
+                              }
+                            }
+                          }),
+                          _vm._v(" "),
+                          _vm.errors.checklist_name
+                            ? _c("span", { staticClass: "text-danger" }, [
+                                _vm._v(_vm._s(_vm.errors.checklist_name[0]))
+                              ])
+                            : _vm._e()
+                        ])
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "col-md-2" }),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "col-md-2" }, [
+                      _c("i", {
+                        staticClass: "fa fa-plus-circle text-green",
+                        staticStyle: {
+                          "font-size": "30px",
+                          cursor: "pointer",
+                          "margin-right": "23px",
+                          float: "right"
+                        },
+                        on: {
+                          click: function($event) {
+                            return _vm.addRow("Add")
+                          }
+                        }
+                      })
+                    ])
+                  ]),
                   _vm._v(" "),
                   _c(
                     "table",
@@ -44751,19 +44869,68 @@ var render = function() {
                   : _vm._e(),
                 _vm._v(" "),
                 _c("div", { staticClass: "form-group" }, [
-                  _c("i", {
-                    staticClass: "fa fa-plus-circle text-green",
-                    staticStyle: {
-                      "font-size": "30px",
-                      cursor: "pointer",
-                      "margin-right": "5px"
-                    },
-                    on: {
-                      click: function($event) {
-                        return _vm.addRow("Update")
-                      }
-                    }
-                  }),
+                  _c("div", { staticClass: "row" }, [
+                    _c("div", { staticClass: "col-md-8" }, [
+                      _c("div", { staticClass: "form-group row" }, [
+                        _c("span", { staticClass: "col-sm-2 " }, [
+                          _vm._v("Name:")
+                        ]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "col-sm-10" }, [
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.checklist_name_copied,
+                                expression: "checklist_name_copied"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            attrs: {
+                              type: "text",
+                              id: "checklist_name_copied",
+                              placeholder: "Checklist name"
+                            },
+                            domProps: { value: _vm.checklist_name_copied },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.checklist_name_copied = $event.target.value
+                              }
+                            }
+                          }),
+                          _vm._v(" "),
+                          _vm.errors.name
+                            ? _c("span", { staticClass: "text-danger" }, [
+                                _vm._v(_vm._s(_vm.errors.name[0]))
+                              ])
+                            : _vm._e()
+                        ])
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "col-md-2" }),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "col-md-2" }, [
+                      _c("i", {
+                        staticClass: "fa fa-plus-circle text-green",
+                        staticStyle: {
+                          "font-size": "30px",
+                          cursor: "pointer",
+                          "margin-right": "23px",
+                          float: "right"
+                        },
+                        on: {
+                          click: function($event) {
+                            return _vm.addRow("Update")
+                          }
+                        }
+                      })
+                    ])
+                  ]),
                   _vm._v(" "),
                   _c(
                     "table",
@@ -44904,6 +45071,63 @@ var render = function() {
                     }
                   },
                   [_vm._v("Save")]
+                )
+              ])
+            ])
+          ]
+        )
+      ]
+    ),
+    _vm._v(" "),
+    _c(
+      "div",
+      {
+        staticClass: "modal fade",
+        attrs: {
+          id: "deleteModal",
+          tabindex: "-1",
+          role: "dialog",
+          "aria-labelledby": "exampleModalLabel",
+          "aria-hidden": "true",
+          "data-backdrop": "static"
+        }
+      },
+      [
+        _c(
+          "span",
+          { staticClass: "closed", attrs: { "data-dismiss": "modal" } },
+          [_vm._v("×")]
+        ),
+        _vm._v(" "),
+        _c(
+          "div",
+          {
+            staticClass: "modal-dialog modal-dialog-centered",
+            attrs: { role: "document" }
+          },
+          [
+            _c("div", { staticClass: "modal-content" }, [
+              _vm._m(9),
+              _vm._v(" "),
+              _vm._m(10),
+              _vm._v(" "),
+              _c("div", { staticClass: "modal-footer" }, [
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-secondary",
+                    attrs: { "data-dismiss": "modal" }
+                  },
+                  [_vm._v("Close")]
+                ),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-warning",
+                    on: { click: _vm.deleteChecklist }
+                  },
+                  [_vm._v("Delete")]
                 )
               ])
             ])
@@ -45060,6 +45284,47 @@ var staticRenderFns = [
       _c("th", [_vm._v("Descriptions")]),
       _vm._v(" "),
       _c("th", [_vm._v("Action")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-header" }, [
+      _c(
+        "h5",
+        { staticClass: "modal-title", attrs: { id: "addCompanyLabel" } },
+        [_vm._v("Delete Checklist")]
+      ),
+      _vm._v(" "),
+      _c(
+        "button",
+        {
+          staticClass: "close",
+          attrs: {
+            type: "button",
+            "data-dismiss": "modal",
+            "aria-label": "Close"
+          }
+        },
+        [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-body" }, [
+      _c("div", { staticClass: "row" }, [
+        _c("div", { staticClass: "col-md-12" }, [
+          _c("div", { staticClass: "form-group" }, [
+            _vm._v(
+              "\n                                Are you sure you want to delete this Checklist?\n                            "
+            )
+          ])
+        ])
+      ])
     ])
   }
 ]
@@ -52478,11 +52743,11 @@ var render = function() {
                 _vm._v(" "),
                 _c(
                   "td",
-                  _vm._l(user.roles, function(role, r) {
-                    return _c("span", { key: r }, [
+                  _vm._l(user.companies, function(company, c) {
+                    return _c("span", { key: c }, [
                       _vm._v(
                         "\n                                    " +
-                          _vm._s(role.name) +
+                          _vm._s(company.name + " - " + user.location.name) +
                           " "
                       ),
                       _c("br")
@@ -52491,13 +52756,15 @@ var render = function() {
                   0
                 ),
                 _vm._v(" "),
+                _c("td", [_vm._v(_vm._s(user.department.name) + " ")]),
+                _vm._v(" "),
                 _c(
                   "td",
-                  _vm._l(user.companies, function(company, c) {
-                    return _c("span", { key: c }, [
+                  _vm._l(user.roles, function(role, r) {
+                    return _c("span", { key: r }, [
                       _vm._v(
                         "\n                                    " +
-                          _vm._s(company.name + " - " + user.location.name) +
+                          _vm._s(role.name) +
                           " "
                       ),
                       _c("br")
@@ -52802,6 +53069,62 @@ var render = function() {
                       _vm.errors.company_location
                         ? _c("span", { staticClass: "text-danger" }, [
                             _vm._v(_vm._s(_vm.errors.company_location[0]))
+                          ])
+                        : _vm._e()
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "col-md-12" }, [
+                    _c("div", { staticClass: "form-group" }, [
+                      _c("label", { attrs: { for: "role" } }, [
+                        _vm._v("Department*")
+                      ]),
+                      _vm._v(" "),
+                      _c(
+                        "select",
+                        {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.user.department,
+                              expression: "user.department"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          on: {
+                            change: function($event) {
+                              var $$selectedVal = Array.prototype.filter
+                                .call($event.target.options, function(o) {
+                                  return o.selected
+                                })
+                                .map(function(o) {
+                                  var val = "_value" in o ? o._value : o.value
+                                  return val
+                                })
+                              _vm.$set(
+                                _vm.user,
+                                "department",
+                                $event.target.multiple
+                                  ? $$selectedVal
+                                  : $$selectedVal[0]
+                              )
+                            }
+                          }
+                        },
+                        _vm._l(_vm.departments, function(department, d) {
+                          return _c(
+                            "option",
+                            { key: d, domProps: { value: department.id } },
+                            [_vm._v(" " + _vm._s(department.name))]
+                          )
+                        }),
+                        0
+                      ),
+                      _vm._v(" "),
+                      _vm.errors.department
+                        ? _c("span", { staticClass: "text-danger" }, [
+                            _vm._v(_vm._s(_vm.errors.department[0]))
                           ])
                         : _vm._e()
                     ])
@@ -53139,6 +53462,62 @@ var render = function() {
                   _c("div", { staticClass: "col-md-12" }, [
                     _c("div", { staticClass: "form-group" }, [
                       _c("label", { attrs: { for: "role" } }, [
+                        _vm._v("Department*")
+                      ]),
+                      _vm._v(" "),
+                      _c(
+                        "select",
+                        {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.user_copied.department_id,
+                              expression: "user_copied.department_id"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          on: {
+                            change: function($event) {
+                              var $$selectedVal = Array.prototype.filter
+                                .call($event.target.options, function(o) {
+                                  return o.selected
+                                })
+                                .map(function(o) {
+                                  var val = "_value" in o ? o._value : o.value
+                                  return val
+                                })
+                              _vm.$set(
+                                _vm.user_copied,
+                                "department_id",
+                                $event.target.multiple
+                                  ? $$selectedVal
+                                  : $$selectedVal[0]
+                              )
+                            }
+                          }
+                        },
+                        _vm._l(_vm.departments, function(department, d) {
+                          return _c(
+                            "option",
+                            { key: d, domProps: { value: department.id } },
+                            [_vm._v(" " + _vm._s(department.name))]
+                          )
+                        }),
+                        0
+                      ),
+                      _vm._v(" "),
+                      _vm.errors.department_id
+                        ? _c("span", { staticClass: "text-danger" }, [
+                            _vm._v(_vm._s(_vm.errors.department_id[0]))
+                          ])
+                        : _vm._e()
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "col-md-12" }, [
+                    _c("div", { staticClass: "form-group" }, [
+                      _c("label", { attrs: { for: "role" } }, [
                         _vm._v("Role*")
                       ]),
                       _vm._v(" "),
@@ -53313,9 +53692,11 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", { attrs: { scope: "col" } }, [_vm._v("Email")]),
         _vm._v(" "),
-        _c("th", { attrs: { scope: "col" } }, [_vm._v("Role")]),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Company")]),
         _vm._v(" "),
-        _c("th", { attrs: { scope: "col" } }, [_vm._v("Company")])
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Department")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Role")])
       ])
     ])
   },

@@ -55,13 +55,12 @@
                                         <i class="fa fa-ellipsis-v"></i>
                                     </a>
                                     <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
-                                        <a class="dropdown-item" data-toggle="modal" data-target="#editModal" style="cursor: pointer" @click="copyObject(checklist)">Edit</a>
-                                        <a class="dropdown-item" data-toggle="modal" data-target="#deleteModal" style="cursor: pointer" @click="copyObject(checklist)">Delete</a>
+                                        <a class="dropdown-item" data-toggle="modal" data-target="#editModal" style="cursor: pointer" @click="copyObject(checklist,c)">Edit</a>
+                                        <a class="dropdown-item" data-toggle="modal" data-target="#deleteModal" style="cursor: pointer" @click="copyObject(checklist,c)">Delete</a>
                                     </div>
                                 </div>
                             </td>
-                            <!-- <td scope="row">{{ c + 1 }}</td> -->
-                            <td>{{ "CHECKLIST - "+ checklist[0].created_at }}</td>
+                            <td>{{ checklist[0].name }}</td>
                             <td>{{ checklist[0].batch }}</td>
                         </tr>
                     </tbody>
@@ -79,7 +78,7 @@
                 </div>
             </div>
         </div>
-        <!-- Add User Modal -->
+        <!-- Add Checklist Modal -->
         <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
             <span class="closed" data-dismiss="modal">&times;</span>
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -97,7 +96,21 @@
                             <strong>Success!</strong> Checklist succesfully added
                         </div>
                         <div class="form-group">
-                            <i @click="addRow('Add')" class="fa fa-plus-circle text-green" style="font-size:30px;cursor:pointer; margin-right:5px"></i>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="form-group row">
+                                        <span class="col-sm-2 ">Name:</span>
+                                        <div class="col-sm-10">
+                                            <input type="text" id="checklist_name" class="form-control" v-model="checklist_name" placeholder="Checklist name">
+                                            <span class="text-danger" v-if="errors.checklist_name">{{ errors.checklist_name[0] }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-2"></div>
+                                <div class="col-md-2">
+                                    <i @click="addRow('Add')" class="fa fa-plus-circle text-green" style="font-size:30px;cursor:pointer; margin-right:23px; float:right"></i>
+                                </div>
+                            </div>
                             <table class="table table-hover table-striped">
                                 <thead>
                                     <th>ID</th>
@@ -149,7 +162,21 @@
                             <strong>Success!</strong> Checklist succesfully updated
                         </div>
                         <div class="form-group">
-                            <i @click="addRow('Update')" class="fa fa-plus-circle text-green" style="font-size:30px;cursor:pointer; margin-right:5px"></i>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="form-group row">
+                                        <span class="col-sm-2 ">Name:</span>
+                                        <div class="col-sm-10">
+                                            <input type="text" id="checklist_name_copied" class="form-control" v-model="checklist_name_copied" placeholder="Checklist name">
+                                            <span class="text-danger" v-if="errors.name">{{ errors.name[0] }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-2"></div>
+                                <div class="col-md-2">
+                                    <i @click="addRow('Update')" class="fa fa-plus-circle text-green" style="font-size:30px;cursor:pointer; margin-right:23px; float:right"></i>
+                                </div>
+                            </div>
                             <table class="table table-hover table-striped">
                                 <thead>
                                     <th>ID</th>
@@ -183,13 +210,14 @@
             </div>
         </div>
 
+
         <!-- Delete User Modal -->
-        <!-- <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
+        <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
             <span class="closed" data-dismiss="modal">&times;</span>
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addCompanyLabel">Delete User</h5>
+                    <h5 class="modal-title" id="addCompanyLabel">Delete Checklist</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -198,18 +226,18 @@
                    <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
-                                Are you sure you want to delete this User?
+                                Are you sure you want to delete this Checklist?
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" data-dismiss='modal'>Close</button>
-                    <button class="btn btn-warning" @click="deleteUser">Delete</button>
+                    <button class="btn btn-warning" @click="deleteChecklist">Delete</button>
                 </div>
                 </div>
             </div>
-        </div> -->
+        </div>
 
 </div>
 </template>
@@ -237,6 +265,8 @@
                 checklists_id: '',
                 checklist_added: false,
                 checklist_updated: false,
+                checklist_name: '',
+                checklist_name_copied: '',
                 checklistAdds: [{
                     requirement: '',
                     description: '',
@@ -244,7 +274,8 @@
                 checklist_copieds: [{
                     requirement: '',
                     description: '',
-                }], 
+                }],
+                checklist_copieds_index: '', 
                 companies: [],
                 company:[],
                 locations: [],
@@ -261,13 +292,15 @@
             this.fetchChecklists();
         },
         methods:{
-            copyObject(checklist){
+            copyObject(checklist,index){
                 this.default_checklists_id = [];
                 this.errors = [];
                 this.checklist_add = false;
                 this.checklist_updated = false;
-                this.checklist_copieds =  checklist;              
+                this.checklist_copieds =  checklist;
+                this.checklist_copieds_index = index;              
                 this.checklist_copieds_batch = checklist[0].batch;
+                this.checklist_name_copied = checklist[0].name;
 
                 checklist.forEach((item) => {
                     this.default_checklists_id.push(item.id);
@@ -309,6 +342,7 @@
                 this.checklist_added = false;
                 this.errors = [];
                 axios.post('/checklist', {
+                    name: this.checklist_name,
                     checklistAdds: checklistAdds
                 })
                 .then(response => {
@@ -338,16 +372,28 @@
                     checklist_copieds: checklist_copieds,
                     default_checklists_id: this.default_checklists_id,
                     remained_id: remained_id,
+                    name: this.checklist_name_copied,
                     _method: 'PATCH'
                 })
                 .then(response => {
                     this.checklist_updated = true;
                     document.getElementById('edit_btn').disabled = false;
+                    window.location.reload();
                 })
                 .catch(error => {
                     this.checklist_updated = false;
-                    this.errors = error.response.data.errors;
                     document.getElementById('edit_btn').disabled = false;
+                })
+            },
+            deleteChecklist(){
+                axios.delete(`/checklist/${this.checklist_copieds_batch}`)
+                .then(response => {
+                    $('#deleteModal').modal('hide');
+                    alert('Checklist successfully deleted');
+                    window.location.reload();
+                })
+                .catch(error => {
+                    this.errors = error.response.data.errors;
                 })
             },
             fetchChecklists (){

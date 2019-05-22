@@ -21,6 +21,7 @@ class CreateChecklistsTable extends Migration
             $table->integer('rating')->nullable();
             $table->string('nc_description', 1000)->nullable();
             $table->integer('batch')->nullable();
+            $table->string('name');
             $table->timestamps();
             $table->softDeletes();
         });
