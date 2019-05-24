@@ -5913,6 +5913,36 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -5945,16 +5975,21 @@ __webpack_require__.r(__webpack_exports__);
       selected_data: [],
       points: [],
       attachments: [],
+      attachment_ids: [],
       reportsPerUser: [],
+      comment: [],
+      final_rating: '',
       report_show: false,
       show_create_report: false,
       show_view_report: false,
+      show_approved: false,
       errors: [],
       currentPage: 0,
       itemsPerPage: 8,
       keywords: '',
       fileSize: 0,
-      maximumSize: 5000000
+      maximumSize: 5000000,
+      formData: new FormData()
     };
   },
   created: function created() {
@@ -5964,13 +5999,21 @@ __webpack_require__.r(__webpack_exports__);
     this.fetchChecklist();
   },
   methods: {
-    uploadFileChange: function uploadFileChange(e) {
-      this.attachments = [];
+    prepareFields: function prepareFields() {
+      if (this.attachments.length > 0) {
+        for (var i = 0; i < this.attachments.length; i++) {
+          var attachment = this.attachments[i];
+          this.formData.append('attachments[]', attachment);
+        }
+      }
+    },
+    uploadFileChange: function uploadFileChange(e, id) {
       var files = e.target.files || e.dataTransfer.files;
       if (!files.length) return;
 
       for (var i = files.length - 1; i >= 0; i--) {
         this.attachments.push(files[i]);
+        this.attachment_ids.push(id);
         this.fileSize = this.fileSize + files[i].size / 1024 / 1024;
       }
 
@@ -6083,45 +6126,84 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     getSelectedChecklist: function getSelectedChecklist(checklist) {
+      this.errors = [];
+      this.points = [];
       this.selected_checklist = [];
       this.selected_checklist = checklist;
-    },
-    addReport: function addReport(selected_checklist, points) {
-      var _this8 = this;
-
-      axios.post('/report', {
-        company: this.company.id,
-        location: this.location.id,
-        operation_line: this.operation_line.id,
-        category: this.category.id,
-        area: this.area.id,
-        process_owner: this.process_owner,
-        date_of_inspection: this.date_of_inspection,
-        time_of_inspection: this.time_of_inspection,
-        checklist: selected_checklist,
-        points: points,
-        attachments: this.attachments
-      }).then(function (response) {})["catch"](function (error) {
-        _this8.errors = error.response.data.errors;
-      });
-    },
-    createReport: function createReport() {
-      this.show_create_report = true;
-      this.show_view_report = false;
-      this.fetchInspectors();
     },
     viewReport: function viewReport() {
       this.show_create_report = false;
       this.show_view_report = true;
       this.fetchReports();
     },
+    createReport: function createReport() {
+      this.show_create_report = true;
+      this.show_view_report = false;
+      this.fetchInspectors();
+    },
     fetchReports: function fetchReports() {
-      var _this9 = this;
+      var _this8 = this;
 
       axios.get("/reports-per-user/".concat(this.company.id, "/").concat(this.location.id, "/").concat(this.operation_line.id, "/").concat(this.category.id, "/").concat(this.area.id)).then(function (response) {
-        _this9.reportsPerUser = response.data;
+        _this8.reportsPerUser = response.data;
+      })["catch"](function (error) {
+        _this8.errors = error.response.data.errors;
+      });
+    },
+    addReport: function addReport(selected_checklist, points) {
+      var _this9 = this;
+
+      this.errors = [];
+      this.prepareFields();
+      this.formData.append('company', this.company.id ? this.company.id : '');
+      this.formData.append('location', this.location.id ? this.location.id : '');
+      this.formData.append('operation_line', this.operation_line.id ? this.operation_line.id : '');
+      this.formData.append('category', this.category.id ? this.category.id : '');
+      this.formData.append('area', this.area.id ? this.area.id : '');
+      this.formData.append('process_owner', this.process_owner ? this.process_owner : '');
+      this.formData.append('date_of_inspection', this.date_of_inspection ? this.date_of_inspection : '');
+      this.formData.append('time_of_inspection', this.time_of_inspection ? this.time_of_inspection : '');
+      this.formData.append('checklist', selected_checklist ? JSON.stringify(selected_checklist) : '');
+      this.formData.append('points', points.length == 0 ? '' : points);
+      this.formData.append('attachment_ids', this.attachment_ids.length > 0 ? this.attachment_ids : '');
+      axios.post('/report', this.formData).then(function (response) {
+        _this9.resetForm();
+
+        alert('Report Successfully created');
       })["catch"](function (error) {
         _this9.errors = error.response.data.errors;
+      });
+    },
+    approvedReport: function approvedReport() {
+      var _this10 = this;
+
+      this.enabledBtn();
+      var report_ids = [];
+      this.reportsPerUser.filter(function (item) {
+        return report_ids.push(item.id);
+      });
+      axios.post('/report-approve', {
+        ids: report_ids,
+        final_rating: this.final_rating
+      }).then(function (response) {
+        _this10.show_approved = true;
+
+        _this10.disabledBtn();
+
+        $('#approveModal').modal('hide');
+      })["catch"](function (error) {
+        _this10.errors = error.response.data.errors;
+
+        _this10.enabledBtn();
+      });
+    },
+    forCheckingReport: function forCheckingReport() {
+      var _this11 = this;
+
+      axios.post('/report-checking', {
+        comment: this.comment
+      }).then(function (response) {})["catch"](function (error) {
+        _this11.errors = error.response.data.errors;
       });
     },
     countRating: function countRating(reportsPerUser) {
@@ -6130,7 +6212,23 @@ __webpack_require__.r(__webpack_exports__);
       reportsPerUser.filter(function (item) {
         return total_points = total_points + item.points;
       });
-      return total_points / denominator * 100;
+      return this.final_rating = total_points / denominator * 100;
+    },
+    resetForm: function resetForm() {
+      this.process_owner = '';
+      this.date_of_inspection = '';
+      this.time_of_inspection = '';
+      this.points = '';
+    },
+    disabledBtn: function disabledBtn() {
+      document.getElementById('btn-checking').disabled = true;
+      document.getElementById('btn-approved').disabled = true;
+      document.getElementsByClassName('comment-input').disabled = true;
+    },
+    enabledBtn: function enabledBtn() {
+      document.getElementById('btn-checking').disabled = false;
+      document.getElementById('btn-approved').disabled = false;
+      document.getElementsByClassName('comment-input').disabled = false;
     },
     setPage: function setPage(pageNumber) {
       this.currentPage = pageNumber;
@@ -50890,14 +50988,14 @@ var render = function() {
               _vm._v(" "),
               _vm.show_create_report
                 ? _c("div", { staticClass: "row mt-5" }, [
-                    _c("div", { staticClass: "col-md-4 card card-report" }, [
+                    _c("div", { staticClass: "col-md-3 card card-report" }, [
                       _c("div", { staticClass: "card-body" }, [
                         _c("div", { staticClass: "form-group row" }, [
-                          _c("span", { staticClass: "col-sm-3 " }, [
+                          _c("span", { staticClass: "col-sm-5" }, [
                             _vm._v("Company:")
                           ]),
                           _vm._v(" "),
-                          _c("div", { staticClass: "col-sm-9" }, [
+                          _c("div", { staticClass: "col-sm-7" }, [
                             _c("span", [
                               _vm._v(
                                 " " +
@@ -50912,11 +51010,11 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("div", { staticClass: "form-group row" }, [
-                          _c("span", { staticClass: "col-sm-3 " }, [
+                          _c("span", { staticClass: "col-sm-5" }, [
                             _vm._v("Operation Line:")
                           ]),
                           _vm._v(" "),
-                          _c("div", { staticClass: "col-sm-9" }, [
+                          _c("div", { staticClass: "col-sm-7" }, [
                             _c("span", [
                               _vm._v(" " + _vm._s(this.operation_line.name))
                             ])
@@ -50924,11 +51022,11 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("div", { staticClass: "form-group row" }, [
-                          _c("span", { staticClass: "col-sm-3 " }, [
+                          _c("span", { staticClass: "col-sm-5" }, [
                             _vm._v("Category:")
                           ]),
                           _vm._v(" "),
-                          _c("div", { staticClass: "col-sm-9" }, [
+                          _c("div", { staticClass: "col-sm-7" }, [
                             _c("span", [
                               _vm._v(" " + _vm._s(this.category.name))
                             ])
@@ -50936,21 +51034,21 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("div", { staticClass: "form-group row" }, [
-                          _c("span", { staticClass: "col-sm-3 " }, [
+                          _c("span", { staticClass: "col-sm-5" }, [
                             _vm._v("Area:")
                           ]),
                           _vm._v(" "),
-                          _c("div", { staticClass: "col-sm-9" }, [
+                          _c("div", { staticClass: "col-sm-7" }, [
                             _c("span", [_vm._v(" " + _vm._s(this.area.name))])
                           ])
                         ]),
                         _vm._v(" "),
                         _c("div", { staticClass: "form-group row" }, [
-                          _c("span", { staticClass: "col-sm-3 " }, [
+                          _c("span", { staticClass: "col-sm-5" }, [
                             _vm._v("Inspector:")
                           ]),
                           _vm._v(" "),
-                          _c("div", { staticClass: "col-sm-9" }, [
+                          _c("div", { staticClass: "col-sm-7" }, [
                             _c("span", [_vm._v(" " + _vm._s(this.userName))])
                           ])
                         ]),
@@ -50959,13 +51057,13 @@ var render = function() {
                           _c(
                             "label",
                             {
-                              staticClass: "col-sm-3 col-form-label",
+                              staticClass: "col-sm-5 col-form-label",
                               attrs: { for: "colFormLabel" }
                             },
                             [_vm._v("Process owner")]
                           ),
                           _vm._v(" "),
-                          _c("div", { staticClass: "col-sm-9" }, [
+                          _c("div", { staticClass: "col-sm-7" }, [
                             _c(
                               "select",
                               {
@@ -51023,13 +51121,13 @@ var render = function() {
                           _c(
                             "label",
                             {
-                              staticClass: "col-sm-3 col-form-label",
+                              staticClass: "col-sm-5 col-form-label",
                               attrs: { for: "colFormLabel" }
                             },
                             [_vm._v("Date of Inspection")]
                           ),
                           _vm._v(" "),
-                          _c("div", { staticClass: "col-sm-9" }, [
+                          _c("div", { staticClass: "col-sm-7" }, [
                             _c("input", {
                               directives: [
                                 {
@@ -51066,13 +51164,13 @@ var render = function() {
                           _c(
                             "label",
                             {
-                              staticClass: "col-sm-3 col-form-label",
+                              staticClass: "col-sm-5 col-form-label",
                               attrs: { for: "colFormLabel" }
                             },
                             [_vm._v("Time")]
                           ),
                           _vm._v(" "),
-                          _c("div", { staticClass: "col-sm-9" }, [
+                          _c("div", { staticClass: "col-sm-7" }, [
                             _c("input", {
                               directives: [
                                 {
@@ -51109,13 +51207,13 @@ var render = function() {
                           _c(
                             "label",
                             {
-                              staticClass: "col-sm-3 col-form-label",
+                              staticClass: "col-sm-5 col-form-label",
                               attrs: { for: "colFormLabel" }
                             },
                             [_vm._v("Cheklist")]
                           ),
                           _vm._v(" "),
-                          _c("div", { staticClass: "col-sm-9" }, [
+                          _c("div", { staticClass: "col-sm-7" }, [
                             _c(
                               "select",
                               {
@@ -51158,15 +51256,7 @@ var render = function() {
                                 return _c(
                                   "option",
                                   { key: c, domProps: { value: checklist } },
-                                  [
-                                    _vm._v(
-                                      " " +
-                                        _vm._s(
-                                          " CHECKLIST - " +
-                                            checklist[0].created_at
-                                        )
-                                    )
-                                  ]
+                                  [_vm._v(" " + _vm._s(checklist[0].name))]
                                 )
                               }),
                               0
@@ -51206,181 +51296,180 @@ var render = function() {
                       ])
                     ]),
                     _vm._v(" "),
-                    _c("div", { staticClass: "col-md-8" }, [
+                    _c("div", { staticClass: "col-md-9" }, [
                       _vm.selected_checklist.length
-                        ? _c("div", { staticClass: "table-responsive" }, [
-                            _c(
-                              "table",
-                              {
-                                staticClass:
-                                  "table align-items-center table-flush"
-                              },
-                              [
-                                _vm._m(2),
-                                _vm._v(" "),
-                                _c(
-                                  "tbody",
-                                  _vm._l(_vm.filteredQueues, function(
-                                    checklist,
-                                    c
-                                  ) {
-                                    return _c(
-                                      "tr",
-                                      { key: c, staticClass: "d-flex" },
-                                      [
-                                        _c(
-                                          "td",
-                                          {
-                                            staticClass: "col-sm-1",
-                                            attrs: { scope: "row" }
-                                          },
-                                          [_vm._v(_vm._s(c + 1))]
-                                        ),
-                                        _vm._v(" "),
-                                        _c(
-                                          "td",
-                                          {
-                                            staticClass: "col-sm-6",
-                                            staticStyle: {
-                                              "white-space": "inherit"
-                                            }
-                                          },
-                                          [
-                                            _vm._v(
-                                              _vm._s(
-                                                checklist.requirement +
-                                                  " - " +
-                                                  checklist.description
-                                              )
-                                            )
-                                          ]
-                                        ),
-                                        _vm._v(" "),
-                                        _c("td", { staticClass: "col-sm-2" }, [
+                        ? _c(
+                            "div",
+                            {
+                              staticClass: "table-responsive",
+                              staticStyle: { height: "720px" }
+                            },
+                            [
+                              _c(
+                                "table",
+                                {
+                                  staticClass:
+                                    "table align-items-center table-flush"
+                                },
+                                [
+                                  _vm._m(2),
+                                  _vm._v(" "),
+                                  _c(
+                                    "tbody",
+                                    _vm._l(_vm.selected_checklist, function(
+                                      checklist,
+                                      c
+                                    ) {
+                                      return _c(
+                                        "tr",
+                                        { key: c, staticClass: "d-flex" },
+                                        [
                                           _c(
-                                            "select",
+                                            "td",
                                             {
-                                              directives: [
-                                                {
-                                                  name: "model",
-                                                  rawName: "v-model",
-                                                  value: _vm.points[c],
-                                                  expression: "points[c]"
-                                                }
-                                              ],
-                                              staticClass: "form-control",
-                                              on: {
-                                                change: function($event) {
-                                                  var $$selectedVal = Array.prototype.filter
-                                                    .call(
-                                                      $event.target.options,
-                                                      function(o) {
-                                                        return o.selected
-                                                      }
-                                                    )
-                                                    .map(function(o) {
-                                                      var val =
-                                                        "_value" in o
-                                                          ? o._value
-                                                          : o.value
-                                                      return val
-                                                    })
-                                                  _vm.$set(
-                                                    _vm.points,
-                                                    c,
-                                                    $event.target.multiple
-                                                      ? $$selectedVal
-                                                      : $$selectedVal[0]
-                                                  )
-                                                }
+                                              staticClass: "col-sm-1",
+                                              attrs: { scope: "row" }
+                                            },
+                                            [_vm._v(_vm._s(c + 1))]
+                                          ),
+                                          _vm._v(" "),
+                                          _c(
+                                            "td",
+                                            {
+                                              staticClass: "col-sm-6",
+                                              staticStyle: {
+                                                "white-space": "inherit"
                                               }
                                             },
                                             [
-                                              _c(
-                                                "option",
-                                                { attrs: { value: "0" } },
-                                                [_vm._v(" 0 ")]
-                                              ),
-                                              _vm._v(" "),
-                                              _c(
-                                                "option",
-                                                { attrs: { value: "1" } },
-                                                [_vm._v(" 1 ")]
-                                              ),
-                                              _vm._v(" "),
-                                              _c(
-                                                "option",
-                                                { attrs: { value: "2" } },
-                                                [_vm._v(" 2 ")]
+                                              _vm._v(
+                                                _vm._s(
+                                                  checklist.requirement +
+                                                    " - " +
+                                                    checklist.description
+                                                )
                                               )
                                             ]
+                                          ),
+                                          _vm._v(" "),
+                                          _c(
+                                            "td",
+                                            { staticClass: "col-sm-2" },
+                                            [
+                                              _c(
+                                                "select",
+                                                {
+                                                  directives: [
+                                                    {
+                                                      name: "model",
+                                                      rawName: "v-model",
+                                                      value: _vm.points[c],
+                                                      expression: "points[c]"
+                                                    }
+                                                  ],
+                                                  staticClass: "form-control",
+                                                  on: {
+                                                    change: function($event) {
+                                                      var $$selectedVal = Array.prototype.filter
+                                                        .call(
+                                                          $event.target.options,
+                                                          function(o) {
+                                                            return o.selected
+                                                          }
+                                                        )
+                                                        .map(function(o) {
+                                                          var val =
+                                                            "_value" in o
+                                                              ? o._value
+                                                              : o.value
+                                                          return val
+                                                        })
+                                                      _vm.$set(
+                                                        _vm.points,
+                                                        c,
+                                                        $event.target.multiple
+                                                          ? $$selectedVal
+                                                          : $$selectedVal[0]
+                                                      )
+                                                    }
+                                                  }
+                                                },
+                                                [
+                                                  _c(
+                                                    "option",
+                                                    { attrs: { value: "0" } },
+                                                    [_vm._v(" 0 ")]
+                                                  ),
+                                                  _vm._v(" "),
+                                                  _c(
+                                                    "option",
+                                                    { attrs: { value: "1" } },
+                                                    [_vm._v(" 1 ")]
+                                                  ),
+                                                  _vm._v(" "),
+                                                  _c(
+                                                    "option",
+                                                    { attrs: { value: "2" } },
+                                                    [_vm._v(" 2 ")]
+                                                  )
+                                                ]
+                                              ),
+                                              _vm._v(" "),
+                                              _vm.errors["points." + c] ||
+                                              _vm.errors.points
+                                                ? _c(
+                                                    "span",
+                                                    {
+                                                      staticClass: "text-danger"
+                                                    },
+                                                    [
+                                                      _vm._v(
+                                                        " This field is required "
+                                                      )
+                                                    ]
+                                                  )
+                                                : _vm._e()
+                                            ]
+                                          ),
+                                          _vm._v(" "),
+                                          _c(
+                                            "td",
+                                            { staticClass: "col-sm-3" },
+                                            [
+                                              _c("input", {
+                                                attrs: {
+                                                  type: "file",
+                                                  multiple: "multiple",
+                                                  id: "attachments",
+                                                  accept: "image/*",
+                                                  placeholder: "Attach file"
+                                                },
+                                                on: {
+                                                  change: function($event) {
+                                                    return _vm.uploadFileChange(
+                                                      $event,
+                                                      checklist.id
+                                                    )
+                                                  }
+                                                }
+                                              }),
+                                              _c("br")
+                                            ]
                                           )
-                                        ]),
-                                        _vm._v(" "),
-                                        _c("td", { staticClass: "col-sm-3" }, [
-                                          _c("input", {
-                                            attrs: {
-                                              type: "file",
-                                              multiple: "multiple",
-                                              id: "attachments",
-                                              placeholder: "Attach file"
-                                            },
-                                            on: { change: _vm.uploadFileChange }
-                                          }),
-                                          _c("br")
-                                        ])
-                                      ]
-                                    )
-                                  }),
-                                  0
-                                )
-                              ]
-                            )
-                          ])
+                                        ]
+                                      )
+                                    }),
+                                    0
+                                  )
+                                ]
+                              )
+                            ]
+                          )
                         : _vm._e(),
                       _vm._v(" "),
                       _vm.selected_checklist.length
                         ? _c("div", { staticClass: "row mb-3 mt-3 ml-1" }, [
-                            _c("div", { staticClass: "col-6" }, [
-                              _c(
-                                "button",
-                                {
-                                  staticClass:
-                                    "btn btn-default btn-sm btn-fill",
-                                  attrs: { disabled: !_vm.showPreviousLink() },
-                                  on: {
-                                    click: function($event) {
-                                      return _vm.setPage(_vm.currentPage - 1)
-                                    }
-                                  }
-                                },
-                                [_vm._v(" Previous ")]
-                              ),
-                              _vm._v(" "),
-                              _c("span", { staticClass: "text-dark" }, [
-                                _vm._v(
-                                  "Page " +
-                                    _vm._s(_vm.currentPage + 1) +
-                                    " of " +
-                                    _vm._s(_vm.totalPages)
-                                )
-                              ]),
-                              _vm._v(" "),
-                              _c(
-                                "button",
-                                {
-                                  staticClass:
-                                    "btn btn-default btn-sm btn-fill",
-                                  attrs: { disabled: !_vm.showNextLink() },
-                                  on: {
-                                    click: function($event) {
-                                      return _vm.setPage(_vm.currentPage + 1)
-                                    }
-                                  }
-                                },
-                                [_vm._v(" Next ")]
-                              )
-                            ]),
+                            _c("div", { staticClass: "col-6" }),
                             _vm._v(" "),
                             _c("div", { staticClass: "col-6 text-right" }, [
                               _c("span", [
@@ -51397,364 +51486,439 @@ var render = function() {
                 : _vm._e(),
               _vm._v(" "),
               _vm.show_view_report
-                ? _c("div", { staticClass: "row mt-5" }, [
-                    _c("div", { staticClass: "col-md-4 card card-report" }, [
-                      _c("div", { staticClass: "card-body" }, [
-                        _c("div", { staticClass: "form-group row" }, [
-                          _c("span", { staticClass: "col-sm-3 " }, [
-                            _vm._v("Company:")
-                          ]),
-                          _vm._v(" "),
-                          _c("div", { staticClass: "col-sm-9" }, [
-                            _c("span", [
-                              _vm._v(" " + _vm._s(this.company.name) + " ")
-                            ])
-                          ])
-                        ]),
-                        _vm._v(" "),
-                        _c("div", { staticClass: "form-group row" }, [
-                          _c("span", { staticClass: "col-sm-3 " }, [
-                            _vm._v("Operation Line:")
-                          ]),
-                          _vm._v(" "),
-                          _c("div", { staticClass: "col-sm-9" }, [
-                            _c("span", [
-                              _vm._v(
-                                " " + _vm._s(this.operation_line.name) + " "
-                              )
-                            ])
-                          ])
-                        ]),
-                        _vm._v(" "),
-                        _c("div", { staticClass: "form-group row" }, [
-                          _c("span", { staticClass: "col-sm-3 " }, [
-                            _vm._v("Category:")
-                          ]),
-                          _vm._v(" "),
-                          _c("div", { staticClass: "col-sm-9" }, [
-                            _c("span", [
-                              _vm._v(" " + _vm._s(this.category.name) + " ")
-                            ])
-                          ])
-                        ]),
-                        _vm._v(" "),
-                        _c("div", { staticClass: "form-group row" }, [
-                          _c("span", { staticClass: "col-sm-3 " }, [
-                            _vm._v("Area:")
-                          ]),
-                          _vm._v(" "),
-                          _c("div", { staticClass: "col-sm-9" }, [
-                            _c("span", [
-                              _vm._v(" " + _vm._s(this.area.name) + "  ")
-                            ])
-                          ])
-                        ]),
-                        _vm._v(" "),
-                        _c("div", { staticClass: "form-group row" }, [
-                          _c("span", { staticClass: "col-sm-3 " }, [
-                            _vm._v("Inspector:")
-                          ]),
-                          _vm._v(" "),
-                          _c("div", { staticClass: "col-sm-9" }, [
-                            _c("span", [
-                              _vm._v(" " + _vm._s(this.userName) + " ")
-                            ])
-                          ])
-                        ]),
-                        _vm._v(" "),
-                        _vm.reportsPerUser.length
-                          ? _c("div", [
-                              _c("div", { staticClass: "form-group row" }, [
-                                _c("span", { staticClass: "col-sm-3 " }, [
-                                  _vm._v("Date of Inspection:")
+                ? _c("div", [
+                    _vm.reportsPerUser.length
+                      ? _c("div", { staticClass: "row mt-5" }, [
+                          _c(
+                            "div",
+                            { staticClass: "col-md-3 card card-view-report" },
+                            [
+                              _c("div", { staticClass: "card-body" }, [
+                                _c("div", { staticClass: "form-group row" }, [
+                                  _c("h1", { staticClass: "col-sm-12 " }, [
+                                    _vm._v(_vm._s(this.category.name))
+                                  ])
                                 ]),
                                 _vm._v(" "),
-                                _c("div", { staticClass: "col-sm-9" }, [
-                                  _c("span", [
-                                    _vm._v(
-                                      _vm._s(
-                                        this.reportsPerUser[0]
-                                          .date_of_inspection
+                                _c("div", { staticClass: "form-group row" }, [
+                                  _c("span", { staticClass: "col-sm-4 " }, [
+                                    _vm._v("Company:")
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("div", { staticClass: "col-sm-8" }, [
+                                    _c("span", [
+                                      _vm._v(
+                                        " " + _vm._s(this.company.name) + " "
                                       )
-                                    )
+                                    ])
                                   ])
-                                ])
-                              ]),
-                              _vm._v(" "),
-                              _c("div", { staticClass: "form-group row" }, [
-                                _c("span", { staticClass: "col-sm-3 " }, [
-                                  _vm._v("Time")
                                 ]),
                                 _vm._v(" "),
-                                _c("div", { staticClass: "col-sm-9" }, [
-                                  _c("span", [
-                                    _vm._v(
-                                      _vm._s(
-                                        this.reportsPerUser[0]
-                                          .time_of_inspection
+                                _c("div", { staticClass: "form-group row" }, [
+                                  _c("span", { staticClass: "col-sm-4 " }, [
+                                    _vm._v("Operation Line:")
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("div", { staticClass: "col-sm-8" }, [
+                                    _c("span", [
+                                      _vm._v(
+                                        " " +
+                                          _vm._s(this.operation_line.name) +
+                                          " "
                                       )
-                                    )
+                                    ])
                                   ])
-                                ])
-                              ]),
-                              _vm._v(" "),
-                              _c("div", { staticClass: "form-group row" }, [
-                                _c("span", { staticClass: "col-sm-3 " }, [
-                                  _vm._v("Rating:")
                                 ]),
                                 _vm._v(" "),
-                                _c("div", { staticClass: "col-sm-9" }, [
-                                  _c("span", [
-                                    _vm._v(
-                                      _vm._s(
-                                        _vm.countRating(this.reportsPerUser)
-                                      ) + " %"
-                                    )
+                                _c("div", { staticClass: "form-group row" }, [
+                                  _c("span", { staticClass: "col-sm-4 " }, [
+                                    _vm._v("Area:")
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("div", { staticClass: "col-sm-8" }, [
+                                    _c("span", [
+                                      _vm._v(
+                                        " " + _vm._s(this.area.name) + "  "
+                                      )
+                                    ])
                                   ])
-                                ])
-                              ])
-                            ])
-                          : _vm._e(),
-                        _vm._v(" "),
-                        _c("div", { staticClass: "form-group row" }, [
-                          _c("div", { staticClass: "col-sm-4" }, [
-                            _c(
-                              "button",
-                              {
-                                staticClass: "btn btn-block btn-danger",
-                                on: {
-                                  click: function($event) {
-                                    return _vm.forCheckingReport(
-                                      this.reportsPerUser
-                                    )
-                                  }
-                                }
-                              },
-                              [_vm._v("FOR CHECKING")]
-                            )
-                          ]),
-                          _vm._v(" "),
-                          _c("div", { staticClass: "col-sm-4" }, [
-                            _c(
-                              "button",
-                              {
-                                staticClass: "btn btn-block btn-primary",
-                                on: {
-                                  click: function($event) {
-                                    return _vm.approvedReport(
-                                      this.reportsPerUser
-                                    )
-                                  }
-                                }
-                              },
-                              [_vm._v("APPROVED")]
-                            )
-                          ]),
-                          _vm._v(" "),
-                          _c("div", { staticClass: "col-sm-4" }, [
-                            _c(
-                              "button",
-                              {
-                                staticClass: "btn btn-success",
-                                on: {
-                                  click: function($event) {
-                                    return _vm.viewSummaryReport(
-                                      this.reportsPerUser
-                                    )
-                                  }
-                                }
-                              },
-                              [_vm._v("SUMMARY REPORT")]
-                            )
-                          ])
-                        ])
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "col-md-8" }, [
-                      _vm.reportsPerUser.length
-                        ? _c("div", { staticClass: "table-responsive" }, [
-                            _c(
-                              "table",
-                              {
-                                staticClass:
-                                  "table align-items-center table-flush"
-                              },
-                              [
-                                _vm._m(3),
+                                ]),
                                 _vm._v(" "),
-                                _c(
-                                  "tbody",
-                                  _vm._l(_vm.filteredQueuesView, function(
-                                    checklist,
-                                    c
-                                  ) {
-                                    return _c(
-                                      "tr",
-                                      { key: c, staticClass: "d-flex" },
-                                      [
-                                        _c(
-                                          "td",
-                                          {
-                                            staticClass: "col-sm-1",
-                                            attrs: { scope: "row" }
-                                          },
-                                          [_vm._v(_vm._s(c + 1))]
-                                        ),
-                                        _vm._v(" "),
-                                        _c(
-                                          "td",
-                                          {
-                                            staticClass: "col-sm-6",
-                                            staticStyle: {
-                                              "white-space": "inherit"
-                                            }
-                                          },
-                                          [_vm._v(_vm._s(checklist.name))]
-                                        ),
-                                        _vm._v(" "),
-                                        _c("td", { staticClass: "col-sm-2" }, [
+                                _c("div", { staticClass: "form-group row" }, [
+                                  _c("span", { staticClass: "col-sm-4 " }, [
+                                    _vm._v("Inspector:")
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("div", { staticClass: "col-sm-8" }, [
+                                    _c("span", [
+                                      _vm._v(" " + _vm._s(this.userName) + " ")
+                                    ])
+                                  ])
+                                ]),
+                                _vm._v(" "),
+                                _vm.reportsPerUser.length
+                                  ? _c("div", [
+                                      _c(
+                                        "div",
+                                        { staticClass: "form-group row" },
+                                        [
                                           _c(
-                                            "select",
-                                            {
-                                              directives: [
-                                                {
-                                                  name: "model",
-                                                  rawName: "v-model",
-                                                  value: checklist.points,
-                                                  expression: "checklist.points"
-                                                }
-                                              ],
-                                              staticClass: "form-control",
-                                              on: {
-                                                change: function($event) {
-                                                  var $$selectedVal = Array.prototype.filter
-                                                    .call(
-                                                      $event.target.options,
-                                                      function(o) {
-                                                        return o.selected
-                                                      }
-                                                    )
-                                                    .map(function(o) {
-                                                      var val =
-                                                        "_value" in o
-                                                          ? o._value
-                                                          : o.value
-                                                      return val
-                                                    })
-                                                  _vm.$set(
-                                                    checklist,
-                                                    "points",
-                                                    $event.target.multiple
-                                                      ? $$selectedVal
-                                                      : $$selectedVal[0]
-                                                  )
-                                                }
-                                              }
-                                            },
+                                            "span",
+                                            { staticClass: "col-sm-4" },
+                                            [_vm._v("Date of Inspection:")]
+                                          ),
+                                          _vm._v(" "),
+                                          _c(
+                                            "div",
+                                            { staticClass: "col-sm-8" },
                                             [
-                                              _c(
-                                                "option",
-                                                { attrs: { value: "0" } },
-                                                [_vm._v(" 0 ")]
-                                              ),
-                                              _vm._v(" "),
-                                              _c(
-                                                "option",
-                                                { attrs: { value: "1" } },
-                                                [_vm._v(" 1 ")]
-                                              ),
-                                              _vm._v(" "),
-                                              _c(
-                                                "option",
-                                                { attrs: { value: "2" } },
-                                                [_vm._v(" 2 ")]
-                                              )
+                                              _c("span", [
+                                                _vm._v(
+                                                  _vm._s(
+                                                    this.reportsPerUser[0]
+                                                      .date_of_inspection
+                                                  )
+                                                )
+                                              ])
                                             ]
                                           )
-                                        ]),
+                                        ]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "div",
+                                        { staticClass: "form-group row" },
+                                        [
+                                          _c(
+                                            "span",
+                                            { staticClass: "col-sm-4" },
+                                            [_vm._v("Time")]
+                                          ),
+                                          _vm._v(" "),
+                                          _c(
+                                            "div",
+                                            { staticClass: "col-sm-8" },
+                                            [
+                                              _c("span", [
+                                                _vm._v(
+                                                  _vm._s(
+                                                    this.reportsPerUser[0]
+                                                      .time_of_inspection
+                                                  )
+                                                )
+                                              ])
+                                            ]
+                                          )
+                                        ]
+                                      ),
+                                      _vm._v(" "),
+                                      _vm._m(3),
+                                      _vm._v(" "),
+                                      _c("div", { staticClass: "row mb-2" }, [
+                                        _c("div", { staticClass: "col-sm-1" }),
                                         _vm._v(" "),
-                                        _c("td", { staticClass: "col-sm-3" }, [
-                                          _c("input", {
-                                            attrs: {
-                                              type: "file",
-                                              multiple: "multiple",
-                                              id: "attachments",
-                                              placeholder: "Attach file"
-                                            },
-                                            on: { change: _vm.uploadFileChange }
-                                          }),
-                                          _c("br")
+                                        _c(
+                                          "div",
+                                          {
+                                            staticClass: "col-sm-10 div-rating"
+                                          },
+                                          [
+                                            _c("span", [
+                                              _vm._v(
+                                                _vm._s(
+                                                  _vm.countRating(
+                                                    this.reportsPerUser
+                                                  )
+                                                ) + " %"
+                                              )
+                                            ])
+                                          ]
+                                        ),
+                                        _vm._v(" "),
+                                        _c("div", { staticClass: "col-sm-1" })
+                                      ]),
+                                      _vm._v(" "),
+                                      _vm._m(4)
+                                    ])
+                                  : _vm._e(),
+                                _vm._v(" "),
+                                _c("div", { staticClass: "form-group row" }, [
+                                  _c("div", { staticClass: "col-sm-6" }, [
+                                    _c(
+                                      "button",
+                                      {
+                                        staticClass: "btn btn-block btn-danger",
+                                        attrs: { id: "btn-checking" },
+                                        on: { click: _vm.forCheckingReport }
+                                      },
+                                      [_vm._v("FOR CHECKING")]
+                                    )
+                                  ]),
+                                  _vm._v(" "),
+                                  _vm._m(5)
+                                ]),
+                                _vm._v(" "),
+                                _c("div", { staticClass: "form-group row" }, [
+                                  _vm.show_approved
+                                    ? _c(
+                                        "div",
+                                        {
+                                          staticClass:
+                                            "alert alert-info col-md-12"
+                                        },
+                                        [
+                                          _c("strong", [_vm._v("Success!")]),
+                                          _vm._v(
+                                            " Report succesfully approved\n                                        "
+                                          )
+                                        ]
+                                      )
+                                    : _vm._e()
+                                ])
+                              ])
+                            ]
+                          ),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "col-md-9" }, [
+                            _c(
+                              "div",
+                              {
+                                staticClass: "table-responsive",
+                                staticStyle: { height: "720px" }
+                              },
+                              _vm._l(_vm.reportsPerUser, function(
+                                checklist,
+                                c
+                              ) {
+                                return _c(
+                                  "div",
+                                  {
+                                    key: c,
+                                    staticClass: "col-md-12 card mb-3",
+                                    staticStyle: {
+                                      "background-color": "#e6e6e6 !important"
+                                    }
+                                  },
+                                  [
+                                    _c("div", { staticClass: "card-body" }, [
+                                      _c("span", [
+                                        _vm._v(
+                                          _vm._s(c + 1 + ". " + checklist.name)
+                                        )
+                                      ]),
+                                      _c("br"),
+                                      _vm._v(" "),
+                                      _c("span", { staticClass: "ml-4" }, [
+                                        _c("b", [
+                                          _vm._v(
+                                            "Points:" + _vm._s(checklist.points)
+                                          )
+                                        ])
+                                      ]),
+                                      _vm._v(" "),
+                                      _c(
+                                        "div",
+                                        { staticClass: "row mt-2 text-center" },
+                                        _vm._l(
+                                          checklist.uploaded_files,
+                                          function(uploadFile, u) {
+                                            return _c(
+                                              "div",
+                                              {
+                                                key: u,
+                                                staticClass: "col-md-3"
+                                              },
+                                              [
+                                                _c("img", {
+                                                  staticClass:
+                                                    "report-img mb-2",
+                                                  attrs: {
+                                                    src:
+                                                      "./storage/" +
+                                                      uploadFile.file_path
+                                                  }
+                                                }),
+                                                _c("br"),
+                                                _vm._v(" "),
+                                                _c("span", [
+                                                  _vm._v(
+                                                    _vm._s(c + 1 + ".") + " "
+                                                  )
+                                                ]),
+                                                _vm._v(" "),
+                                                _c("span", [
+                                                  _vm._v(
+                                                    " " + _vm._s(u + 1) + " "
+                                                  )
+                                                ]),
+                                                _vm._v(" "),
+                                                _c("input", {
+                                                  directives: [
+                                                    {
+                                                      name: "model",
+                                                      rawName: "v-model",
+                                                      value:
+                                                        _vm.comment[
+                                                          c + 1 + "" + u + 1
+                                                        ],
+                                                      expression:
+                                                        "comment[c + 1 +'' + u + 1]"
+                                                    }
+                                                  ],
+                                                  staticClass:
+                                                    "form-control comment-input",
+                                                  attrs: {
+                                                    type: "text",
+                                                    id: "comment",
+                                                    placeholder: "Comment"
+                                                  },
+                                                  domProps: {
+                                                    value:
+                                                      _vm.comment[
+                                                        c + 1 + "" + u + 1
+                                                      ]
+                                                  },
+                                                  on: {
+                                                    input: function($event) {
+                                                      if (
+                                                        $event.target.composing
+                                                      ) {
+                                                        return
+                                                      }
+                                                      _vm.$set(
+                                                        _vm.comment,
+                                                        c + 1 + "" + u + 1,
+                                                        $event.target.value
+                                                      )
+                                                    }
+                                                  }
+                                                }),
+                                                _vm._v(" "),
+                                                _vm.errors[
+                                                  "comment." +
+                                                    c +
+                                                    1 +
+                                                    "" +
+                                                    u +
+                                                    1
+                                                ]
+                                                  ? _c(
+                                                      "span",
+                                                      {
+                                                        staticClass:
+                                                          "text-danger"
+                                                      },
+                                                      [
+                                                        _vm._v(
+                                                          " This field is required "
+                                                        )
+                                                      ]
+                                                    )
+                                                  : _vm._e()
+                                              ]
+                                            )
+                                          }
+                                        ),
+                                        0
+                                      )
+                                    ])
+                                  ]
+                                )
+                              }),
+                              0
+                            ),
+                            _vm._v(" "),
+                            _vm.reportsPerUser.length
+                              ? _c(
+                                  "div",
+                                  { staticClass: "row mb-3 mt-3 ml-1" },
+                                  [
+                                    _c("div", { staticClass: "col-6" }),
+                                    _vm._v(" "),
+                                    _c(
+                                      "div",
+                                      { staticClass: "col-6 text-right" },
+                                      [
+                                        _c("span", [
+                                          _vm._v(
+                                            _vm._s(_vm.reportsPerUser.length) +
+                                              " Checklist(s)"
+                                          )
                                         ])
                                       ]
                                     )
-                                  }),
-                                  0
+                                  ]
                                 )
-                              ]
-                            )
+                              : _vm._e()
                           ])
-                        : _vm._e(),
-                      _vm._v(" "),
-                      _vm.reportsPerUser.length
-                        ? _c("div", { staticClass: "row mb-3 mt-3 ml-1" }, [
-                            _c("div", { staticClass: "col-6" }, [
-                              _c(
-                                "button",
-                                {
-                                  staticClass:
-                                    "btn btn-default btn-sm btn-fill",
-                                  attrs: { disabled: !_vm.showPreviousLink() },
-                                  on: {
-                                    click: function($event) {
-                                      return _vm.setPage(_vm.currentPage - 1)
-                                    }
-                                  }
-                                },
-                                [_vm._v(" Previous ")]
-                              ),
-                              _vm._v(" "),
-                              _c("span", { staticClass: "text-dark" }, [
-                                _vm._v(
-                                  "Page " +
-                                    _vm._s(_vm.currentPage + 1) +
-                                    " of " +
-                                    _vm._s(_vm.totalPagesView)
-                                )
-                              ]),
-                              _vm._v(" "),
-                              _c(
-                                "button",
-                                {
-                                  staticClass:
-                                    "btn btn-default btn-sm btn-fill",
-                                  attrs: { disabled: !_vm.showNextLinkView() },
-                                  on: {
-                                    click: function($event) {
-                                      return _vm.setPage(_vm.currentPage + 1)
-                                    }
-                                  }
-                                },
-                                [_vm._v(" Next ")]
-                              )
-                            ]),
-                            _vm._v(" "),
-                            _c("div", { staticClass: "col-6 text-right" }, [
-                              _c("span", [
-                                _vm._v(
-                                  _vm._s(_vm.reportsPerUser.length) +
-                                    " Checklist(s)"
-                                )
-                              ])
-                            ])
-                          ])
-                        : _vm._e()
-                    ])
+                        ])
+                      : _c("div", [
+                          _vm._v(
+                            "\n                            No report available\n                        "
+                          )
+                        ])
                   ])
                 : _vm._e()
             ]
           )
-        ])
+        ]),
+        _vm._v(" "),
+        _c(
+          "div",
+          {
+            staticClass: "modal fade",
+            attrs: {
+              id: "approveModal",
+              tabindex: "-1",
+              role: "dialog",
+              "aria-labelledby": "exampleModalLabel",
+              "aria-hidden": "true",
+              "data-backdrop": "static"
+            }
+          },
+          [
+            _c(
+              "span",
+              { staticClass: "closed", attrs: { "data-dismiss": "modal" } },
+              [_vm._v("×")]
+            ),
+            _vm._v(" "),
+            _c(
+              "div",
+              {
+                staticClass: "modal-dialog modal-dialog-centered",
+                attrs: { role: "document" }
+              },
+              [
+                _c("div", { staticClass: "modal-content" }, [
+                  _vm._m(6),
+                  _vm._v(" "),
+                  _vm._m(7),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "modal-footer" }, [
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-secondary",
+                        attrs: { "data-dismiss": "modal" }
+                      },
+                      [_vm._v("Close")]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-primary",
+                        on: { click: _vm.approvedReport }
+                      },
+                      [_vm._v("Approved")]
+                    )
+                  ])
+                ])
+              ]
+            )
+          ]
+        )
       ])
     ])
   ])
@@ -51808,22 +51972,78 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("thead", { staticClass: "thead-light" }, [
-      _c("tr", { staticClass: "d-flex" }, [
-        _c("th", { staticClass: "col-1", attrs: { scope: "col" } }, [
-          _vm._v("ID")
-        ]),
-        _vm._v(" "),
-        _c("th", { staticClass: "col-6", attrs: { scope: "col" } }, [
-          _vm._v("Name")
-        ]),
-        _vm._v(" "),
-        _c("th", { staticClass: "col-2", attrs: { scope: "col" } }, [
-          _vm._v("Points")
-        ]),
-        _vm._v(" "),
-        _c("th", { staticClass: "col-3", attrs: { scope: "col" } }, [
-          _vm._v("File")
+    return _c("div", { staticClass: "row" }, [
+      _c("h1", { staticClass: "col-sm-12" }, [_vm._v("Rating:")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "row mb-2" }, [
+      _c(
+        "a",
+        { staticClass: "summary-btn", attrs: { href: "javascript:void(0)" } },
+        [_vm._v("View Summary Report")]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "col-sm-6" }, [
+      _c(
+        "button",
+        {
+          staticClass: "btn btn-block btn-primary",
+          attrs: {
+            id: "btn-approved",
+            "data-toggle": "modal",
+            "data-target": "#approveModal"
+          }
+        },
+        [_vm._v("APPROVED")]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-header" }, [
+      _c(
+        "h5",
+        { staticClass: "modal-title", attrs: { id: "addCompanyLabel" } },
+        [_vm._v("Approve Report")]
+      ),
+      _vm._v(" "),
+      _c(
+        "button",
+        {
+          staticClass: "close",
+          attrs: {
+            type: "button",
+            "data-dismiss": "modal",
+            "aria-label": "Close"
+          }
+        },
+        [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-body" }, [
+      _c("div", { staticClass: "row" }, [
+        _c("div", { staticClass: "col-md-12" }, [
+          _c("div", { staticClass: "form-group" }, [
+            _vm._v(
+              "\n                                    Are you sure you want to approve this Report?\n                                "
+            )
+          ])
         ])
       ])
     ])

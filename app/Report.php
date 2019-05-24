@@ -13,10 +13,13 @@ class Report extends Model
      * @var array
      */
     protected $fillable = [
-        'company_id', 'company_location','category', 'area', 'inspector', 'date_of_inspection',
-        'time_of_inspection', 'checklist_id','checklist_batch','name','points','status'
+        'company_id', 'location_id', 'operation_line_id','category_id', 'area_id', 'process_owner', 'inspector', 
+        'date_of_inspection','time_of_inspection', 'checklist_id','checklist_batch','name','points','status'
     ];
 
     // Relation
+    public function uploadedFiles(){
+        return $this->hasMany(UploadedFile::class);
+    }
 
 }

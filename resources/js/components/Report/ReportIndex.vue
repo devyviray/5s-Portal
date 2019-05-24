@@ -92,44 +92,43 @@
                         </div>
                     </div>
                     
-
                     <!-- Create Report page -->
                     <div class="row mt-5" v-if="show_create_report">
-                        <div class="col-md-4 card card-report">
+                        <div class="col-md-3 card card-report">
                             <div class="card-body">
                                 <div class="form-group row">
-                                    <span class="col-sm-3 ">Company:</span>
-                                    <div class="col-sm-9">
+                                    <span class="col-sm-5">Company:</span>
+                                    <div class="col-sm-7">
                                         <span> {{ this.company.name + ' - ' + this.location.name }}</span>
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <span class="col-sm-3 ">Operation Line:</span>
-                                    <div class="col-sm-9">
+                                    <span class="col-sm-5">Operation Line:</span>
+                                    <div class="col-sm-7">
                                         <span> {{ this.operation_line.name }}</span>
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <span class="col-sm-3 ">Category:</span>
-                                    <div class="col-sm-9">
+                                    <span class="col-sm-5">Category:</span>
+                                    <div class="col-sm-7">
                                         <span> {{ this.category.name }}</span>
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <span class="col-sm-3 ">Area:</span>
-                                    <div class="col-sm-9">
+                                    <span class="col-sm-5">Area:</span>
+                                    <div class="col-sm-7">
                                         <span> {{ this.area.name }}</span>
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <span class="col-sm-3 ">Inspector:</span>
-                                    <div class="col-sm-9">
+                                    <span class="col-sm-5">Inspector:</span>
+                                    <div class="col-sm-7">
                                         <span> {{ this.userName }}</span>
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label for="colFormLabel" class="col-sm-3 col-form-label">Process owner</label>
-                                    <div class="col-sm-9">
+                                    <label for="colFormLabel" class="col-sm-5 col-form-label">Process owner</label>
+                                    <div class="col-sm-7">
                                         <select class="form-control" v-model="process_owner">
                                             <option v-for="(process_owner,p) in process_owners" v-bind:key="p" :value="process_owner.id"> {{ process_owner.name }}</option>
                                         </select>
@@ -137,24 +136,24 @@
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label for="colFormLabel" class="col-sm-3 col-form-label">Date of Inspection</label>
-                                    <div class="col-sm-9">
+                                    <label for="colFormLabel" class="col-sm-5 col-form-label">Date of Inspection</label>
+                                    <div class="col-sm-7">
                                         <input type="date" class="form-control" id="colFormLabel" v-model="date_of_inspection">
                                         <span class="text-danger" v-if="errors.process_owner  ">{{ errors.date_of_inspection[0] }}</span>
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label for="colFormLabel" class="col-sm-3 col-form-label">Time</label>
-                                    <div class="col-sm-9">
+                                    <label for="colFormLabel" class="col-sm-5 col-form-label">Time</label>
+                                    <div class="col-sm-7">
                                         <input type="email" class="form-control" id="colFormLabel" v-model="time_of_inspection">
                                         <span class="text-danger" v-if="errors.time_of_inspection  ">{{ errors.time_of_inspection[0] }}</span>
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label for="colFormLabel" class="col-sm-3 col-form-label">Cheklist</label>
-                                    <div class="col-sm-9">
+                                    <label for="colFormLabel" class="col-sm-5 col-form-label">Cheklist</label>
+                                    <div class="col-sm-7">
                                         <select class="form-control" v-model="checklist" @change="getSelectedChecklist(checklist)">
-                                            <option v-for="(checklist,c) in checklists" v-bind:key="c" :value="checklist"> {{ ' CHECKLIST - '+ checklist[0].created_at }}</option>
+                                            <option v-for="(checklist,c) in checklists" v-bind:key="c" :value="checklist"> {{  checklist[0].name }}</option>
                                         </select>
                                         <span class="text-danger" v-if="errors.checklist  ">{{ errors.checklist[0] }}</span>
                                     </div>
@@ -168,8 +167,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-8">
-                            <div class="table-responsive" v-if="selected_checklist.length">
+                        <div class="col-md-9">
+                            <div class="table-responsive" v-if="selected_checklist.length" style="height: 720px">
                                 <!-- Projects table -->
                                 <table class="table align-items-center table-flush">
                                     <thead class="thead-light">
@@ -181,7 +180,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr v-for="(checklist, c) in filteredQueues" v-bind:key="c" class="d-flex">
+                                        <tr v-for="(checklist, c) in selected_checklist" v-bind:key="c" class="d-flex">
                                             <td scope="row" class="col-sm-1">{{ c + 1 }}</td>
                                             <td class="col-sm-6" style="white-space: inherit;">{{ checklist.requirement +' - '+ checklist.description  }}</td>
                                             <td class="col-sm-2">
@@ -190,9 +189,11 @@
                                                     <option value="1"> 1 </option>
                                                     <option value="2"> 2 </option>
                                                 </select>
+                                                <span class="text-danger" v-if="errors['points.'+c] || errors.points"> This field is required </span> 
+                         
                                             </td>
                                             <td class="col-sm-3">
-                                                <input type="file" multiple="multiple" id="attachments" placeholder="Attach file" @change="uploadFileChange"><br>
+                                                <input type="file" multiple="multiple" id="attachments" accept="image/*" placeholder="Attach file" @change="uploadFileChange($event,checklist.id)"><br>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -200,9 +201,9 @@
                             </div>
                             <div class="row mb-3 mt-3 ml-1" v-if="selected_checklist.length ">
                                 <div class="col-6">
-                                    <button :disabled="!showPreviousLink()" class="btn btn-default btn-sm btn-fill" v-on:click="setPage(currentPage - 1)"> Previous </button>
+                                    <!-- <button :disabled="!showPreviousLink()" class="btn btn-default btn-sm btn-fill" v-on:click="setPage(currentPage - 1)"> Previous </button>
                                         <span class="text-dark">Page {{ currentPage + 1 }} of {{ totalPages }}</span>
-                                    <button :disabled="!showNextLink()" class="btn btn-default btn-sm btn-fill" v-on:click="setPage(currentPage + 1)"> Next </button>
+                                    <button :disabled="!showNextLink()" class="btn btn-default btn-sm btn-fill" v-on:click="setPage(currentPage + 1)"> Next </button> -->
                                 </div>
                                 <div class="col-6 text-right">
                                     <span>{{ selected_checklist.length }} Checklist(s)</span>
@@ -212,116 +213,145 @@
                     </div>
 
                     <!-- View Report page -->
-                    <div class="row mt-5" v-if="show_view_report">
-                            <div class="col-md-4 card card-report">
-                            <div class="card-body">
-                                <div class="form-group row">
-                                    <span class="col-sm-3 ">Company:</span>
-                                    <div class="col-sm-9">
-                                        <span> {{ this.company.name }} </span>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <span class="col-sm-3 ">Operation Line:</span>
-                                    <div class="col-sm-9">
-                                        <span> {{ this.operation_line.name }} </span>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <span class="col-sm-3 ">Category:</span>
-                                    <div class="col-sm-9">
-                                        <span> {{ this.category.name }} </span>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <span class="col-sm-3 ">Area:</span>
-                                    <div class="col-sm-9">
-                                        <span> {{ this.area.name }}  </span>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <span class="col-sm-3 ">Inspector:</span>
-                                    <div class="col-sm-9">
-                                        <span> {{ this.userName }} </span>
-                                    </div>
-                                </div>
-                                <div v-if="reportsPerUser.length">
+                    <div v-if="show_view_report">
+                        <div  class="row mt-5" v-if="reportsPerUser.length">
+                            <div class="col-md-3 card card-view-report" >
+                                <div class="card-body">
                                     <div class="form-group row">
-                                        <span class="col-sm-3 ">Date of Inspection:</span>
-                                        <div class="col-sm-9">
-                                            <span>{{ this.reportsPerUser[0].date_of_inspection }}</span>
+                                        <h1 class="col-sm-12 ">{{ this.category.name }}</h1>
+                                    </div>
+                                    <div class="form-group row">
+                                        <span class="col-sm-4 ">Company:</span>
+                                        <div class="col-sm-8">
+                                            <span> {{ this.company.name }} </span>
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <span class="col-sm-3 ">Time</span>
-                                        <div class="col-sm-9">
-                                            <span>{{ this.reportsPerUser[0].time_of_inspection }}</span>
+                                        <span class="col-sm-4 ">Operation Line:</span>
+                                        <div class="col-sm-8">
+                                            <span> {{ this.operation_line.name }} </span>
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <span class="col-sm-3 ">Rating:</span>
-                                        <div class="col-sm-9">
-                                            <span>{{ countRating(this.reportsPerUser) }} %</span>
+                                        <span class="col-sm-4 ">Area:</span>
+                                        <div class="col-sm-8">
+                                            <span> {{ this.area.name }}  </span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <span class="col-sm-4 ">Inspector:</span>
+                                        <div class="col-sm-8">
+                                            <span> {{ this.userName }} </span>
+                                        </div>
+                                    </div>
+                                    <div v-if="reportsPerUser.length">
+                                        <div class="form-group row">
+                                            <span class="col-sm-4">Date of Inspection:</span>
+                                            <div class="col-sm-8">
+                                                <span>{{ this.reportsPerUser[0].date_of_inspection }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <span class="col-sm-4">Time</span>
+                                            <div class="col-sm-8">
+                                                <span>{{ this.reportsPerUser[0].time_of_inspection }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <h1 class="col-sm-12">Rating:</h1>
+                                        </div>
+                                        <div class="row mb-2">
+                                            <div class="col-sm-1"></div>
+                                            <div class="col-sm-10 div-rating">
+                                                <span>{{ countRating(this.reportsPerUser) }} %</span>
+                                            </div>
+                                            <div class="col-sm-1"></div>
+                                        </div>
+                                        <div class="row mb-2">
+                                            <a class="summary-btn" href="javascript:void(0)">View Summary Report</a>
+                                        </div>   
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-sm-6">
+                                            <button id="btn-checking" class="btn btn-block btn-danger" @click="forCheckingReport">FOR CHECKING</button>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <button id="btn-approved" class="btn btn-block btn-primary" data-toggle="modal" data-target="#approveModal">APPROVED</button>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="alert alert-info col-md-12" v-if="show_approved">
+                                            <strong>Success!</strong> Report succesfully approved
                                         </div>
                                     </div>
                                 </div>
-                                <div class="form-group row">
-                                    <div class="col-sm-4">
-                                        <button class="btn btn-block btn-danger" @click="forCheckingReport(this.reportsPerUser)">FOR CHECKING</button>
+                            </div>
+                            <div class="col-md-9">
+                                <div class="table-responsive" style="height: 720px">
+                                    <div class="col-md-12 card mb-3" v-for="(checklist, c) in reportsPerUser" v-bind:key="c" style="background-color: #e6e6e6 !important">
+                                        <div class="card-body">
+                                            <span>{{ c + 1 +'. '+checklist.name }}</span><br>
+                                            <span class="ml-4"><b>Points:{{checklist.points}}</b></span>
+                                            <div class="row mt-2 text-center">
+                                                <div class="col-md-3" v-for="(uploadFile, u) in checklist.uploaded_files" :key="u">
+                                                    <img class="report-img mb-2"  :src="`./storage/`+uploadFile.file_path"><br>
+                                                    <span>{{ c + 1 +'.' }} </span> <span> {{  u + 1  }} </span>
+                                                    <input type="text" id="comment" class="form-control comment-input" v-model="comment[c + 1 +'' + u + 1]" placeholder="Comment">
+                                                    <span class="text-danger" v-if="errors['comment.'+c + 1 +'' + u + 1]"> This field is required </span> 
+                                                </div> 
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="col-sm-4">
-                                        <button class="btn btn-block btn-primary" @click="approvedReport(this.reportsPerUser)">APPROVED</button>
+                                </div>
+                                <div class="row mb-3 mt-3 ml-1" v-if="reportsPerUser.length ">
+                                    <div class="col-6">
+                                        <!-- <button :disabled="!showPreviousLink()" class="btn btn-default btn-sm btn-fill" v-on:click="setPage(currentPage - 1)"> Previous </button>
+                                            <span class="text-dark">Page {{ currentPage + 1 }} of {{ totalPagesView }}</span>
+                                        <button :disabled="!showNextLinkView()" class="btn btn-default btn-sm btn-fill" v-on:click="setPage(currentPage + 1)"> Next </button> -->
                                     </div>
-                                    <div class="col-sm-4">
-                                        <button class="btn btn-success" @click="viewSummaryReport(this.reportsPerUser)">SUMMARY REPORT</button>
+                                    <div class="col-6 text-right">
+                                        <span>{{ reportsPerUser.length }} Checklist(s)</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-8">
-                            <div class="table-responsive" v-if="reportsPerUser.length">
-                                <!-- View reports table -->
-                                <table class="table align-items-center table-flush">
-                                    <thead class="thead-light">
-                                        <tr class="d-flex">
-                                            <th scope="col" class="col-1">ID</th>
-                                            <th scope="col" class="col-6">Name</th>
-                                            <th scope="col" class="col-2">Points</th>
-                                            <th scope="col" class="col-3">File</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr v-for="(checklist, c) in filteredQueuesView" v-bind:key="c" class="d-flex">
-                                            <td scope="row" class="col-sm-1">{{ c + 1 }}</td>
-                                            <td class="col-sm-6" style="white-space: inherit;">{{ checklist.name }}</td>
-                                            <td class="col-sm-2">
-                                                <select class="form-control" v-model="checklist.points">
-                                                    <option value="0"> 0 </option>
-                                                    <option value="1"> 1 </option>
-                                                    <option value="2"> 2 </option>
-                                                </select>
-                                            </td>
-                                            <td class="col-sm-3">
-                                                <input type="file" multiple="multiple" id="attachments" placeholder="Attach file" @change="uploadFileChange"><br>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="row mb-3 mt-3 ml-1" v-if="reportsPerUser.length ">
-                                <div class="col-6">
-                                    <button :disabled="!showPreviousLink()" class="btn btn-default btn-sm btn-fill" v-on:click="setPage(currentPage - 1)"> Previous </button>
-                                        <span class="text-dark">Page {{ currentPage + 1 }} of {{ totalPagesView }}</span>
-                                    <button :disabled="!showNextLinkView()" class="btn btn-default btn-sm btn-fill" v-on:click="setPage(currentPage + 1)"> Next </button>
-                                </div>
-                                <div class="col-6 text-right">
-                                    <span>{{ reportsPerUser.length }} Checklist(s)</span>
-                                </div>
-                            </div>
+                        <div v-else>
+                            No report available
                         </div>
                     </div>
                 </div>
             </div>
+
+            
+            <!-- Approve Report Modal -->
+            <div class="modal fade" id="approveModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
+                <span class="closed" data-dismiss="modal">&times;</span>
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addCompanyLabel">Approve Report</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                    <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    Are you sure you want to approve this Report?
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" data-dismiss='modal'>Close</button>
+                        <button class="btn btn-primary" @click="approvedReport">Approved</button>
+                    </div>
+                    </div>
+                </div>
+            </div>
+
+
         </div>
     </div>
 </div>
@@ -361,16 +391,21 @@
                 selected_data: [],
                 points: [],
                 attachments: [],
+                attachment_ids: [],
                 reportsPerUser: [],
+                comment: [],
+                final_rating: '',
                 report_show: false,
                 show_create_report: false,
                 show_view_report: false,
+                show_approved: false,
                 errors: [],
                 currentPage: 0,
                 itemsPerPage: 8,
                 keywords: '',
                 fileSize: 0,
                 maximumSize: 5000000,
+                formData: new FormData(),
             }
         },
         created(){
@@ -380,8 +415,15 @@
             this.fetchChecklist();
         },
         methods:{
-            uploadFileChange(e){
-                this.attachments = [];
+            prepareFields(){
+                if(this.attachments.length > 0){
+                    for(var i = 0; i < this.attachments.length; i++){
+                        let attachment = this.attachments[i];
+                        this.formData.append('attachments[]', attachment);
+                    }
+                } 
+            },
+            uploadFileChange(e, id){
                 var files = e.target.files || e.dataTransfer.files;
 
                 if(!files.length)
@@ -389,6 +431,7 @@
                 
                 for (var i = files.length - 1; i >= 0; i--){
                     this.attachments.push(files[i]);
+                    this.attachment_ids.push(id);
                     this.fileSize = this.fileSize+files[i].size / 1024 / 1024;
                 }
                 if(this.fileSize > 5){
@@ -397,6 +440,7 @@
                     this.attachments = [];
                     this.fileSize = 0;
                 }
+
             },
             changeCompany(company,action){
                 if(action == 'getCompanies'){
@@ -494,40 +538,21 @@
                 }
             },
             getSelectedChecklist(checklist){
+                this.errors = [];
+                this.points = [];
                 this.selected_checklist = [];
                 this.selected_checklist = checklist;
-            },
-            addReport(selected_checklist,points){
-                axios.post('/report', {
-                    company: this.company.id,
-                    location: this.location.id,
-                    operation_line: this.operation_line.id,
-                    category: this.category.id,
-                    area: this.area.id,
-                    process_owner: this.process_owner,
-                    date_of_inspection: this.date_of_inspection,
-                    time_of_inspection: this.time_of_inspection,
-                    checklist: selected_checklist,
-                    points: points,
-                    attachments: this.attachments
-                })
-                .then(response => { 
-
-                })
-                .catch(error => { 
-                    this.errors = error.response.data.errors;
-                });
-            },
-            createReport(){
-                this.show_create_report = true;
-                this.show_view_report = false;
-                this.fetchInspectors();
             },
             viewReport(){
                 this.show_create_report = false;
                 this.show_view_report = true;
                 this.fetchReports();
 
+            },
+            createReport(){
+                this.show_create_report = true;
+                this.show_view_report = false;
+                this.fetchInspectors();
             },
             fetchReports(){
                 axios.get(`/reports-per-user/${this.company.id}/${this.location.id}/${this.operation_line.id}/${this.category.id}/${this.area.id}`)
@@ -538,12 +563,81 @@
                     this.errors = error.response.data.errors;
                 })
             },
+            addReport(selected_checklist,points){
+                this.errors = [];
+                this.prepareFields();
+                this.formData.append('company', this.company.id ? this.company.id : '');
+                this.formData.append('location', this.location.id ? this.location.id : '');
+                this.formData.append('operation_line', this.operation_line.id ? this.operation_line.id : '');
+                this.formData.append('category', this.category.id ? this.category.id : '');
+                this.formData.append('area', this.area.id ? this.area.id : '');
+                this.formData.append('process_owner', this.process_owner ? this.process_owner : '');
+                this.formData.append('date_of_inspection', this.date_of_inspection ? this.date_of_inspection : '');
+                this.formData.append('time_of_inspection', this.time_of_inspection ? this.time_of_inspection : '');
+                this.formData.append('checklist', selected_checklist ? JSON.stringify(selected_checklist) : '');
+                this.formData.append('points', points.length == 0 ? '' : points);
+                this.formData.append('attachment_ids',this.attachment_ids.length > 0 ? this.attachment_ids : '');  
+
+                axios.post('/report', this.formData)
+                .then(response => { 
+                    this.resetForm();
+                    alert('Report Successfully created');
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.errors;
+                });
+            },
+            approvedReport(){
+                this.enabledBtn();
+                var report_ids = [];
+                this.reportsPerUser.filter(item => report_ids.push(item.id))
+                axios.post('/report-approve', {
+                    ids: report_ids,
+                    final_rating: this.final_rating
+                })
+                .then(response => {
+                    this.show_approved = true;
+                    this.disabledBtn();
+                    $('#approveModal').modal('hide');
+                })
+                .catch(error => {
+                    this.errors = error.response.data.errors
+                    this.enabledBtn();
+                })
+            },
+            forCheckingReport(){
+                axios.post('/report-checking', { 
+                    comment: this.comment
+                })
+                .then(response => { 
+             
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.errors;
+                })
+            },
             countRating(reportsPerUser){
                 var denominator = reportsPerUser.length * 2;
                 var total_points = 0;
                 reportsPerUser.filter(item => total_points = total_points + item.points);
 
-                return total_points / denominator * 100;
+                return this.final_rating = total_points / denominator * 100;
+            },
+            resetForm(){
+                this.process_owner = '';
+                this.date_of_inspection = '';
+                this.time_of_inspection = '';
+                this.points = '';
+            },
+            disabledBtn(){
+                document.getElementById('btn-checking').disabled = true;
+                document.getElementById('btn-approved').disabled = true;
+                document.getElementsByClassName('comment-input').disabled = true;
+            },
+            enabledBtn(){
+                document.getElementById('btn-checking').disabled = false;
+                document.getElementById('btn-approved').disabled = false;
+                document.getElementsByClassName('comment-input').disabled = false;
             },
             setPage(pageNumber) {
                 this.currentPage = pageNumber;
@@ -572,11 +666,9 @@
                 if(this.currentPage >= this.totalPages) {
                     this.currentPage = this.totalPages - 1
                 }
-
                 if(this.currentPage == -1) {
                     this.currentPage = 0;
                 }
-
                 return queues_array;
             },
             totalPagesView() {
@@ -593,7 +685,6 @@
                 if(this.currentPage == -1) {
                     this.currentPage = 0;
                 }
-
                 return queues_array;
             },
             logoLink(){

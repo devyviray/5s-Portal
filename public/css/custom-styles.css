@@ -780,9 +780,27 @@ tbody{
     background-color: #fff;
 }
 .card-report{
-    /* background-color: #ABAEB3 !important; */
        background-color: #302d2d !important;
        color: #fff;
+}
+.card-view-report{
+    background-color: #40B04A !important;
+    color: #fff;
+}
+.report-img{
+    width: 150px;
+    height: 150px;
+}
+.summary-btn{
+    margin: 0 auto;
+    color: #fff;
+}
+.div-rating{
+    background-color: #A9D8AC !important;
+    border-radius: 20px;
+    font-size: 80px;
+    color: #010502;
+    text-align: center;
 }
 
 /* vue-carousel css */

@@ -79,6 +79,8 @@ Route::group(['middleware' => 'auth'], function(){
     Route::patch('/report/{report}', 'ReportController@update');
     Route::delete('/report/{report}', 'ReportController@destroy');
     Route::get('/reports-per-user/{companyId}/{locationId}/{operationLineId}/{categoryId}/{areaId}', 'ReportController@getReportsPerUser');
+    Route::post('/report-approve', 'ReportController@approveReportPerUser');
+    Route::post('/report-checking', 'ReportController@checkingReporPerUser');
 
     // operation line
     Route::get('/operation-lines', 'OperationLineController@index')->name('operation-lines');
