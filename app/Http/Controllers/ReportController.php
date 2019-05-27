@@ -160,7 +160,15 @@ class ReportController extends Controller
             'final_rating' => 'required'
         ]);
 
-        return Report::whereIn('id', $request->ids)->update(['status' => 3, 'ratings' => $request->final_rating]);
+        DB::beginTransaction();
+        try {
+            $report = Report::whereIn('id', $request->ids)->update(['status' => 3, 'ratings' => $request->final_rating]);
+            DB::commit();
+            return  $report;
+
+        } catch (Exception $e) {
+            DB::rollBack();
+        }
     }
 
     /**
@@ -171,8 +179,25 @@ class ReportController extends Controller
      */
     public function checkingReporPerUser(Request $request){
         $request->validate([
-            'comment.*' => 'required',
+            'ids' => 'required',
         ]);
+
+        DB::beginTransaction();
+        try {
+            $ids = [];
+            foreach($request->comments as $comment){
+                    $uploadedFile = UploadedFile::findOrFail($comment['id']);
+                    $uploadedFile->update(['comment' => $comment['text']]);
+                    $ids[] = $comment['id'];
+            }
+            $report = Report::whereIn('id', $request->ids)->update(['status' => 2]); //Status for checking 
+            DB::commit();
+            return  $report;
+
+        } catch (Exception $e) {
+            DB::rollBack();
+        }
+    
     }
 
     /**

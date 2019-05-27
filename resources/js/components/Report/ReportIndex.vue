@@ -193,7 +193,7 @@
                          
                                             </td>
                                             <td class="col-sm-3">
-                                                <input type="file" multiple="multiple" id="attachments" accept="image/*" placeholder="Attach file" @change="uploadFileChange($event,checklist.id)"><br>
+                                                <input type="file" multiple="multiple" id="attachments" accept="image/*" placeholder="Attach file" @change="uploadFileChange($event,c,checklist.id)"><br>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -283,6 +283,9 @@
                                         <div class="alert alert-info col-md-12" v-if="show_approved">
                                             <strong>Success!</strong> Report succesfully approved
                                         </div>
+                                        <div class="alert alert-info col-md-12" v-if="show_forChecking">
+                                             <strong>Success!</strong> Report succesfully resent for checking
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -296,7 +299,8 @@
                                                 <div class="col-md-3" v-for="(uploadFile, u) in checklist.uploaded_files" :key="u">
                                                     <img class="report-img mb-2"  :src="`./storage/`+uploadFile.file_path"><br>
                                                     <span>{{ c + 1 +'.' }} </span> <span> {{  u + 1  }} </span>
-                                                    <input type="text" id="comment" class="form-control comment-input" v-model="comment[c + 1 +'' + u + 1]" placeholder="Comment">
+                                                    <input type="text" :id="uploadFile.id" class="form-control comment-input"  placeholder="Comment Hidden">
+                                                    <!-- <input type="text" id="comment" class="form-control comment-input" v-model="comment[c + 1 +'' + u + 1]" placeholder="Comment"> -->
                                                     <span class="text-danger" v-if="errors['comment.'+c + 1 +'' + u + 1]"> This field is required </span> 
                                                 </div> 
                                             </div>
@@ -392,13 +396,15 @@
                 points: [],
                 attachments: [],
                 attachment_ids: [],
+                attachment_index: [],
                 reportsPerUser: [],
-                comment: [],
+                comments: [],
                 final_rating: '',
                 report_show: false,
                 show_create_report: false,
                 show_view_report: false,
                 show_approved: false,
+                show_forChecking: false,
                 errors: [],
                 currentPage: 0,
                 itemsPerPage: 8,
@@ -423,7 +429,7 @@
                     }
                 } 
             },
-            uploadFileChange(e, id){
+            uploadFileChange(e, index,id){
                 var files = e.target.files || e.dataTransfer.files;
 
                 if(!files.length)
@@ -431,6 +437,7 @@
                 
                 for (var i = files.length - 1; i >= 0; i--){
                     this.attachments.push(files[i]);
+                    this.attachment_index.push(index);
                     this.attachment_ids.push(id);
                     this.fileSize = this.fileSize+files[i].size / 1024 / 1024;
                 }
@@ -440,7 +447,6 @@
                     this.attachments = [];
                     this.fileSize = 0;
                 }
-
             },
             changeCompany(company,action){
                 if(action == 'getCompanies'){
@@ -577,6 +583,7 @@
                 this.formData.append('checklist', selected_checklist ? JSON.stringify(selected_checklist) : '');
                 this.formData.append('points', points.length == 0 ? '' : points);
                 this.formData.append('attachment_ids',this.attachment_ids.length > 0 ? this.attachment_ids : '');  
+                this.formData.append('attachment_index',this.attachment_index.length > 0 ? this.attachment_index : '');  
 
                 axios.post('/report', this.formData)
                 .then(response => { 
@@ -597,6 +604,7 @@
                 })
                 .then(response => {
                     this.show_approved = true;
+                    this.forCheckingReport = false;
                     this.disabledBtn();
                     $('#approveModal').modal('hide');
                 })
@@ -606,14 +614,31 @@
                 })
             },
             forCheckingReport(){
-                axios.post('/report-checking', { 
-                    comment: this.comment
+                this.enabledBtn();
+                let t = this;
+                var comment = $(".comment-input").map(function() {
+                    t.comments.push({
+                        id: $(this).attr('id'),
+                        text: $(this).val()
+                    });
+                }).get();
+                
+                var report_ids = [];
+                this.reportsPerUser.filter(item => report_ids.push(item.id))
+                
+                axios.post('/report-checking', {
+                    ids: report_ids, 
+                    comments: t.comments
                 })
                 .then(response => { 
-             
+                    this.disabledBtn();
+                    this.show_forChecking = true;
+                    this.show_approved = false;
+                    
                 })
                 .catch(error => { 
                     this.errors = error.response.data.errors;
+                    this.enabledBtn();
                 })
             },
             countRating(reportsPerUser){

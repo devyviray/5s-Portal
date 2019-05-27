@@ -27,7 +27,6 @@ class CreateReportsTable extends Migration
             $table->integer('checklist_id');
             $table->integer('checklist_batch');
             $table->string('name', 1000);
-            $table->string('comment', 1000)->nullable();
             $table->integer('points');
             $table->integer('ratings')->nullable();
             $table->integer('status');

@@ -5943,6 +5943,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 
 
 
@@ -5976,13 +5980,15 @@ __webpack_require__.r(__webpack_exports__);
       points: [],
       attachments: [],
       attachment_ids: [],
+      attachment_index: [],
       reportsPerUser: [],
-      comment: [],
+      comments: [],
       final_rating: '',
       report_show: false,
       show_create_report: false,
       show_view_report: false,
       show_approved: false,
+      show_forChecking: false,
       errors: [],
       currentPage: 0,
       itemsPerPage: 8,
@@ -6007,12 +6013,13 @@ __webpack_require__.r(__webpack_exports__);
         }
       }
     },
-    uploadFileChange: function uploadFileChange(e, id) {
+    uploadFileChange: function uploadFileChange(e, index, id) {
       var files = e.target.files || e.dataTransfer.files;
       if (!files.length) return;
 
       for (var i = files.length - 1; i >= 0; i--) {
         this.attachments.push(files[i]);
+        this.attachment_index.push(index);
         this.attachment_ids.push(id);
         this.fileSize = this.fileSize + files[i].size / 1024 / 1024;
       }
@@ -6166,6 +6173,7 @@ __webpack_require__.r(__webpack_exports__);
       this.formData.append('checklist', selected_checklist ? JSON.stringify(selected_checklist) : '');
       this.formData.append('points', points.length == 0 ? '' : points);
       this.formData.append('attachment_ids', this.attachment_ids.length > 0 ? this.attachment_ids : '');
+      this.formData.append('attachment_index', this.attachment_index.length > 0 ? this.attachment_index : '');
       axios.post('/report', this.formData).then(function (response) {
         _this9.resetForm();
 
@@ -6187,6 +6195,7 @@ __webpack_require__.r(__webpack_exports__);
         final_rating: this.final_rating
       }).then(function (response) {
         _this10.show_approved = true;
+        _this10.forCheckingReport = false;
 
         _this10.disabledBtn();
 
@@ -6200,10 +6209,30 @@ __webpack_require__.r(__webpack_exports__);
     forCheckingReport: function forCheckingReport() {
       var _this11 = this;
 
+      this.enabledBtn();
+      var t = this;
+      var comment = $(".comment-input").map(function () {
+        t.comments.push({
+          id: $(this).attr('id'),
+          text: $(this).val()
+        });
+      }).get();
+      var report_ids = [];
+      this.reportsPerUser.filter(function (item) {
+        return report_ids.push(item.id);
+      });
       axios.post('/report-checking', {
-        comment: this.comment
-      }).then(function (response) {})["catch"](function (error) {
+        ids: report_ids,
+        comments: t.comments
+      }).then(function (response) {
+        _this11.disabledBtn();
+
+        _this11.show_forChecking = true;
+        _this11.show_approved = false;
+      })["catch"](function (error) {
         _this11.errors = error.response.data.errors;
+
+        _this11.enabledBtn();
       });
     },
     countRating: function countRating(reportsPerUser) {
@@ -51448,6 +51477,7 @@ var render = function() {
                                                   change: function($event) {
                                                     return _vm.uploadFileChange(
                                                       $event,
+                                                      c,
                                                       checklist.id
                                                     )
                                                   }
@@ -51673,6 +51703,22 @@ var render = function() {
                                           )
                                         ]
                                       )
+                                    : _vm._e(),
+                                  _vm._v(" "),
+                                  _vm.show_forChecking
+                                    ? _c(
+                                        "div",
+                                        {
+                                          staticClass:
+                                            "alert alert-info col-md-12"
+                                        },
+                                        [
+                                          _c("strong", [_vm._v("Success!")]),
+                                          _vm._v(
+                                            " Report succesfully resent for checking\n                                        "
+                                          )
+                                        ]
+                                      )
                                     : _vm._e()
                                 ])
                               ])
@@ -51753,44 +51799,13 @@ var render = function() {
                                                 ]),
                                                 _vm._v(" "),
                                                 _c("input", {
-                                                  directives: [
-                                                    {
-                                                      name: "model",
-                                                      rawName: "v-model",
-                                                      value:
-                                                        _vm.comment[
-                                                          c + 1 + "" + u + 1
-                                                        ],
-                                                      expression:
-                                                        "comment[c + 1 +'' + u + 1]"
-                                                    }
-                                                  ],
                                                   staticClass:
                                                     "form-control comment-input",
                                                   attrs: {
                                                     type: "text",
-                                                    id: "comment",
-                                                    placeholder: "Comment"
-                                                  },
-                                                  domProps: {
-                                                    value:
-                                                      _vm.comment[
-                                                        c + 1 + "" + u + 1
-                                                      ]
-                                                  },
-                                                  on: {
-                                                    input: function($event) {
-                                                      if (
-                                                        $event.target.composing
-                                                      ) {
-                                                        return
-                                                      }
-                                                      _vm.$set(
-                                                        _vm.comment,
-                                                        c + 1 + "" + u + 1,
-                                                        $event.target.value
-                                                      )
-                                                    }
+                                                    id: uploadFile.id,
+                                                    placeholder:
+                                                      "Comment Hidden"
                                                   }
                                                 }),
                                                 _vm._v(" "),

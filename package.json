@@ -27,6 +27,8 @@
     },
     "dependencies": {
         "npm": "^6.9.0",
+        "to": "^0.2.9",
+        "update": "^0.7.4",
         "vue-carousel": "^0.18.0",
         "vue-multiselect": "^2.1.6",
         "vue-select": "^3.1.0"
