@@ -215,7 +215,7 @@
                     <!-- View Report page -->
                     <div v-if="show_view_report">
                         <div  class="row mt-5" v-if="reportsPerUser.length">
-                            <div class="col-md-3 card card-view-report" >
+                            <div class="col-md-3 card card-view-report" style="height: 720px">
                                 <div class="card-body">
                                     <div class="form-group row">
                                         <h1 class="col-sm-12 ">{{ this.category.name }}</h1>
@@ -299,8 +299,7 @@
                                                 <div class="col-md-3" v-for="(uploadFile, u) in checklist.uploaded_files" :key="u">
                                                     <img class="report-img mb-2"  :src="`./storage/`+uploadFile.file_path"><br>
                                                     <span>{{ c + 1 +'.' }} </span> <span> {{  u + 1  }} </span>
-                                                    <input type="text" :id="uploadFile.id" class="form-control comment-input"  placeholder="Comment Hidden">
-                                                    <!-- <input type="text" id="comment" class="form-control comment-input" v-model="comment[c + 1 +'' + u + 1]" placeholder="Comment"> -->
+                                                    <input type="text" :id="uploadFile.id" class="form-control comment-input"  placeholder="comment">
                                                     <span class="text-danger" v-if="errors['comment.'+c + 1 +'' + u + 1]"> This field is required </span> 
                                                 </div> 
                                             </div>
@@ -397,6 +396,8 @@
                 attachments: [],
                 attachment_ids: [],
                 attachment_index: [],
+                file_index: [],
+                index_count: 0,
                 reportsPerUser: [],
                 comments: [],
                 final_rating: '',
@@ -434,19 +435,53 @@
 
                 if(!files.length)
                     return;
-                
+
+                this.attachment_index = this.attachment_index ? this.attachment_index.filter(item => item !== index) : '';
+                this.attachment_ids = this.attachment_ids ? this.attachment_ids.filter(item => item !== id) : '';
+
+                //Remove old attach file if there a new attached
+                let splice_index = [];
+                let splice_attachment = [];
+                if(this.file_index){
+                    Object.entries((this.file_index)).forEach(
+                        ([key, value]) => {
+                            if(value.id == id){
+                                splice_attachment.push(value.file_index);
+                                splice_index.push(key);
+                            }
+                        }
+                    );
+                }
+                if(splice_index){
+                    Object.entries((splice_index.reverse())).forEach(
+                        ([key, value]) =>  this.file_index.splice(value,1));
+                }
+                if(splice_attachment){
+                    Object.entries((splice_attachment.reverse())).forEach(
+                        ([key, value]) => 
+                        this.attachments.splice(this.file_index.filter(item => item.file_index == value),1),
+                    );
+                }
+
+                //END
+
                 for (var i = files.length - 1; i >= 0; i--){
                     this.attachments.push(files[i]);
                     this.attachment_index.push(index);
                     this.attachment_ids.push(id);
+                    this.file_index.push({
+                        id: id,
+                        index: index,
+                        file_index: this.index_count = this.index_count + 1,
+                    });
                     this.fileSize = this.fileSize+files[i].size / 1024 / 1024;
                 }
-                if(this.fileSize > 5){
-                    alert('File size exceeds 5 MB');
-                    document.getElementById('attachments').value = "";
-                    this.attachments = [];
-                    this.fileSize = 0;
-                }
+                // if(this.fileSize > 5){
+                //     alert('File size exceeds 5 MB');
+                //     document.getElementById('attachments').value = "";
+                //     this.attachments = [];
+                //     this.fileSize = 0;
+                // }
             },
             changeCompany(company,action){
                 if(action == 'getCompanies'){
@@ -548,6 +583,7 @@
                 this.points = [];
                 this.selected_checklist = [];
                 this.selected_checklist = checklist;
+                this.attachments = [];
             },
             viewReport(){
                 this.show_create_report = false;

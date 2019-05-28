@@ -70,30 +70,14 @@ class ReportController extends Controller
                 );
                 $ids[] = $report->id;
             }
-            $report_id = [];
-
-            // Script to assign report id per attachment
-            foreach(explode(',',$request->attachment_ids) as $a => $i){
-                $startKey = 0;
-                if($a == 0){
-                    $report_id[] = $ids[0];
-                }else{
-                    if($i[$startKey] == $i){
-                        $report_id[] = $ids[$startKey];
-                    }else{
-                        $startKey = $startKey + 1;
-                        $report_id[] = $ids[$startKey];
-                    }
-                }
-            }
-
+            
             if($request->has('attachments')){
                 $attachments = $request->file('attachments');
                 foreach($attachments as $key => $attachment){
                     $filename = $attachment->getClientOriginalName();
                     $path = Storage::disk('public')->put('report', $attachment);
     
-                    $uploadedFile = $this->uploadFiles($request->process_owner,$report_id[$key],explode(',',$request->attachment_ids)[$key], $filename,$path);
+                    $uploadedFile = $this->uploadFiles($request->process_owner,$ids[explode(',',$request->attachment_index)[$key]],explode(',',$request->attachment_ids)[$key], $filename,$path);
                 }
 
             }

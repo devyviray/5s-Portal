@@ -5583,7 +5583,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue_multiselect__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue_multiselect__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _NavbarRight__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../NavbarRight */ "./resources/js/components/NavbarRight.vue");
 /* harmony import */ var _Breadcrumb__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../Breadcrumb */ "./resources/js/components/Breadcrumb.vue");
-//
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+
+function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
 //
 //
 //
@@ -5981,6 +5988,8 @@ __webpack_require__.r(__webpack_exports__);
       attachments: [],
       attachment_ids: [],
       attachment_index: [],
+      file_index: [],
+      index_count: 0,
       reportsPerUser: [],
       comments: [],
       final_rating: '',
@@ -6014,31 +6023,80 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     uploadFileChange: function uploadFileChange(e, index, id) {
+      var _this = this;
+
       var files = e.target.files || e.dataTransfer.files;
       if (!files.length) return;
+      this.attachment_index = this.attachment_index ? this.attachment_index.filter(function (item) {
+        return item !== index;
+      }) : '';
+      this.attachment_ids = this.attachment_ids ? this.attachment_ids.filter(function (item) {
+        return item !== id;
+      }) : '';
+      var splice_index = [];
+      var splice_attachment = [];
+
+      if (this.file_index) {
+        Object.entries(this.file_index).forEach(function (_ref) {
+          var _ref2 = _slicedToArray(_ref, 2),
+              key = _ref2[0],
+              value = _ref2[1];
+
+          if (value.id == id) {
+            splice_attachment.push(value.file_index);
+            splice_index.push(key);
+          }
+        });
+      }
+
+      if (splice_index) {
+        Object.entries(splice_index.reverse()).forEach(function (_ref3) {
+          var _ref4 = _slicedToArray(_ref3, 2),
+              key = _ref4[0],
+              value = _ref4[1];
+
+          return _this.file_index.splice(value, 1);
+        });
+      }
+
+      if (splice_attachment) {
+        Object.entries(splice_attachment.reverse()).forEach(function (_ref5) {
+          var _ref6 = _slicedToArray(_ref5, 2),
+              key = _ref6[0],
+              value = _ref6[1];
+
+          return _this.attachments.splice(_this.file_index.filter(function (item) {
+            return item.file_index == value;
+          }), 1);
+        });
+      }
 
       for (var i = files.length - 1; i >= 0; i--) {
         this.attachments.push(files[i]);
         this.attachment_index.push(index);
         this.attachment_ids.push(id);
+        this.file_index.push({
+          id: id,
+          index: index,
+          file_index: this.index_count = this.index_count + 1
+        });
         this.fileSize = this.fileSize + files[i].size / 1024 / 1024;
-      }
+      } // if(this.fileSize > 5){
+      //     alert('File size exceeds 5 MB');
+      //     document.getElementById('attachments').value = "";
+      //     this.attachments = [];
+      //     this.fileSize = 0;
+      // }
 
-      if (this.fileSize > 5) {
-        alert('File size exceeds 5 MB');
-        document.getElementById('attachments').value = "";
-        this.attachments = [];
-        this.fileSize = 0;
-      }
     },
     changeCompany: function changeCompany(company, action) {
-      var _this = this;
+      var _this2 = this;
 
       if (action == 'getCompanies') {
         axios.get("/company-location/".concat(company.id)).then(function (response) {
-          _this.locations = response.data.locations;
+          _this2.locations = response.data.locations;
         })["catch"](function (error) {
-          _this.errors = error.response.data.errors;
+          _this2.errors = error.response.data.errors;
         });
       } else {
         if (this.company && this.location && this.operation_line && this.category) {
@@ -6047,57 +6105,57 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     fetchCompanies: function fetchCompanies() {
-      var _this2 = this;
-
-      axios.get('companies-all').then(function (response) {
-        _this2.companies = response.data;
-      })["catch"](function (error) {
-        _this2.errors = error.response.data.errors;
-      });
-    },
-    fetchOperationLines: function fetchOperationLines() {
       var _this3 = this;
 
-      axios.get('operation-lines-all').then(function (response) {
-        _this3.operation_lines = response.data;
+      axios.get('companies-all').then(function (response) {
+        _this3.companies = response.data;
       })["catch"](function (error) {
         _this3.errors = error.response.data.errors;
       });
     },
-    fetchCategories: function fetchCategories() {
+    fetchOperationLines: function fetchOperationLines() {
       var _this4 = this;
 
-      axios.get('categories-all').then(function (response) {
-        _this4.categories = response.data;
+      axios.get('operation-lines-all').then(function (response) {
+        _this4.operation_lines = response.data;
       })["catch"](function (error) {
         _this4.errors = error.response.data.errors;
       });
     },
-    fetchCompayAreas: function fetchCompayAreas() {
+    fetchCategories: function fetchCategories() {
       var _this5 = this;
 
-      axios.get("/company-areas-per-company/".concat(this.company.id, "/").concat(this.location.id, "/").concat(this.operation_line.id, ",").concat(this.category.id)).then(function (response) {
-        _this5.areas = response.data;
+      axios.get('categories-all').then(function (response) {
+        _this5.categories = response.data;
       })["catch"](function (error) {
         _this5.errors = error.response.data.errors;
       });
     },
-    fetchChecklist: function fetchChecklist() {
+    fetchCompayAreas: function fetchCompayAreas() {
       var _this6 = this;
 
-      axios.get('checklists-all').then(function (response) {
-        _this6.checklists = response.data;
+      axios.get("/company-areas-per-company/".concat(this.company.id, "/").concat(this.location.id, "/").concat(this.operation_line.id, ",").concat(this.category.id)).then(function (response) {
+        _this6.areas = response.data;
       })["catch"](function (error) {
         _this6.errors = error.response.data.errors;
       });
     },
-    fetchInspectors: function fetchInspectors() {
+    fetchChecklist: function fetchChecklist() {
       var _this7 = this;
 
-      axios.get("/user-process-owner/".concat(this.company.id, "/").concat(this.location.id)).then(function (response) {
-        _this7.process_owners = response.data;
+      axios.get('checklists-all').then(function (response) {
+        _this7.checklists = response.data;
       })["catch"](function (error) {
         _this7.errors = error.response.data.errors;
+      });
+    },
+    fetchInspectors: function fetchInspectors() {
+      var _this8 = this;
+
+      axios.get("/user-process-owner/".concat(this.company.id, "/").concat(this.location.id)).then(function (response) {
+        _this8.process_owners = response.data;
+      })["catch"](function (error) {
+        _this8.errors = error.response.data.errors;
       });
     },
     viewAction: function viewAction() {
@@ -6137,6 +6195,7 @@ __webpack_require__.r(__webpack_exports__);
       this.points = [];
       this.selected_checklist = [];
       this.selected_checklist = checklist;
+      this.attachments = [];
     },
     viewReport: function viewReport() {
       this.show_create_report = false;
@@ -6149,16 +6208,16 @@ __webpack_require__.r(__webpack_exports__);
       this.fetchInspectors();
     },
     fetchReports: function fetchReports() {
-      var _this8 = this;
+      var _this9 = this;
 
       axios.get("/reports-per-user/".concat(this.company.id, "/").concat(this.location.id, "/").concat(this.operation_line.id, "/").concat(this.category.id, "/").concat(this.area.id)).then(function (response) {
-        _this8.reportsPerUser = response.data;
+        _this9.reportsPerUser = response.data;
       })["catch"](function (error) {
-        _this8.errors = error.response.data.errors;
+        _this9.errors = error.response.data.errors;
       });
     },
     addReport: function addReport(selected_checklist, points) {
-      var _this9 = this;
+      var _this10 = this;
 
       this.errors = [];
       this.prepareFields();
@@ -6175,15 +6234,15 @@ __webpack_require__.r(__webpack_exports__);
       this.formData.append('attachment_ids', this.attachment_ids.length > 0 ? this.attachment_ids : '');
       this.formData.append('attachment_index', this.attachment_index.length > 0 ? this.attachment_index : '');
       axios.post('/report', this.formData).then(function (response) {
-        _this9.resetForm();
+        _this10.resetForm();
 
         alert('Report Successfully created');
       })["catch"](function (error) {
-        _this9.errors = error.response.data.errors;
+        _this10.errors = error.response.data.errors;
       });
     },
     approvedReport: function approvedReport() {
-      var _this10 = this;
+      var _this11 = this;
 
       this.enabledBtn();
       var report_ids = [];
@@ -6194,20 +6253,20 @@ __webpack_require__.r(__webpack_exports__);
         ids: report_ids,
         final_rating: this.final_rating
       }).then(function (response) {
-        _this10.show_approved = true;
-        _this10.forCheckingReport = false;
+        _this11.show_approved = true;
+        _this11.forCheckingReport = false;
 
-        _this10.disabledBtn();
+        _this11.disabledBtn();
 
         $('#approveModal').modal('hide');
       })["catch"](function (error) {
-        _this10.errors = error.response.data.errors;
+        _this11.errors = error.response.data.errors;
 
-        _this10.enabledBtn();
+        _this11.enabledBtn();
       });
     },
     forCheckingReport: function forCheckingReport() {
-      var _this11 = this;
+      var _this12 = this;
 
       this.enabledBtn();
       var t = this;
@@ -6225,14 +6284,14 @@ __webpack_require__.r(__webpack_exports__);
         ids: report_ids,
         comments: t.comments
       }).then(function (response) {
-        _this11.disabledBtn();
+        _this12.disabledBtn();
 
-        _this11.show_forChecking = true;
-        _this11.show_approved = false;
+        _this12.show_forChecking = true;
+        _this12.show_approved = false;
       })["catch"](function (error) {
-        _this11.errors = error.response.data.errors;
+        _this12.errors = error.response.data.errors;
 
-        _this11.enabledBtn();
+        _this12.enabledBtn();
       });
     },
     countRating: function countRating(reportsPerUser) {
@@ -51521,7 +51580,10 @@ var render = function() {
                       ? _c("div", { staticClass: "row mt-5" }, [
                           _c(
                             "div",
-                            { staticClass: "col-md-3 card card-view-report" },
+                            {
+                              staticClass: "col-md-3 card card-view-report",
+                              staticStyle: { height: "720px" }
+                            },
                             [
                               _c("div", { staticClass: "card-body" }, [
                                 _c("div", { staticClass: "form-group row" }, [
@@ -51804,8 +51866,7 @@ var render = function() {
                                                   attrs: {
                                                     type: "text",
                                                     id: uploadFile.id,
-                                                    placeholder:
-                                                      "Comment Hidden"
+                                                    placeholder: "comment"
                                                   }
                                                 }),
                                                 _vm._v(" "),
