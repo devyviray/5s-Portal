@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Auth;
 use DB;
+use Carbon\Carbon;
 use Storage;
 use App\{
     Report,
@@ -22,6 +23,35 @@ class ReportController extends Controller
     {
         return view('report.index');
     }
+
+    /**
+     * Get all Reports
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function indexData()
+    {
+        return Report::with('company', 'location', 'operationLine', 'category', 'area', 'inspector')
+        ->where('process_owner', Auth::user()->id)
+        ->where('status', 1)->get()
+        ->groupBy(function($val){
+            return Carbon::parse($val->date_of_inspection)->format('m');
+        });
+    }
+
+    /**
+     * Display adding report  page
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create(){
+
+        return view('report.form');
+    }
+
+    
+
+    
 
     /**
      * Store a newly created resource in storage.
@@ -89,6 +119,19 @@ class ReportController extends Controller
         }
     }
 
+     /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($companyId,$locationId,$operationLineId,$categoryId,$areaId)
+    {
+        return view('report.view', compact('companyId', 'locationId', 'operationLineId','categoryId','areaId'));
+    }
+
+
+
     /**
      * Update the specified resource in storage.
      *
@@ -120,14 +163,15 @@ class ReportController extends Controller
      */
 
     public function getReportsPerUser($companyId, $locationId, $operationLineId,$categoryId, $areaId){
-        return Report::with('uploadedFiles')
+        return Report::with('uploadedFiles', 'company','category','operationLine', 'area', 'inspector')
         ->where('company_id', $companyId)
         ->where('location_id', $locationId)
         ->where('operation_line_id', $operationLineId)
         ->where('category_id', $categoryId)
         ->where('area_id', $areaId)
         ->where('process_owner', Auth::user()->id)
-        ->where('status', 1)->get();
+        // ->where('status', 1)->get();
+        ->get();
     }
 
 
@@ -170,9 +214,9 @@ class ReportController extends Controller
         try {
             $ids = [];
             foreach($request->comments as $comment){
-                    $uploadedFile = UploadedFile::findOrFail($comment['id']);
-                    $uploadedFile->update(['comment' => $comment['text']]);
-                    $ids[] = $comment['id'];
+                $uploadedFile = UploadedFile::findOrFail($comment['id']);
+                $uploadedFile->update(['comment' => $comment['text']]);
+                $ids[] = $comment['id'];
             }
             $report = Report::whereIn('id', $request->ids)->update(['status' => 2]); //Status for checking 
             DB::commit();

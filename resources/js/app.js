@@ -51,6 +51,8 @@ Vue.component('faq-index-page', require('./components/Faq/FaqIndexPage.vue').def
 
 // Report page
 Vue.component('report-index', require('./components/Report/ReportIndex.vue').default);
+Vue.component('report-form', require('./components/Report/ReportForm.vue').default);
+Vue.component('report-view', require('./components/Report/ReportView.vue').default);
 
 // operation line page
 Vue.component('operation-line-index', require('./components/Operation/OperationLineIndex.vue').default);

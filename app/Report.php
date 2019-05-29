@@ -23,4 +23,28 @@ class Report extends Model
         return $this->hasMany(UploadedFile::class);
     }
 
+    public function company(){
+        return $this->belongsTo(Company::class);
+    }
+
+    public function location(){
+        return $this->belongsTo(Location::class);
+    }
+
+    public function operationLine(){
+        return $this->belongsTo(OperationLine::class);
+    }
+
+    public function category(){
+        return $this->belongsTo(Category::class);
+    }
+
+    public function area(){
+        return $this->belongsTo(Area::class);
+    }
+
+    public function inspector(){
+        return $this->belongsTo(User::class, 'inspector');
+    }
+
 }
