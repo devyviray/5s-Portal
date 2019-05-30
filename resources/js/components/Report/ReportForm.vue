@@ -133,13 +133,15 @@
                                             <td scope="row" class="col-sm-1">{{ c + 1 }}</td>
                                             <td class="col-sm-6" style="white-space: inherit;">{{ checklist.requirement +' - '+ checklist.description  }}</td>
                                             <td class="col-sm-2">
-                                                <select class="form-control" v-model="points[c]">
+                                                <!-- <select class="form-control" v-model="points[c]"> -->
+                                                <select class="form-control select-points" v-model="checklist.rating">
                                                     <option value="0"> 0 </option>
                                                     <option value="1"> 1 </option>
                                                     <option value="2"> 2 </option>
                                                 </select>
-                                                <span class="text-danger" v-if="errors['points.'+c] || errors.points"> This field is required </span> 
-                         
+                                                <div v-for="(points_error, p) in points_errors" :key="p">
+                                                    <span class="text-danger" v-if="points_error == c"> This field is required </span>
+                                                </div>
                                             </td>
                                             <td class="col-sm-3">
                                                 <input type="file" multiple="multiple" id="attachments"  class="attachments" accept="image/*" placeholder="Attach file" @change="uploadFileChange($event,c,checklist.id)"><br>
@@ -208,6 +210,7 @@
                 index_count: 0,
                 reportsPerUser: [],
                 errors: [],
+                points_errors: [],
                 currentPage: 0,
                 itemsPerPage: 8,
                 keywords: '',
@@ -375,6 +378,16 @@
                 })
             },
             addReport(selected_checklist,points){
+                this.formData = new FormData();
+                let t = this;
+                this.points = [];
+                this.points_errors = [];
+                selected_checklist.filter(function(item,index) {
+                    item.rating !== null ? t.points.push(item.rating) : t.points_errors.push(index);
+                });
+                if(this.points_errors.length){
+                    return false;
+                }
                 this.show_added = false;
                 this.errors = [];
                 this.prepareFields();
@@ -387,16 +400,16 @@
                 this.formData.append('date_of_inspection', this.date_of_inspection ? this.date_of_inspection : '');
                 this.formData.append('time_of_inspection', this.time_of_inspection ? this.time_of_inspection : '');
                 this.formData.append('checklist', selected_checklist ? JSON.stringify(selected_checklist) : '');
-                this.formData.append('points', points.length == 0 ? '' : points);
+                this.formData.append('points', this.points.length == 0 ? '' : this.points);
                 this.formData.append('attachment_ids',this.attachment_ids.length > 0 ? this.attachment_ids : '');  
-                this.formData.append('attachment_index',this.attachment_index.length > 0 ? this.attachment_index : '');  
+                this.formData.append('attachment_index',this.attachment_index.length > 0 ? this.attachment_index : ''); 
 
                 axios.post('/report', this.formData)
                 .then(response => { 
                     this.resetForm();
                     this.show_added = true;
                 })
-                .catch(error => { 
+                .catch(error => {
                     this.errors = error.response.data.errors;
                     this.show_added = false;
                 });
@@ -405,7 +418,7 @@
                 this.process_owner = '';
                 this.date_of_inspection = '';
                 this.time_of_inspection = '';
-                this.points = '';
+                this.points = [];
                 this.attachments = [];
                 var removeElements = (elms) => [...elms].forEach(el => el.value = "");
                 removeElements( document.querySelectorAll(".attachments"));

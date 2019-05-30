@@ -5770,6 +5770,8 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 //
 //
 //
+//
+//
 
 
 
@@ -5808,6 +5810,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
       index_count: 0,
       reportsPerUser: [],
       errors: [],
+      points_errors: [],
       currentPage: 0,
       itemsPerPage: 8,
       keywords: '',
@@ -6000,6 +6003,18 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
     addReport: function addReport(selected_checklist, points) {
       var _this10 = this;
 
+      this.formData = new FormData();
+      var t = this;
+      this.points = [];
+      this.points_errors = [];
+      selected_checklist.filter(function (item, index) {
+        item.rating !== null ? t.points.push(item.rating) : t.points_errors.push(index);
+      });
+
+      if (this.points_errors.length) {
+        return false;
+      }
+
       this.show_added = false;
       this.errors = [];
       this.prepareFields();
@@ -6012,7 +6027,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
       this.formData.append('date_of_inspection', this.date_of_inspection ? this.date_of_inspection : '');
       this.formData.append('time_of_inspection', this.time_of_inspection ? this.time_of_inspection : '');
       this.formData.append('checklist', selected_checklist ? JSON.stringify(selected_checklist) : '');
-      this.formData.append('points', points.length == 0 ? '' : points);
+      this.formData.append('points', this.points.length == 0 ? '' : this.points);
       this.formData.append('attachment_ids', this.attachment_ids.length > 0 ? this.attachment_ids : '');
       this.formData.append('attachment_index', this.attachment_index.length > 0 ? this.attachment_index : '');
       axios.post('/report', this.formData).then(function (response) {
@@ -6028,7 +6043,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
       this.process_owner = '';
       this.date_of_inspection = '';
       this.time_of_inspection = '';
-      this.points = '';
+      this.points = [];
       this.attachments = [];
 
       var removeElements = function removeElements(elms) {
@@ -51688,75 +51703,93 @@ var render = function() {
                                       ]
                                     ),
                                     _vm._v(" "),
-                                    _c("td", { staticClass: "col-sm-2" }, [
-                                      _c(
-                                        "select",
-                                        {
-                                          directives: [
-                                            {
-                                              name: "model",
-                                              rawName: "v-model",
-                                              value: _vm.points[c],
-                                              expression: "points[c]"
-                                            }
-                                          ],
-                                          staticClass: "form-control",
-                                          on: {
-                                            change: function($event) {
-                                              var $$selectedVal = Array.prototype.filter
-                                                .call(
-                                                  $event.target.options,
-                                                  function(o) {
-                                                    return o.selected
-                                                  }
+                                    _c(
+                                      "td",
+                                      { staticClass: "col-sm-2" },
+                                      [
+                                        _c(
+                                          "select",
+                                          {
+                                            directives: [
+                                              {
+                                                name: "model",
+                                                rawName: "v-model",
+                                                value: checklist.rating,
+                                                expression: "checklist.rating"
+                                              }
+                                            ],
+                                            staticClass:
+                                              "form-control select-points",
+                                            on: {
+                                              change: function($event) {
+                                                var $$selectedVal = Array.prototype.filter
+                                                  .call(
+                                                    $event.target.options,
+                                                    function(o) {
+                                                      return o.selected
+                                                    }
+                                                  )
+                                                  .map(function(o) {
+                                                    var val =
+                                                      "_value" in o
+                                                        ? o._value
+                                                        : o.value
+                                                    return val
+                                                  })
+                                                _vm.$set(
+                                                  checklist,
+                                                  "rating",
+                                                  $event.target.multiple
+                                                    ? $$selectedVal
+                                                    : $$selectedVal[0]
                                                 )
-                                                .map(function(o) {
-                                                  var val =
-                                                    "_value" in o
-                                                      ? o._value
-                                                      : o.value
-                                                  return val
-                                                })
-                                              _vm.$set(
-                                                _vm.points,
-                                                c,
-                                                $event.target.multiple
-                                                  ? $$selectedVal
-                                                  : $$selectedVal[0]
-                                              )
+                                              }
                                             }
-                                          }
-                                        },
-                                        [
-                                          _c(
-                                            "option",
-                                            { attrs: { value: "0" } },
-                                            [_vm._v(" 0 ")]
-                                          ),
-                                          _vm._v(" "),
-                                          _c(
-                                            "option",
-                                            { attrs: { value: "1" } },
-                                            [_vm._v(" 1 ")]
-                                          ),
-                                          _vm._v(" "),
-                                          _c(
-                                            "option",
-                                            { attrs: { value: "2" } },
-                                            [_vm._v(" 2 ")]
-                                          )
-                                        ]
-                                      ),
-                                      _vm._v(" "),
-                                      _vm.errors["points." + c] ||
-                                      _vm.errors.points
-                                        ? _c(
-                                            "span",
-                                            { staticClass: "text-danger" },
-                                            [_vm._v(" This field is required ")]
-                                          )
-                                        : _vm._e()
-                                    ]),
+                                          },
+                                          [
+                                            _c(
+                                              "option",
+                                              { attrs: { value: "0" } },
+                                              [_vm._v(" 0 ")]
+                                            ),
+                                            _vm._v(" "),
+                                            _c(
+                                              "option",
+                                              { attrs: { value: "1" } },
+                                              [_vm._v(" 1 ")]
+                                            ),
+                                            _vm._v(" "),
+                                            _c(
+                                              "option",
+                                              { attrs: { value: "2" } },
+                                              [_vm._v(" 2 ")]
+                                            )
+                                          ]
+                                        ),
+                                        _vm._v(" "),
+                                        _vm._l(_vm.points_errors, function(
+                                          points_error,
+                                          p
+                                        ) {
+                                          return _c("div", { key: p }, [
+                                            points_error == c
+                                              ? _c(
+                                                  "span",
+                                                  {
+                                                    staticClass: "text-danger"
+                                                  },
+                                                  [
+                                                    _vm._v(
+                                                      " This field is required "
+                                                    )
+                                                  ]
+                                                )
+                                              : _vm._e()
+                                          ])
+                                        })
+                                      ],
+                                      2
+                                    ),
                                     _vm._v(" "),
                                     _c("td", { staticClass: "col-sm-3" }, [
                                       _c("input", {
