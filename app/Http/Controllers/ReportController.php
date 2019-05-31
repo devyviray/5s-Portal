@@ -265,6 +265,17 @@ class ReportController extends Controller
     }
 
     /**
+     * Display verified page
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function verifiedIndex($companyId, $locationId, $operationLineId, $categoryId, $areaId, $processOwnerId){
+
+        return view('report.verified', compact('companyId', 'locationId', 'operationLineId','categoryId','areaId','processOwnerId'));
+
+    }
+
+    /**
      * Uploading files for Reports
      *
      * @return \Illuminate\Http\Response

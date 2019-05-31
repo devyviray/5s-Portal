@@ -114,10 +114,11 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/company-areas-per-company/{companyId}/{locationId}/{operationLineId},{categoryId}', 'CompanyAreaController@companyAreaPerCompany');
 });
 
-// Accessible routes for admin and IT
+// Accessible routes for admin , inspector and IT
 Route::group(['middleware' => ['auth', 'role:it|administrator|inspector']], function () {
     
     //Report
     Route::get('/create-report', 'ReportController@create');
     Route::post('/report-filtered', 'ReportController@getFilteredReports');
+    Route::get('/verified-report/{companyId}/{locationId}/{operationLineId}/{categoryId}/{areaId}/{processOwnerId}', 'ReportController@verifiedIndex');
 });

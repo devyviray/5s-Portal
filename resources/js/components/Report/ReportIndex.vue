@@ -102,6 +102,7 @@
                                     </a>
                                     <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
                                         <a class="dropdown-item" target="_blank" :href="viewReportLink+report[0].company.id+'/'+report[0].location.id+'/'+report[0].operation_line.id+'/'+report[0].category.id+'/'+report[0].area.id+'/'+report[0].process_owner_id">View</a>
+                                        <a class="dropdown-item" target="_blank" :href="verifiedReportLink+report[0].company.id+'/'+report[0].location.id+'/'+report[0].operation_line.id+'/'+report[0].category.id+'/'+report[0].area.id+'/'+report[0].process_owner_id">Verified</a>
                                         <a class="dropdown-item" data-toggle="modal" data-target="#deleteModal" style="cursor: pointer" @click="copyObject(report)">Delete</a>
                                     </div>
                                 </div>
@@ -285,6 +286,9 @@
             },
             viewReportLink(){
                return window.location.origin+'/view-report/'; 
+            },
+            verifiedReportLink(){
+                return window.location.origin+'/verified-report/'; 
             }
         }
     }
