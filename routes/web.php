@@ -81,8 +81,8 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/report-approve', 'ReportController@approveReportPerUser');
     Route::post('/report-checking', 'ReportController@checkingReporPerUser');
     Route::get('/create-report', 'ReportController@create');
-    Route::get('/view-report/{companyId}/{locationId}/{operationLineId}/{categoryId}/{areaId}', 'ReportController@show');
-    Route::get('/reports-per-user/{companyId}/{locationId}/{operationLineId}/{categoryId}/{areaId}', 'ReportController@getReportsPerUser');
+    Route::get('/view-report/{companyId}/{locationId}/{operationLineId}/{categoryId}/{areaId}/{processOwnerId}', 'ReportController@show');
+    Route::get('/reports-per-user/{companyId}/{locationId}/{operationLineId}/{categoryId}/{areaId}/{processOwnerId}', 'ReportController@getReportsPerUser');
 
     // operation line
     Route::get('/operation-lines', 'OperationLineController@index')->name('operation-lines');
@@ -112,4 +112,12 @@ Route::group(['middleware' => 'auth'], function(){
     Route::patch('/company-area/{companyArea}', 'CompanyAreaController@update');
     Route::delete('/company-area/{companyArea}', 'CompanyAreaController@destroy');
     Route::get('/company-areas-per-company/{companyId}/{locationId}/{operationLineId},{categoryId}', 'CompanyAreaController@companyAreaPerCompany');
+});
+
+// Accessible routes for admin and IT
+Route::group(['middleware' => ['auth', 'role:it|administrator|inspector']], function () {
+    
+    //Report
+    Route::get('/create-report', 'ReportController@create');
+    Route::post('/report-filtered', 'ReportController@getFilteredReports');
 });

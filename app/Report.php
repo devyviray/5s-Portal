@@ -14,7 +14,7 @@ class Report extends Model
      * @var array
      */
     protected $fillable = [
-        'company_id', 'location_id', 'operation_line_id','category_id', 'area_id', 'process_owner', 'inspector', 
+        'company_id', 'location_id', 'operation_line_id','category_id', 'area_id', 'process_owner_id', 'inspector_id', 
         'date_of_inspection','time_of_inspection', 'checklist_id','checklist_batch','name','points','status'
     ];
 
@@ -44,7 +44,10 @@ class Report extends Model
     }
 
     public function inspector(){
-        return $this->belongsTo(User::class, 'inspector');
+        return $this->belongsTo(User::class, 'inspector_id');
     }
 
+    public function processOwner(){
+        return $this->belongsTo(User::class, 'process_owner_id');
+    }
 }

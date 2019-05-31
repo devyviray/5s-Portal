@@ -101,7 +101,7 @@
                             </div>
                             <div class="col-md-9" style="height: 770px">
                                 <div class="table-responsive" style="height: 770px">
-                                    <div class="col-md-12 card mb-3" v-for="(checklist, c) in reportsPerUser" v-bind:key="c" style="background-color: #e6e6e6 !important">
+                                    <div class="col-md-12 card mb-3" v-for="(checklist, c) in reportsPerUser" v-bind:key="c" style="background-color: #e6e6e6 !important; min-height: 300px;">
                                         <div class="card-body">
                                             <span>{{ c + 1 +'. '+checklist.name }}</span><br>
                                             <span class="ml-4"><b>Points:{{checklist.points}}</b></span>
@@ -175,7 +175,7 @@
     import navbarRight from '../NavbarRight';
     import breadcrumb from '../Breadcrumb';
     export default {
-        props: ['userName', 'companyId', 'locationId', 'operationlineId', 'categoryId', 'areaId'],
+        props: ['userName', 'companyId', 'locationId', 'operationlineId', 'categoryId', 'areaId', 'processOwnerId'],
         components:{
             Multiselect,
             navbarRight,
@@ -199,7 +199,7 @@
         },
         methods:{
             fetchReportsPerUser(){
-                axios.get(`/reports-per-user/${this.companyId}/${this.locationId}/${this.operationlineId}/${this.categoryId}/${this.areaId}`)
+                axios.get(`/reports-per-user/${this.companyId}/${this.locationId}/${this.operationlineId}/${this.categoryId}/${this.areaId}/${this.processOwnerId}`)
                 .then(response => {
                     this.reportsPerUser = response.data;
                 })

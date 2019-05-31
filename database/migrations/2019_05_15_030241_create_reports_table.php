@@ -20,8 +20,8 @@ class CreateReportsTable extends Migration
             $table->integer('location_id');
             $table->integer('category_id');
             $table->integer('area_id');
-            $table->integer('process_owner');
-            $table->integer('inspector');
+            $table->integer('process_owner_id');
+            $table->integer('inspector_id');
             $table->date('date_of_inspection');
             $table->string('time_of_inspection');
             $table->integer('checklist_id');

@@ -5991,17 +5991,8 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
       removeElements(document.querySelectorAll(".attachments"));
     },
-    fetchReportsPerUser: function fetchReportsPerUser() {
-      var _this9 = this;
-
-      axios.get("/reports-per-user/".concat(this.company.id, "/").concat(this.location.id, "/").concat(this.operation_line.id, "/").concat(this.category.id, "/").concat(this.area.id)).then(function (response) {
-        _this9.reportsPerUser = response.data;
-      })["catch"](function (error) {
-        _this9.errors = error.response.data.errors;
-      });
-    },
     addReport: function addReport(selected_checklist, points) {
-      var _this10 = this;
+      var _this9 = this;
 
       this.formData = new FormData();
       var t = this;
@@ -6031,12 +6022,12 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
       this.formData.append('attachment_ids', this.attachment_ids.length > 0 ? this.attachment_ids : '');
       this.formData.append('attachment_index', this.attachment_index.length > 0 ? this.attachment_index : '');
       axios.post('/report', this.formData).then(function (response) {
-        _this10.resetForm();
+        _this9.resetForm();
 
-        _this10.show_added = true;
+        _this9.show_added = true;
       })["catch"](function (error) {
-        _this10.errors = error.response.data.errors;
-        _this10.show_added = false;
+        _this9.errors = error.response.data.errors;
+        _this9.show_added = false;
       });
     },
     resetForm: function resetForm() {
@@ -6257,11 +6248,27 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['userName'],
+  props: ['userName', 'userRole'],
   components: {
     Multiselect: vue_multiselect__WEBPACK_IMPORTED_MODULE_0___default.a,
     navbarRight: _NavbarRight__WEBPACK_IMPORTED_MODULE_1__["default"],
@@ -6283,7 +6290,7 @@ __webpack_require__.r(__webpack_exports__);
       report_show: false,
       errors: [],
       currentPage: 0,
-      itemsPerPage: 8,
+      itemsPerPage: 15,
       keywords: ''
     };
   },
@@ -6357,37 +6364,20 @@ __webpack_require__.r(__webpack_exports__);
         _this6.errors = error.response.data.errors;
       });
     },
-    viewAction: function viewAction() {
-      this.errors = [];
+    fetchFilteredReport: function fetchFilteredReport() {
+      var _this7 = this;
 
-      if (!this.company) {
-        this.errors.company = 'This field is required';
-        this.report_show = false;
-      }
-
-      if (!this.location) {
-        this.errors.location = 'This field is required';
-        this.report_show = false;
-      }
-
-      if (!this.operation_line) {
-        this.errors.operation_line = 'This field is required';
-        this.report_show = false;
-      }
-
-      if (!this.category) {
-        this.errors.category = 'This field is required';
-        this.report_show = false;
-      }
-
-      if (!this.area) {
-        this.errors.area = 'This field is required';
-        this.report_show = false;
-      }
-
-      if (this.company && this.location && this.operation_line && this.category && this.area) {
-        this.report_show = true;
-      }
+      axios.post('/report-filtered', {
+        company: this.company.id,
+        location: this.location.id,
+        operation_line: this.operation_line.id,
+        category: this.category.id,
+        area: this.area.id
+      }).then(function (response) {
+        _this7.reports = response.data;
+      })["catch"](function (error) {
+        _this7.errors = error.response.data.errors;
+      });
     },
     setPage: function setPage(pageNumber) {
       this.currentPage = pageNumber;
@@ -6400,38 +6390,18 @@ __webpack_require__.r(__webpack_exports__);
     },
     showNextLink: function showNextLink() {
       return this.currentPage == this.totalPages - 1 ? false : true;
-    },
-    showNextLinkView: function showNextLinkView() {
-      return this.currentPage == this.totalPages - 1 ? false : true;
     }
   },
   computed: {
     totalPages: function totalPages() {
-      return Math.ceil(Object.values(this.selected_checklist).length / this.itemsPerPage);
+      return Math.ceil(Object.values(this.reports).length / this.itemsPerPage);
     },
     filteredQueues: function filteredQueues() {
       var index = this.currentPage * this.itemsPerPage;
-      var queues_array = Object.values(this.selected_checklist).slice(index, index + this.itemsPerPage);
+      var queues_array = Object.values(this.reports).slice(index, index + this.itemsPerPage);
 
       if (this.currentPage >= this.totalPages) {
         this.currentPage = this.totalPages - 1;
-      }
-
-      if (this.currentPage == -1) {
-        this.currentPage = 0;
-      }
-
-      return queues_array;
-    },
-    totalPagesView: function totalPagesView() {
-      return Math.ceil(Object.values(this.reportsPerUser).length / this.itemsPerPage);
-    },
-    filteredQueuesView: function filteredQueuesView() {
-      var index = this.currentPage * this.itemsPerPage;
-      var queues_array = Object.values(this.reportsPerUser).slice(index, index + this.itemsPerPage);
-
-      if (this.currentPage >= this.totalPagesView) {
-        this.currentPage = this.totalPagesView - 1;
       }
 
       if (this.currentPage == -1) {
@@ -6640,7 +6610,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['userName', 'companyId', 'locationId', 'operationlineId', 'categoryId', 'areaId'],
+  props: ['userName', 'companyId', 'locationId', 'operationlineId', 'categoryId', 'areaId', 'processOwnerId'],
   components: {
     Multiselect: vue_multiselect__WEBPACK_IMPORTED_MODULE_0___default.a,
     navbarRight: _NavbarRight__WEBPACK_IMPORTED_MODULE_1__["default"],
@@ -6666,7 +6636,7 @@ __webpack_require__.r(__webpack_exports__);
     fetchReportsPerUser: function fetchReportsPerUser() {
       var _this = this;
 
-      axios.get("/reports-per-user/".concat(this.companyId, "/").concat(this.locationId, "/").concat(this.operationlineId, "/").concat(this.categoryId, "/").concat(this.areaId)).then(function (response) {
+      axios.get("/reports-per-user/".concat(this.companyId, "/").concat(this.locationId, "/").concat(this.operationlineId, "/").concat(this.categoryId, "/").concat(this.areaId, "/").concat(this.processOwnerId)).then(function (response) {
         _this.reportsPerUser = response.data;
       })["catch"](function (error) {
         _this.errors = error.response.data.errors;
@@ -51953,351 +51923,356 @@ var render = function() {
       _vm._v(" "),
       _c("div", { attrs: { id: "page-inner" } }, [
         _c("div", { staticClass: "card" }, [
-          _c("div", { staticClass: "card-header" }, [
-            _c("div", { staticClass: "row ml-2" }, [
-              _c("div", { staticClass: "col-md-2" }, [
-                _c("div", { staticClass: "form-group" }, [
-                  _c(
-                    "label",
-                    {
-                      staticClass: "form-control-label",
-                      attrs: { for: "role" }
-                    },
-                    [_vm._v("Company")]
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "select",
-                    {
-                      directives: [
+          _vm.userRole > 2
+            ? _c("div", { staticClass: "card-header" }, [
+                _c("div", { staticClass: "row ml-2" }, [
+                  _c("div", { staticClass: "col-md-2" }, [
+                    _c("div", { staticClass: "form-group" }, [
+                      _c(
+                        "label",
                         {
-                          name: "model",
-                          rawName: "v-model",
-                          value: _vm.company,
-                          expression: "company"
-                        }
-                      ],
-                      staticClass: "form-control",
-                      on: {
-                        change: [
-                          function($event) {
-                            var $$selectedVal = Array.prototype.filter
-                              .call($event.target.options, function(o) {
-                                return o.selected
-                              })
-                              .map(function(o) {
-                                var val = "_value" in o ? o._value : o.value
-                                return val
-                              })
-                            _vm.company = $event.target.multiple
-                              ? $$selectedVal
-                              : $$selectedVal[0]
-                          },
-                          function($event) {
-                            return _vm.changeCompany(
-                              _vm.company,
-                              "getCompanies"
-                            )
-                          }
-                        ]
-                      }
-                    },
-                    _vm._l(_vm.companies, function(company, c) {
-                      return _c(
-                        "option",
-                        { key: c, domProps: { value: company } },
-                        [_vm._v(" " + _vm._s(company.name))]
-                      )
-                    }),
-                    0
-                  ),
-                  _vm._v(" "),
-                  _vm.errors.company
-                    ? _c("span", { staticClass: "text-danger" }, [
-                        _vm._v(_vm._s(_vm.errors.company))
-                      ])
-                    : _vm._e()
-                ])
-              ]),
-              _vm._v(" "),
-              _c("div", { staticClass: "col-md-2" }, [
-                _c("div", { staticClass: "form-group" }, [
-                  _c(
-                    "label",
-                    {
-                      staticClass: "form-control-label",
-                      attrs: { for: "role" }
-                    },
-                    [_vm._v("Company Location")]
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "select",
-                    {
-                      directives: [
+                          staticClass: "form-control-label",
+                          attrs: { for: "role" }
+                        },
+                        [_vm._v("Company")]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "select",
                         {
-                          name: "model",
-                          rawName: "v-model",
-                          value: _vm.location,
-                          expression: "location"
-                        }
-                      ],
-                      staticClass: "form-control",
-                      on: {
-                        change: [
-                          function($event) {
-                            var $$selectedVal = Array.prototype.filter
-                              .call($event.target.options, function(o) {
-                                return o.selected
-                              })
-                              .map(function(o) {
-                                var val = "_value" in o ? o._value : o.value
-                                return val
-                              })
-                            _vm.location = $event.target.multiple
-                              ? $$selectedVal
-                              : $$selectedVal[0]
-                          },
-                          function($event) {
-                            return _vm.changeCompany("", "")
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.company,
+                              expression: "company"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          on: {
+                            change: [
+                              function($event) {
+                                var $$selectedVal = Array.prototype.filter
+                                  .call($event.target.options, function(o) {
+                                    return o.selected
+                                  })
+                                  .map(function(o) {
+                                    var val = "_value" in o ? o._value : o.value
+                                    return val
+                                  })
+                                _vm.company = $event.target.multiple
+                                  ? $$selectedVal
+                                  : $$selectedVal[0]
+                              },
+                              function($event) {
+                                return _vm.changeCompany(
+                                  _vm.company,
+                                  "getCompanies"
+                                )
+                              }
+                            ]
                           }
-                        ]
-                      }
-                    },
-                    _vm._l(_vm.locations, function(location, l) {
-                      return _c(
-                        "option",
-                        { key: l, domProps: { value: location } },
-                        [_vm._v(" " + _vm._s(location.name))]
-                      )
-                    }),
-                    0
-                  ),
+                        },
+                        _vm._l(_vm.companies, function(company, c) {
+                          return _c(
+                            "option",
+                            { key: c, domProps: { value: company } },
+                            [_vm._v(" " + _vm._s(company.name))]
+                          )
+                        }),
+                        0
+                      ),
+                      _vm._v(" "),
+                      _vm.errors.company
+                        ? _c("span", { staticClass: "text-danger" }, [
+                            _vm._v(_vm._s(_vm.errors.company[0]))
+                          ])
+                        : _vm._e()
+                    ])
+                  ]),
                   _vm._v(" "),
-                  _vm.errors.location
-                    ? _c("span", { staticClass: "text-danger" }, [
-                        _vm._v(_vm._s(_vm.errors.location))
-                      ])
-                    : _vm._e()
-                ])
-              ]),
-              _vm._v(" "),
-              _c("div", { staticClass: "col-md-2" }, [
-                _c("div", { staticClass: "form-group" }, [
-                  _c(
-                    "label",
-                    {
-                      staticClass: "form-control-label",
-                      attrs: { for: "role" }
-                    },
-                    [_vm._v("Operation Line")]
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "select",
-                    {
-                      directives: [
+                  _c("div", { staticClass: "col-md-2" }, [
+                    _c("div", { staticClass: "form-group" }, [
+                      _c(
+                        "label",
                         {
-                          name: "model",
-                          rawName: "v-model",
-                          value: _vm.operation_line,
-                          expression: "operation_line"
-                        }
-                      ],
-                      staticClass: "form-control",
-                      on: {
-                        change: [
-                          function($event) {
-                            var $$selectedVal = Array.prototype.filter
-                              .call($event.target.options, function(o) {
-                                return o.selected
-                              })
-                              .map(function(o) {
-                                var val = "_value" in o ? o._value : o.value
-                                return val
-                              })
-                            _vm.operation_line = $event.target.multiple
-                              ? $$selectedVal
-                              : $$selectedVal[0]
-                          },
-                          function($event) {
-                            return _vm.changeCompany("", "")
-                          }
-                        ]
-                      }
-                    },
-                    _vm._l(_vm.operation_lines, function(operation_line, o) {
-                      return _c(
-                        "option",
-                        { key: o, domProps: { value: operation_line } },
-                        [_vm._v(" " + _vm._s(operation_line.name))]
-                      )
-                    }),
-                    0
-                  ),
-                  _vm._v(" "),
-                  _vm.errors.operation_line
-                    ? _c("span", { staticClass: "text-danger" }, [
-                        _vm._v(_vm._s(_vm.errors.operation_line))
-                      ])
-                    : _vm._e()
-                ])
-              ]),
-              _vm._v(" "),
-              _c("div", { staticClass: "col-md-2" }, [
-                _c("div", { staticClass: "form-group" }, [
-                  _c(
-                    "label",
-                    {
-                      staticClass: "form-control-label",
-                      attrs: { for: "role" }
-                    },
-                    [_vm._v("Category")]
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "select",
-                    {
-                      directives: [
+                          staticClass: "form-control-label",
+                          attrs: { for: "role" }
+                        },
+                        [_vm._v("Company Location")]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "select",
                         {
-                          name: "model",
-                          rawName: "v-model",
-                          value: _vm.category,
-                          expression: "category"
-                        }
-                      ],
-                      staticClass: "form-control",
-                      on: {
-                        change: [
-                          function($event) {
-                            var $$selectedVal = Array.prototype.filter
-                              .call($event.target.options, function(o) {
-                                return o.selected
-                              })
-                              .map(function(o) {
-                                var val = "_value" in o ? o._value : o.value
-                                return val
-                              })
-                            _vm.category = $event.target.multiple
-                              ? $$selectedVal
-                              : $$selectedVal[0]
-                          },
-                          function($event) {
-                            return _vm.changeCompany("", "")
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.location,
+                              expression: "location"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          on: {
+                            change: [
+                              function($event) {
+                                var $$selectedVal = Array.prototype.filter
+                                  .call($event.target.options, function(o) {
+                                    return o.selected
+                                  })
+                                  .map(function(o) {
+                                    var val = "_value" in o ? o._value : o.value
+                                    return val
+                                  })
+                                _vm.location = $event.target.multiple
+                                  ? $$selectedVal
+                                  : $$selectedVal[0]
+                              },
+                              function($event) {
+                                return _vm.changeCompany("", "")
+                              }
+                            ]
                           }
-                        ]
-                      }
-                    },
-                    _vm._l(_vm.categories, function(category, c) {
-                      return _c(
-                        "option",
-                        { key: c, domProps: { value: category } },
-                        [_vm._v(" " + _vm._s(category.name))]
-                      )
-                    }),
-                    0
-                  ),
+                        },
+                        _vm._l(_vm.locations, function(location, l) {
+                          return _c(
+                            "option",
+                            { key: l, domProps: { value: location } },
+                            [_vm._v(" " + _vm._s(location.name))]
+                          )
+                        }),
+                        0
+                      ),
+                      _vm._v(" "),
+                      _vm.errors.location
+                        ? _c("span", { staticClass: "text-danger" }, [
+                            _vm._v(_vm._s(_vm.errors.location[0]))
+                          ])
+                        : _vm._e()
+                    ])
+                  ]),
                   _vm._v(" "),
-                  _vm.errors.category
-                    ? _c("span", { staticClass: "text-danger" }, [
-                        _vm._v(_vm._s(_vm.errors.category))
-                      ])
-                    : _vm._e()
-                ])
-              ]),
-              _vm._v(" "),
-              _c("div", { staticClass: "col-md-2" }, [
-                _c("div", { staticClass: "form-group" }, [
-                  _c(
-                    "label",
-                    {
-                      staticClass: "form-control-label",
-                      attrs: { for: "role" }
-                    },
-                    [_vm._v("AREA")]
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "select",
-                    {
-                      directives: [
+                  _c("div", { staticClass: "col-md-2" }, [
+                    _c("div", { staticClass: "form-group" }, [
+                      _c(
+                        "label",
                         {
-                          name: "model",
-                          rawName: "v-model",
-                          value: _vm.area,
-                          expression: "area"
-                        }
-                      ],
-                      staticClass: "form-control",
-                      on: {
-                        change: [
-                          function($event) {
-                            var $$selectedVal = Array.prototype.filter
-                              .call($event.target.options, function(o) {
-                                return o.selected
-                              })
-                              .map(function(o) {
-                                var val = "_value" in o ? o._value : o.value
-                                return val
-                              })
-                            _vm.area = $event.target.multiple
-                              ? $$selectedVal
-                              : $$selectedVal[0]
-                          },
-                          function($event) {
-                            return _vm.changeCompany("", "")
+                          staticClass: "form-control-label",
+                          attrs: { for: "role" }
+                        },
+                        [_vm._v("Operation Line")]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "select",
+                        {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.operation_line,
+                              expression: "operation_line"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          on: {
+                            change: [
+                              function($event) {
+                                var $$selectedVal = Array.prototype.filter
+                                  .call($event.target.options, function(o) {
+                                    return o.selected
+                                  })
+                                  .map(function(o) {
+                                    var val = "_value" in o ? o._value : o.value
+                                    return val
+                                  })
+                                _vm.operation_line = $event.target.multiple
+                                  ? $$selectedVal
+                                  : $$selectedVal[0]
+                              },
+                              function($event) {
+                                return _vm.changeCompany("", "")
+                              }
+                            ]
                           }
-                        ]
-                      }
-                    },
-                    _vm._l(_vm.areas, function(area, a) {
-                      return _c(
-                        "option",
-                        { key: a, domProps: { value: area.area } },
-                        [_vm._v(" " + _vm._s(area.area.name))]
-                      )
-                    }),
-                    0
-                  ),
+                        },
+                        _vm._l(_vm.operation_lines, function(
+                          operation_line,
+                          o
+                        ) {
+                          return _c(
+                            "option",
+                            { key: o, domProps: { value: operation_line } },
+                            [_vm._v(" " + _vm._s(operation_line.name))]
+                          )
+                        }),
+                        0
+                      ),
+                      _vm._v(" "),
+                      _vm.errors.operation_line
+                        ? _c("span", { staticClass: "text-danger" }, [
+                            _vm._v(_vm._s(_vm.errors.operation_line[0]))
+                          ])
+                        : _vm._e()
+                    ])
+                  ]),
                   _vm._v(" "),
-                  _vm.errors.area
-                    ? _c("span", { staticClass: "text-danger" }, [
-                        _vm._v(_vm._s(_vm.errors.area))
-                      ])
-                    : _vm._e()
+                  _c("div", { staticClass: "col-md-2" }, [
+                    _c("div", { staticClass: "form-group" }, [
+                      _c(
+                        "label",
+                        {
+                          staticClass: "form-control-label",
+                          attrs: { for: "role" }
+                        },
+                        [_vm._v("Category")]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "select",
+                        {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.category,
+                              expression: "category"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          on: {
+                            change: [
+                              function($event) {
+                                var $$selectedVal = Array.prototype.filter
+                                  .call($event.target.options, function(o) {
+                                    return o.selected
+                                  })
+                                  .map(function(o) {
+                                    var val = "_value" in o ? o._value : o.value
+                                    return val
+                                  })
+                                _vm.category = $event.target.multiple
+                                  ? $$selectedVal
+                                  : $$selectedVal[0]
+                              },
+                              function($event) {
+                                return _vm.changeCompany("", "")
+                              }
+                            ]
+                          }
+                        },
+                        _vm._l(_vm.categories, function(category, c) {
+                          return _c(
+                            "option",
+                            { key: c, domProps: { value: category } },
+                            [_vm._v(" " + _vm._s(category.name))]
+                          )
+                        }),
+                        0
+                      ),
+                      _vm._v(" "),
+                      _vm.errors.category
+                        ? _c("span", { staticClass: "text-danger" }, [
+                            _vm._v(_vm._s(_vm.errors.category[0]))
+                          ])
+                        : _vm._e()
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "col-md-2" }, [
+                    _c("div", { staticClass: "form-group" }, [
+                      _c(
+                        "label",
+                        {
+                          staticClass: "form-control-label",
+                          attrs: { for: "role" }
+                        },
+                        [_vm._v("AREA")]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "select",
+                        {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.area,
+                              expression: "area"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          on: {
+                            change: [
+                              function($event) {
+                                var $$selectedVal = Array.prototype.filter
+                                  .call($event.target.options, function(o) {
+                                    return o.selected
+                                  })
+                                  .map(function(o) {
+                                    var val = "_value" in o ? o._value : o.value
+                                    return val
+                                  })
+                                _vm.area = $event.target.multiple
+                                  ? $$selectedVal
+                                  : $$selectedVal[0]
+                              },
+                              function($event) {
+                                return _vm.changeCompany("", "")
+                              }
+                            ]
+                          }
+                        },
+                        _vm._l(_vm.areas, function(area, a) {
+                          return _c(
+                            "option",
+                            { key: a, domProps: { value: area.area } },
+                            [_vm._v(" " + _vm._s(area.area.name))]
+                          )
+                        }),
+                        0
+                      ),
+                      _vm._v(" "),
+                      _vm.errors.area
+                        ? _c("span", { staticClass: "text-danger" }, [
+                            _vm._v(_vm._s(_vm.errors.area[0]))
+                          ])
+                        : _vm._e()
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "col-md-2" }, [
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-sm btn-primary mt-4",
+                        on: { click: _vm.fetchFilteredReport }
+                      },
+                      [_vm._v(" Filter")]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-sm btn-primary mt-4",
+                        on: { click: _vm.createReport }
+                      },
+                      [_vm._v(" Create Report")]
+                    )
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "col-md-4" })
                 ])
-              ]),
-              _vm._v(" "),
-              _c("div", { staticClass: "col-md-2" }, [
-                _c(
-                  "button",
-                  {
-                    staticClass: "btn btn-sm btn-primary mt-4",
-                    on: { click: _vm.viewAction }
-                  },
-                  [_vm._v(" Go")]
-                ),
-                _vm._v(" "),
-                _c(
-                  "button",
-                  {
-                    staticClass: "btn btn-sm btn-primary mt-4",
-                    on: { click: _vm.createReport }
-                  },
-                  [_vm._v(" Create Report")]
-                )
-              ]),
-              _vm._v(" "),
-              _c("div", { staticClass: "col-md-4" })
-            ])
-          ]),
+              ])
+            : _vm._e(),
           _vm._v(" "),
           _c("table", { staticClass: "table align-items-center table-flush" }, [
             _vm._m(0),
             _vm._v(" "),
             _c(
               "tbody",
-              _vm._l(_vm.reports, function(report, r) {
+              _vm._l(_vm.filteredQueues, function(report, r) {
                 return _c("tr", { key: r }, [
                   _c("td", { staticClass: "text-right" }, [
                     _c("div", { staticClass: "dropdown" }, [
@@ -52326,7 +52301,9 @@ var render = function() {
                                   "/" +
                                   report[0].category.id +
                                   "/" +
-                                  report[0].area.id
+                                  report[0].area.id +
+                                  "/" +
+                                  report[0].process_owner_id
                               }
                             },
                             [_vm._v("View")]
@@ -52356,6 +52333,8 @@ var render = function() {
                   _vm._v(" "),
                   _c("td", { attrs: { scope: "row" } }, [_vm._v(_vm._s(r))]),
                   _vm._v(" "),
+                  _c("td", [_vm._v(_vm._s(report[0].process_owner.name))]),
+                  _vm._v(" "),
                   _c("td", [
                     _vm._v(
                       _vm._s(
@@ -52370,6 +52349,8 @@ var render = function() {
                   _vm._v(" "),
                   _c("td", [_vm._v(_vm._s(report[0].area.name) + " ")]),
                   _vm._v(" "),
+                  _c("td", [_vm._v(_vm._s(report[0].inspector.name))]),
+                  _vm._v(" "),
                   _c("td", [_vm._v(_vm._s(report[0].status) + " ")])
                 ])
               }),
@@ -52377,7 +52358,66 @@ var render = function() {
             )
           ])
         ])
-      ])
+      ]),
+      _vm._v(" "),
+      _vm.filteredQueues.length
+        ? _c("div", { staticClass: "row mb-3 mt-3 ml-3" }, [
+            _c("div", { staticClass: "col-6" }, [
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-default btn-sm btn-fill",
+                  attrs: { disabled: !_vm.showPreviousLink() },
+                  on: {
+                    click: function($event) {
+                      return _vm.setPage(_vm.currentPage - 1)
+                    }
+                  }
+                },
+                [_vm._v(" Previous ")]
+              ),
+              _vm._v(" "),
+              _c("span", { staticClass: "text-dark" }, [
+                _vm._v(
+                  "Page " +
+                    _vm._s(_vm.currentPage + 1) +
+                    " of " +
+                    _vm._s(_vm.totalPages)
+                )
+              ]),
+              _vm._v(" "),
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-default btn-sm btn-fill",
+                  attrs: { disabled: !_vm.showNextLink() },
+                  on: {
+                    click: function($event) {
+                      return _vm.setPage(_vm.currentPage + 1)
+                    }
+                  }
+                },
+                [_vm._v(" Next ")]
+              )
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "col-6 text-right" }, [
+              _c("span", [
+                _vm._v(
+                  _vm._s(_vm.filteredQueues.length) + " Filtered Report(s)"
+                )
+              ]),
+              _c("br"),
+              _vm._v(" "),
+              _c("span", [
+                _vm._v(
+                  _vm._s(Object.values(this.reports).length) +
+                    " Total Report(s)"
+                )
+              ])
+            ])
+          ])
+        : _vm._e()
     ])
   ])
 }
@@ -52392,6 +52432,8 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", { attrs: { scope: "col" } }, [_vm._v("#")]),
         _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Process Owner")]),
+        _vm._v(" "),
         _c("th", { attrs: { scope: "col" } }, [_vm._v("Company")]),
         _vm._v(" "),
         _c("th", { attrs: { scope: "col" } }, [_vm._v("Operation Line")]),
@@ -52399,6 +52441,8 @@ var staticRenderFns = [
         _c("th", { attrs: { scope: "col" } }, [_vm._v("Category")]),
         _vm._v(" "),
         _c("th", { attrs: { scope: "col" } }, [_vm._v("Area")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Inspector")]),
         _vm._v(" "),
         _c("th", { attrs: { scope: "col" } }, [_vm._v("Status")])
       ])
@@ -52711,7 +52755,8 @@ var render = function() {
                                 key: c,
                                 staticClass: "col-md-12 card mb-3",
                                 staticStyle: {
-                                  "background-color": "#e6e6e6 !important"
+                                  "background-color": "#e6e6e6 !important",
+                                  "min-height": "300px"
                                 }
                               },
                               [

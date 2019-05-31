@@ -22,7 +22,7 @@
         </div>
         <div id="page-inner">
             <div class="card">
-                <div class="card-header">
+                <div class="card-header" v-if="userRole > 2"> 
                     <div class="row ml-2">
                         <div class="col-md-2">
                             <div class="form-group">
@@ -30,7 +30,7 @@
                                 <select class="form-control" v-model="company" @change="changeCompany(company, 'getCompanies')">
                                     <option v-for="(company,c) in companies" v-bind:key="c" :value="company"> {{ company.name }}</option>
                                 </select>
-                                <span class="text-danger" v-if="errors.company  ">{{ errors.company }}</span>
+                                <span class="text-danger" v-if="errors.company  ">{{ errors.company[0] }}</span>
                             </div>
                         </div>
                         <div class="col-md-2">
@@ -39,7 +39,7 @@
                                 <select class="form-control" v-model="location" @change="changeCompany('', '')">
                                     <option v-for="(location,l) in locations" v-bind:key="l" :value="location"> {{ location.name }}</option>
                                 </select>
-                                <span class="text-danger" v-if="errors.location  ">{{ errors.location }}</span>
+                                <span class="text-danger" v-if="errors.location  ">{{ errors.location[0] }}</span>
                             </div>
                         </div>
                         <div class="col-md-2">
@@ -48,7 +48,7 @@
                                 <select class="form-control" v-model="operation_line" @change="changeCompany('', '')">
                                     <option v-for="(operation_line,o) in operation_lines" v-bind:key="o" :value="operation_line"> {{ operation_line.name }}</option>
                                 </select>
-                                <span class="text-danger" v-if="errors.operation_line  ">{{ errors.operation_line }}</span>
+                                <span class="text-danger" v-if="errors.operation_line  ">{{ errors.operation_line[0] }}</span>
                             </div>
                         </div>
                         <div class="col-md-2">
@@ -57,7 +57,7 @@
                                 <select class="form-control" v-model="category"  @change="changeCompany('', '')">
                                     <option v-for="(category,c) in categories" v-bind:key="c" :value="category"> {{ category.name }}</option>
                                 </select>
-                                <span class="text-danger" v-if="errors.category  ">{{ errors.category }}</span>
+                                <span class="text-danger" v-if="errors.category  ">{{ errors.category[0] }}</span>
                             </div>
                         </div>
                         <div class="col-md-2">
@@ -66,11 +66,12 @@
                                 <select class="form-control" v-model="area"  @change="changeCompany('', '')">
                                     <option v-for="(area,a) in areas" v-bind:key="a" :value="area.area"> {{ area.area.name }}</option>
                                 </select>
-                                <span class="text-danger" v-if="errors.area  ">{{ errors.area }}</span>
+                                <span class="text-danger" v-if="errors.area  ">{{ errors.area[0] }}</span>
                             </div>
                         </div>
                         <div class="col-md-2">
-                            <button class="btn btn-sm btn-primary mt-4" @click="viewAction"> Go</button>
+                            <!-- <button class="btn btn-sm btn-primary mt-4" @click="viewAction"> Go</button> -->
+                            <button class="btn btn-sm btn-primary mt-4" @click="fetchFilteredReport"> Filter</button>
                             <button class="btn btn-sm btn-primary mt-4" @click="createReport"> Create Report</button>
                         </div>
                         <div class="col-md-4"></div>
@@ -82,15 +83,17 @@
                         <tr>
                             <th></th>
                             <th scope="col">#</th>
+                            <th scope="col">Process Owner</th>
                             <th scope="col">Company</th>
                             <th scope="col">Operation Line</th>
                             <th scope="col">Category</th>
                             <th scope="col">Area</th>
+                            <th scope="col">Inspector</th>
                             <th scope="col">Status</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(report, r) in reports" v-bind:key="r">
+                        <tr v-for="(report, r) in filteredQueues" v-bind:key="r">
                             <td class="text-right">
                                 <div class="dropdown">
                                     <a class="btn btn-sm btn-icon-only text-light" href="#" role="button"
@@ -98,20 +101,33 @@
                                         <i class="fa fa-ellipsis-v"></i>
                                     </a>
                                     <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
-                                        <a class="dropdown-item" target="_blank" :href="viewReportLink+report[0].company.id+'/'+report[0].location.id+'/'+report[0].operation_line.id+'/'+report[0].category.id+'/'+report[0].area.id">View</a>
+                                        <a class="dropdown-item" target="_blank" :href="viewReportLink+report[0].company.id+'/'+report[0].location.id+'/'+report[0].operation_line.id+'/'+report[0].category.id+'/'+report[0].area.id+'/'+report[0].process_owner_id">View</a>
                                         <a class="dropdown-item" data-toggle="modal" data-target="#deleteModal" style="cursor: pointer" @click="copyObject(report)">Delete</a>
                                     </div>
                                 </div>
                             </td>
                             <td scope="row">{{ r }}</td>
+                            <td>{{ report[0].process_owner.name }}</td>
                             <td>{{ report[0].company.name + ' ' + report[0].location.name }}</td>
                             <td>{{ report[0].operation_line.name }}</td>
                             <td>{{ report[0].category.name }} </td>
                             <td>{{ report[0].area.name }} </td>
+                            <td>{{ report[0].inspector.name }}</td>
                             <td>{{ report[0].status }} </td>
                         </tr>
                     </tbody>
                 </table>
+            </div>
+        </div>
+        <div class="row mb-3 mt-3 ml-3" v-if="filteredQueues.length ">
+            <div class="col-6">
+                <button :disabled="!showPreviousLink()" class="btn btn-default btn-sm btn-fill" v-on:click="setPage(currentPage - 1)"> Previous </button>
+                    <span class="text-dark">Page {{ currentPage + 1 }} of {{ totalPages }}</span>
+                <button :disabled="!showNextLink()" class="btn btn-default btn-sm btn-fill" v-on:click="setPage(currentPage + 1)"> Next </button>
+            </div>
+            <div class="col-6 text-right">
+                <span>{{ filteredQueues.length }} Filtered Report(s)</span><br>
+                <span>{{ Object.values(this.reports).length }} Total Report(s)</span>
             </div>
         </div>
     </div>
@@ -124,7 +140,7 @@
     import navbarRight from '../NavbarRight';
     import breadcrumb from '../Breadcrumb';
     export default {
-        props: ['userName'],
+        props: ['userName', 'userRole'],
         components:{
             Multiselect,
             navbarRight,
@@ -146,7 +162,7 @@
                 report_show: false,
                 errors: [],
                 currentPage: 0,
-                itemsPerPage: 8,
+                itemsPerPage: 15,
                 keywords: '',
             }
         },
@@ -220,31 +236,20 @@
                     this.errors = error.response.data.errors;
                 });
             },
-            viewAction(){
-                this.errors = [];
-                if(!this.company){
-                    this.errors.company = 'This field is required';
-                    this.report_show = false;
-                }
-                if(!this.location){
-                    this.errors.location = 'This field is required';
-                    this.report_show = false;
-                }
-                if(!this.operation_line){
-                    this.errors.operation_line = 'This field is required';
-                   this.report_show = false;
-                }
-                if(!this.category){
-                    this.errors.category = 'This field is required';
-                   this.report_show = false;
-                }
-                if(!this.area){
-                    this.errors.area = 'This field is required';
-                    this.report_show = false;
-                }
-                if(this.company && this.location && this.operation_line && this.category && this.area){
-                    this.report_show = true;
-                }
+            fetchFilteredReport(){
+                axios.post('/report-filtered', {
+                    company: this.company.id,
+                    location: this.location.id,
+                    operation_line: this.operation_line.id,
+                    category: this.category.id,
+                    area: this.area.id
+                })
+                .then(response => { 
+                    this.reports = response.data;
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.errors
+                })
             },
             setPage(pageNumber) {
                 this.currentPage = pageNumber;
@@ -257,38 +262,19 @@
             },
             showNextLink() {
                 return this.currentPage == (this.totalPages - 1) ? false : true;
-            }, 
-            showNextLinkView() {
-                return this.currentPage == (this.totalPages - 1) ? false : true;
-            }   
+            }  
         },
         computed:{
             totalPages() {
-                return Math.ceil(Object.values(this.selected_checklist).length / this.itemsPerPage);
+                return Math.ceil(Object.values(this.reports).length / this.itemsPerPage);
             },
             filteredQueues() {
                 var index = this.currentPage * this.itemsPerPage;
-                var queues_array = Object.values(this.selected_checklist).slice(index, index + this.itemsPerPage);
+                var queues_array = Object.values(this.reports).slice(index, index + this.itemsPerPage);
 
                 if(this.currentPage >= this.totalPages) {
                     this.currentPage = this.totalPages - 1
                 }
-                if(this.currentPage == -1) {
-                    this.currentPage = 0;
-                }
-                return queues_array;
-            },
-            totalPagesView() {
-                return Math.ceil(Object.values(this.reportsPerUser).length / this.itemsPerPage);
-            },
-            filteredQueuesView() {
-                var index = this.currentPage * this.itemsPerPage;
-                var queues_array = Object.values(this.reportsPerUser).slice(index, index + this.itemsPerPage);
-
-                if(this.currentPage >= this.totalPagesView) {
-                    this.currentPage = this.totalPagesView - 1
-                }
-
                 if(this.currentPage == -1) {
                     this.currentPage = 0;
                 }

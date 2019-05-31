@@ -368,15 +368,6 @@
                 var removeElements = (elms) => [...elms].forEach(el => el.value = "");
                 removeElements( document.querySelectorAll(".attachments"));
             },
-            fetchReportsPerUser(){
-                axios.get(`/reports-per-user/${this.company.id}/${this.location.id}/${this.operation_line.id}/${this.category.id}/${this.area.id}`)
-                .then(response => {
-                    this.reportsPerUser = response.data;
-                })
-                .catch(error => { 
-                    this.errors = error.response.data.errors;
-                })
-            },
             addReport(selected_checklist,points){
                 this.formData = new FormData();
                 let t = this;

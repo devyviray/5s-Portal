@@ -31,12 +31,19 @@ class ReportController extends Controller
      */
     public function indexData()
     {
-        return Report::with('company', 'location', 'operationLine', 'category', 'area', 'inspector')
-        ->where('process_owner', Auth::user()->id)
-        ->where('status', 1)->get()
-        ->groupBy(function($val){
-            return Carbon::parse($val->date_of_inspection)->format('m');
-        });
+        // return Report::with('company', 'location', 'operationLine', 'category', 'area', 'inspector')
+        // ->where('process_owner', Auth::user()->id)
+        // ->where('status', 1)->get()
+        // ->groupBy(function($val){
+        //     return Carbon::parse($val->date_of_inspection)->format('m');
+        // });
+
+       return Report::with('company', 'location', 'operationLine', 'category', 'area', 'inspector', 'processOwner')
+        ->when(Auth::user()->level() < 3, function($q){
+            $q->where('process_owner_id', Auth::user()->id);
+        })
+        ->get()
+        ->groupBy('process_owner_id');
     }
 
     /**
@@ -48,10 +55,6 @@ class ReportController extends Controller
 
         return view('report.form');
     }
-
-    
-
-    
 
     /**
      * Store a newly created resource in storage.
@@ -87,8 +90,8 @@ class ReportController extends Controller
                         'operation_line_id' => $request->operation_line,
                         'category_id' => $request->category,
                         'area_id' => $request->area,
-                        'process_owner' => $request->process_owner,
-                        'inspector' => Auth::user()->id,
+                        'process_owner_id' => $request->process_owner,
+                        'inspector_id' => Auth::user()->id,
                         'date_of_inspection' => $request->date_of_inspection,
                         'time_of_inspection' => $request->time_of_inspection,
                         'checklist_id' => $checklist->id,
@@ -125,9 +128,9 @@ class ReportController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($companyId,$locationId,$operationLineId,$categoryId,$areaId)
+    public function show($companyId,$locationId,$operationLineId,$categoryId,$areaId, $processOwnerId)
     {
-        return view('report.view', compact('companyId', 'locationId', 'operationLineId','categoryId','areaId'));
+        return view('report.view', compact('companyId', 'locationId', 'operationLineId','categoryId','areaId','processOwnerId'));
     }
 
 
@@ -155,6 +158,34 @@ class ReportController extends Controller
         //
     }
 
+     /**
+     *Fetch All Filtered Reports  
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+
+
+    public function getFilteredReports(Request $request){
+        $request->validate([
+            'company' => 'required',
+            'location' => 'required',
+            'operation_line' => 'required',
+            'category' => 'required',
+            'area' => 'required'
+        ]);
+
+        return Report::with('company', 'location', 'operationLine', 'category', 'area', 'inspector', 'processOwner')
+        ->where('company_id', $request->company)
+        ->where('location_id', $request->location)
+        ->where('operation_line_id', $request->operation_line)
+        ->where('category_id', $request->category)
+        ->where('area_id', $request->area)
+        ->get()
+        ->groupBy('process_owner_id');
+
+    }
+
     /**
      *Fetch All reports per user  
      *
@@ -162,14 +193,19 @@ class ReportController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function getReportsPerUser($companyId, $locationId, $operationLineId,$categoryId, $areaId){
+    public function getReportsPerUser($companyId, $locationId, $operationLineId,$categoryId, $areaId, $processOwnerId){
         return Report::with('uploadedFiles', 'company','category','operationLine', 'area', 'inspector')
         ->where('company_id', $companyId)
         ->where('location_id', $locationId)
         ->where('operation_line_id', $operationLineId)
         ->where('category_id', $categoryId)
         ->where('area_id', $areaId)
-        ->where('process_owner', Auth::user()->id)
+        ->when(Auth::user()->level() < 3, function ($q){
+            $q->where('process_owner_id', Auth::user()->id);
+        })
+        ->when(Auth::user()->level() > 2, function ($q) use ($processOwnerId){
+            $q->where('process_owner_id', $processOwnerId);
+        })
         // ->where('status', 1)->get();
         ->get();
     }
