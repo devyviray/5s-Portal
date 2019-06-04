@@ -1,5 +1,6 @@
 <template>
     <div id="wrapper">
+         <loader v-if="loading"></loader>
          <nav class="navbar navbar-default top-navbar" role="navigation">
             <div class="row">
                 <div class="col-md-9"></div>
@@ -284,13 +285,15 @@
     import vSelect from 'vue-select';
     import navbarRight from '../NavbarRight';
     import breadcrumb from '../Breadcrumb';
+    import loader from '../Loader'
     export default {
         props: ['userName'],
         components:{
             Multiselect,
             vSelect,
             navbarRight,
-            breadcrumb
+            breadcrumb,
+            loader
         },
         data(){
             return {
@@ -312,6 +315,7 @@
                 currentPage: 0,
                 itemsPerPage: 50,
                 keywords: '',
+                loading: false,
             }
         },
         created(){
@@ -321,6 +325,9 @@
             this.fetchRoles();
         },
         methods:{
+            showLoader(){
+               this.loading = true;
+            },
             customLabelLocation (company) {
                 return `${company.name}`
             },

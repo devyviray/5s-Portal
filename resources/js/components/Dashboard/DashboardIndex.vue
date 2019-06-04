@@ -1,5 +1,6 @@
 <template>
     <div id="wrapper">
+        <loader v-if="loading"></loader>
         <nav class="navbar navbar-default top-navbar" role="navigation">
             <div class="row">
                 <div class="col-md-9"></div>
@@ -54,17 +55,25 @@
     import { Carousel, Slide } from 'vue-carousel';
     import navbarRight from '../NavbarRight';
     import breadcrumb from '../Breadcrumb';
+    import loader from '../Loader'
     export default {
         props: ['userName'],
         components: {
             'carousel': Carousel,
             'slide': Slide,
             navbarRight,
-            breadcrumb
+            breadcrumb,
+            loader
         },
         data(){
             return { 
                 errors: [],
+                loading: false,
+            }
+        },
+        methods:{
+            showLoader(){
+               this.loading = true;
             }
         },
         computed:{

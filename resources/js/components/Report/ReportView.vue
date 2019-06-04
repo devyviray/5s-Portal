@@ -1,5 +1,6 @@
 <template>
     <div id="wrapper">
+    <loader v-if="loading"></loader>
     <nav class="navbar navbar-default top-navbar" role="navigation">
         <div class="row">
             <div class="col-md-9"></div>
@@ -172,12 +173,14 @@
     import Multiselect from 'vue-multiselect';
     import navbarRight from '../NavbarRight';
     import breadcrumb from '../Breadcrumb';
+    import loader from '../Loader';
     export default {
         props: ['userName', 'reportId'],
         components:{
             Multiselect,
             navbarRight,
-            breadcrumb
+            breadcrumb,
+            loader
         },
         data(){
             return {
@@ -190,6 +193,7 @@
                 currentPage: 0,
                 itemsPerPage: 8,
                 keywords: '',
+                loading: false,
             }
         },
         created(){
@@ -206,6 +210,7 @@
                 })
             },
             approvedReport(){
+                this.loading = true;
                 this.enabledBtn();
                 var report_ids = [];
                 this.reportsPerUser.filter(item => report_ids.push(item.id))
@@ -218,13 +223,16 @@
                     this.forCheckingReport = false;
                     this.disabledBtn();
                     $('#approveModal').modal('hide');
+                    this.loading = false;
                 })
                 .catch(error => {
                     this.errors = error.response.data.errors
                     this.enabledBtn();
+                    this.loading = false;
                 })
             },
             forCheckingReport(){
+                this.loading = true;
                 this.enabledBtn();
                 let t = this;
                 var comment = $(".comment-input").map(function() {
@@ -245,11 +253,13 @@
                     this.disabledBtn();
                     this.show_forChecking = true;
                     this.show_approved = false;
+                    this.loading = false;
                     
                 })
                 .catch(error => { 
                     this.errors = error.response.data.errors;
                     this.enabledBtn();
+                    this.loading = false;
                 })
             },
             countRating(reportsPerUser){

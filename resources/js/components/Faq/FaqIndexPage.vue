@@ -1,6 +1,7 @@
 <template>
     <div id="wrapper">
-         <nav class="navbar navbar-default top-navbar" role="navigation">
+        <loader v-if="loading"></loader>
+        <nav class="navbar navbar-default top-navbar" role="navigation">
             <div class="row">
                 <div class="col-md-9"></div>
                 <div class="col-md-2">
@@ -49,12 +50,14 @@
     import Multiselect from 'vue-multiselect';
     import  navbarRight from '../NavbarRight';
     import breadcrumb from '../Breadcrumb';
+    import loader from '../Loader';
     export default {
         props: ['userName'],
         components:{
             Multiselect,
             navbarRight,
-            breadcrumb
+            breadcrumb,
+            loader
         },
         data(){
             return {
@@ -68,12 +71,16 @@
                 currentPage: 0,
                 itemsPerPage: 50,
                 keywords: '',
+                loading: false,
             }
         },
         created(){
             this.fetchFAQs();
         },
         methods:{
+            showLoader(){
+               this.loading = true;
+            },
             fetchFAQs(){
                 axios.get('faqs-all')
                 .then(response => {

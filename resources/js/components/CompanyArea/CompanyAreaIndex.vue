@@ -1,6 +1,7 @@
 <template>
     <div id="wrapper">
-         <nav class="navbar navbar-default top-navbar" role="navigation">
+        <loader v-if="loading"></loader>
+        <nav class="navbar navbar-default top-navbar" role="navigation">
             <div class="row">
                 <div class="col-md-9"></div>
                 <div class="col-md-2">
@@ -293,12 +294,14 @@
     import navbarRight from '../NavbarRight';
     import breadcrumb from '../Breadcrumb';
     import Multiselect from 'vue-multiselect';
+    import loader from '../Loader';
     export default {
         props: ['userName'],
         components:{
             navbarRight,
             breadcrumb,
-            Multiselect
+            Multiselect,
+            loader
         },
         data(){
             return {
@@ -317,6 +320,7 @@
                 currentPage: 0,
                 itemsPerPage: 50,
                 keywords: '',
+                loading: false,
             }
         },
         created(){
@@ -327,6 +331,9 @@
             this.fetchAreas();
         },
         methods:{
+            showLoader(){
+               this.loading = true;
+            },
             copyObject(company_area){
                 this.company_area_updated = false;
                 this.company_area_id = company_area.id;

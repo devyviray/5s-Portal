@@ -1,5 +1,6 @@
 <template>
     <div id="wrapper">
+    <loader v-if="loading"></loader>
     <nav class="navbar navbar-default top-navbar" role="navigation">
         <div class="row">
             <div class="col-md-9"></div>
@@ -175,12 +176,14 @@
     import Multiselect from 'vue-multiselect';
     import navbarRight from '../NavbarRight';
     import breadcrumb from '../Breadcrumb';
+    import loader from '../Loader';
     export default {
         props: ['userName'],
         components:{
             Multiselect,
             navbarRight,
-            breadcrumb
+            breadcrumb,
+            loader
         },
         data(){
             return {
@@ -217,7 +220,8 @@
                 fileSize: 0,
                 maximumSize: 5000000,
                 formData: new FormData(),
-                show_added: false
+                show_added: false,
+                loading: false,
             }
         },
         created(){
@@ -369,6 +373,7 @@
                 removeElements( document.querySelectorAll(".attachments"));
             },
             addReport(selected_checklist,points){
+                this.loading = true;
                 this.formData = new FormData();
                 let t = this;
                 this.points = [];
@@ -399,10 +404,12 @@
                 .then(response => { 
                     this.resetForm();
                     this.show_added = true;
+                    this.loading = false;
                 })
                 .catch(error => {
                     this.errors = error.response.data.errors;
                     this.show_added = false;
+                    this.loading = false;
                 });
             },
             resetForm(){

@@ -1,6 +1,7 @@
 <template>
     <div id="wrapper">
-         <nav class="navbar navbar-default top-navbar" role="navigation">
+        <loader v-if="loading"></loader>
+        <nav class="navbar navbar-default top-navbar" role="navigation">
             <div class="row">
                 <div class="col-md-9"></div>
                 <div class="col-md-2">
@@ -248,13 +249,15 @@
     import vSelect from 'vue-select'
     import navbarRight from '../NavbarRight';
     import breadcrumb from '../Breadcrumb';
+    import loader from '../Loader';
     export default {
         props: ['userName'],
         components:{
             Multiselect,
             vSelect,
             navbarRight,
-            breadcrumb
+            breadcrumb,
+            loader
         },
         data(){
             return {
@@ -286,12 +289,16 @@
                 currentPage: 0,
                 itemsPerPage: 50,
                 keywords: '',
+                loading: false,
             }
         },
         created(){
             this.fetchChecklists();
         },
         methods:{
+            showLoader(){
+               this.loading = true;
+            },
             copyObject(checklist,index){
                 this.default_checklists_id = [];
                 this.errors = [];

@@ -1,5 +1,6 @@
 <template>
     <div>
+        <loader v-if="loading"></loader>
         <ul class="nav navbar-top-links navbar-right">
             <li class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
@@ -27,9 +28,19 @@
 </template>
 
 <script>
+import loader from './Loader'
 export default {
+    components:{
+        loader
+    },
+    data(){
+        return {
+            loading: false,
+        }
+    },
     methods:{
         logoutForm(){
+            this.$parent.showLoader();
             axios.post('/logout')
             .then(response =>{
                 if(response.status == 200){
