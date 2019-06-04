@@ -229,6 +229,7 @@
                     this.locations.unshift(response.data);
                     this.location_added = true;
                     document.getElementById('add_btn').disabled = false;
+                    this.location = [];
                 })
                 .catch(error => {
                     this.errors = error.response.data.errors;

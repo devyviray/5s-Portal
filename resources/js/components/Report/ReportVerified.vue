@@ -73,34 +73,31 @@
                                             <div class="row mb-4">
                                                 <div class="col-sm-1"></div>
                                                 <div class="col-sm-10 div-rating">
-                                                    <span>{{ countRating(this.reportsPerUser) }} %</span>
+                                                    <span>{{ countRating(this.reportsPerUser[0].report_detail) }} %</span>
                                                 </div>
                                                 <div class="col-sm-1"></div>
                                             </div> 
                                         </div>
-                                        <div class="form-group row" v-if="this.reportsPerUser[0].status == 1">
+                                        <div class="form-group row" v-if="this.reportsPerUser[0].status == 2">
                                             <div class="col-sm-3"></div>
                                             <div class="col-sm-6">
-                                                <button id="btn-approved" class="btn btn-block btn-primary" data-toggle="modal" data-target="#approveModal">POST</button>
+                                                <button id="btn-approved" class="btn btn-block btn-primary" data-toggle="modal" data-target="#validateModal">Validate</button>
                                             </div>
                                             <div class="col-sm-3"></div>
                                         </div>
-                                        <div class="form-group row">
-                                            <div class="alert alert-info col-md-12" v-if="show_approved">
-                                                <strong>Success!</strong> Report succesfully approved
-                                            </div>
-                                            <div class="alert alert-info col-md-12" v-if="show_forChecking">
-                                                <strong>Success!</strong> Report succesfully resent for checking
+                                        <div class="form-group row" v-else>
+                                            <div class="alert alert-info col-md-12">
+                                                <strong>Success!</strong> Report succesfully validated
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-md-9" style="height: 770px">
                                     <div class="table-responsive" style="height: 770px">
-                                        <div class="col-md-12 card mb-3" v-for="(checklist, c) in reportsPerUser" v-bind:key="c" style="background-color: #e6e6e6 !important; min-height: 300px;">
+                                        <div class="col-md-12 card mb-3" v-for="(checklist, c) in reportsPerUser[0].report_detail" v-bind:key="c" style="background-color: #e6e6e6 !important; min-height: 300px;">
                                             <div class="card-body">
                                                 <span>{{ c + 1 +'. '+checklist.name }}</span><br>
-                                                    <select class="form-control select-points" v-model="checklist.points" style="width: 60px">
+                                                    <select class="form-control select-points" v-model="checklist.points" style="width: 60px" :disabled="reportsPerUser[0].status !=2">
                                                         <option value="0"> 0 </option>
                                                         <option value="1"> 1 </option>
                                                         <option value="2"> 2 </option>
@@ -113,7 +110,6 @@
                                                         <img class="report-img mb-2"  :src="attachmentLink + uploadFile.file_path"><br>
                                                         <span>{{ c + 1 +'.' }} </span> <span> {{  u + 1  }} </span>
                                                         <input type="text" :id="uploadFile.id" class="form-control comment-input"  placeholder="Comment..." v-model="uploadFile.comment" disabled>
-                                                        <span class="text-danger" v-if="errors['comment.'+c + 1 +'' + u + 1]"> This field is required </span> 
                                                     </div> 
                                                 </div>
                                             </div>
@@ -136,6 +132,33 @@
                     </div>
                 </div>
 
+                <!-- Validate Report Modal -->
+                <div class="modal fade" id="validateModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="addCompanyLabel">Validate Report</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                        <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        Are you sure you want to Validate this Report?
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" data-dismiss='modal'>Close</button>
+                            <button class="btn btn-primary" @click="validateReport">Validate</button>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
@@ -147,7 +170,7 @@
     import navbarRight from '../NavbarRight';
     import breadcrumb from '../Breadcrumb';
     export default {
-        props: ['userName', 'companyId', 'locationId', 'operationlineId', 'categoryId', 'areaId', 'processOwnerId'],
+        props: ['userName', 'reportId'],
         components:{
             Multiselect,
             navbarRight,
@@ -157,8 +180,8 @@
             return {
                 reportsPerUser: [],
                 comments: [],
+                points_errors: [],
                 final_rating: '',
-                show_approved: false,
                 show_forChecking: false,
                 errors: [],
                 currentPage: 0,
@@ -171,7 +194,7 @@
         },
         methods:{
             fetchReportsPerUser(){
-                axios.get(`/reports-per-user/${this.companyId}/${this.locationId}/${this.operationlineId}/${this.categoryId}/${this.areaId}/${this.processOwnerId}`)
+                axios.get(`/reports-per-user/${this.reportId}`)
                 .then(response => {
                     this.reportsPerUser = response.data;
                 })
@@ -185,6 +208,33 @@
                 reportsPerUser.filter(item => total_points = parseInt(total_points) +  parseInt(item.points));
 
                 return this.final_rating = total_points / denominator * 100;
+            },
+            validateReport(){
+                this.enabledBtn();
+                var report_ids = [];
+                this.reportsPerUser.filter(item => report_ids.push(item.id));
+                let t = this;
+                this.points = [];
+                this.points_errors = [];
+                this.reportsPerUser[0].report_detail.filter(function(item,index) {
+                    item.rating !== null ? t.points.push(item.points) : t.points_errors.push(index);
+                });
+
+                axios.post('/report-validate', {
+                    ids: report_ids,
+                    final_rating: this.final_rating,
+                    points: this.points
+                })
+                .then(response => {
+                    this.show_approved = true;
+                    this.disabledBtn();
+                    this.reportsPerUser = response.data;
+                    $('#validateModal').modal('hide');
+                })
+                .catch(error => {
+                    this.errors = error.response.data.errors
+                    this.enabledBtn();
+                })
             },
             disabledBtn(){
                 document.getElementById('btn-approved').disabled = true;

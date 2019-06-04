@@ -197,7 +197,7 @@
                 department_updated: false, 
                 errors: [],
                 currentPage: 0,
-                itemsPerPage: 50,
+                itemsPerPage: 10,
                 keywords: '',
             }
         },
@@ -220,6 +220,7 @@
                 })
             },
             addDepartment(department){
+                this.department_added = false;
                 document.getElementById('add_btn').disabled = true;
                 this.errors = [];
                 axios.post('/department', {
@@ -229,6 +230,7 @@
                     this.departments.unshift(response.data);
                     this.department_added = true;
                     document.getElementById('add_btn').disabled = false;
+                    this.department = [];
                 })
                 .catch(error => {
                     this.errors = error.response.data.errors;

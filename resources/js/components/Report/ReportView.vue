@@ -73,7 +73,7 @@
                                         <div class="row mb-2">
                                             <div class="col-sm-1"></div>
                                             <div class="col-sm-10 div-rating">
-                                                <span>{{ countRating(this.reportsPerUser) }} %</span>
+                                                <span>{{ countRating(this.reportsPerUser[0].report_detail) }} %</span>
                                             </div>
                                             <div class="col-sm-1"></div>
                                         </div>
@@ -101,7 +101,7 @@
                             </div>
                             <div class="col-md-9" style="height: 770px">
                                 <div class="table-responsive" style="height: 770px">
-                                    <div class="col-md-12 card mb-3" v-for="(checklist, c) in reportsPerUser" v-bind:key="c" style="background-color: #e6e6e6 !important; min-height: 300px;">
+                                    <div class="col-md-12 card mb-3" v-for="(checklist, c) in reportsPerUser[0].report_detail" v-bind:key="c" style="background-color: #e6e6e6 !important; min-height: 300px;">
                                         <div class="card-body">
                                             <span>{{ c + 1 +'. '+checklist.name }}</span><br>
                                             <span class="ml-4"><b>Points:{{checklist.points}}</b></span>
@@ -110,7 +110,7 @@
                                                     <img class="report-img mb-2"  :src="attachmentLink + uploadFile.file_path"><br>
 
                                                     <span>{{ c + 1 +'.' }} </span> <span> {{  u + 1  }} </span>
-                                                    <input type="text" :disabled="checklist.status != 1" :id="uploadFile.id" class="form-control comment-input"  placeholder="Comment..." v-model="uploadFile.comment">
+                                                    <input type="text" :disabled="reportsPerUser[0].status != 1" :id="uploadFile.id" class="form-control comment-input"  placeholder="Comment..." v-model="uploadFile.comment">
                                                     <span class="text-danger" v-if="errors['comment.'+c + 1 +'' + u + 1]"> This field is required </span> 
                                                 </div> 
                                             </div>
@@ -133,7 +133,6 @@
                     </div>
                 </div>
             </div>
-
             
             <!-- Approve Report Modal -->
             <div class="modal fade" id="approveModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
@@ -162,8 +161,7 @@
                     </div>
                 </div>
             </div>
-
-
+            
         </div>
     </div>
 </div>
@@ -175,7 +173,7 @@
     import navbarRight from '../NavbarRight';
     import breadcrumb from '../Breadcrumb';
     export default {
-        props: ['userName', 'companyId', 'locationId', 'operationlineId', 'categoryId', 'areaId', 'processOwnerId'],
+        props: ['userName', 'reportId'],
         components:{
             Multiselect,
             navbarRight,
@@ -199,7 +197,7 @@
         },
         methods:{
             fetchReportsPerUser(){
-                axios.get(`/reports-per-user/${this.companyId}/${this.locationId}/${this.operationlineId}/${this.categoryId}/${this.areaId}/${this.processOwnerId}`)
+                axios.get(`/reports-per-user/${this.reportId}`)
                 .then(response => {
                     this.reportsPerUser = response.data;
                 })

@@ -1997,6 +1997,7 @@ __webpack_require__.r(__webpack_exports__);
 
         _this2.area_added = true;
         document.getElementById('add_btn').disabled = false;
+        _this2.area = [];
       })["catch"](function (error) {
         _this2.errors = error.response.data.errors;
         _this2.area_added = false;
@@ -2361,6 +2362,7 @@ __webpack_require__.r(__webpack_exports__);
     addCategory: function addCategory(category) {
       var _this2 = this;
 
+      this.category_added = false;
       document.getElementById('add_btn').disabled = true;
       this.errors = [];
       axios.post('/category', {
@@ -3218,6 +3220,7 @@ __webpack_require__.r(__webpack_exports__);
     addCompany: function addCompany(company) {
       var _this3 = this;
 
+      this.company_added = false;
       var locationIds = [];
 
       if (company.location) {
@@ -3236,6 +3239,7 @@ __webpack_require__.r(__webpack_exports__);
 
         _this3.company_added = true;
         document.getElementById('add_btn').disabled = false;
+        _this3.company = [];
       })["catch"](function (error) {
         _this3.errors = error.response.data.errors;
         _this3.company_added = false;
@@ -3772,6 +3776,8 @@ __webpack_require__.r(__webpack_exports__);
         document.getElementById('add_btn').disabled = false;
 
         _this7.fetchCompanyAreas();
+
+        _this7.company_area = [];
       })["catch"](function (error) {
         _this7.errors = error.response.data.errors;
         _this7.company_area_added = false;
@@ -4175,7 +4181,7 @@ __webpack_require__.r(__webpack_exports__);
       department_updated: false,
       errors: [],
       currentPage: 0,
-      itemsPerPage: 50,
+      itemsPerPage: 10,
       keywords: ''
     };
   },
@@ -4200,6 +4206,7 @@ __webpack_require__.r(__webpack_exports__);
     addDepartment: function addDepartment(department) {
       var _this2 = this;
 
+      this.department_added = false;
       document.getElementById('add_btn').disabled = true;
       this.errors = [];
       axios.post('/department', {
@@ -4209,6 +4216,7 @@ __webpack_require__.r(__webpack_exports__);
 
         _this2.department_added = true;
         document.getElementById('add_btn').disabled = false;
+        _this2.department = [];
       })["catch"](function (error) {
         _this2.errors = error.response.data.errors;
         _this2.department_added = false;
@@ -5047,6 +5055,7 @@ __webpack_require__.r(__webpack_exports__);
 
         _this2.location_added = true;
         document.getElementById('add_btn').disabled = false;
+        _this2.location = [];
       })["catch"](function (error) {
         _this2.errors = error.response.data.errors;
         _this2.location_added = false;
@@ -5467,6 +5476,7 @@ __webpack_require__.r(__webpack_exports__);
     addOperationLine: function addOperationLine(operation_line) {
       var _this2 = this;
 
+      this.operation_line_added = false;
       document.getElementById('add_btn').disabled = true;
       this.errors = [];
       axios.post('/operation-line', {
@@ -6264,7 +6274,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
 
 
 
@@ -6380,6 +6389,27 @@ __webpack_require__.r(__webpack_exports__);
         _this7.errors = error.response.data.errors;
       });
     },
+    reportStatus: function reportStatus(status) {
+      switch (status) {
+        case 1:
+          return 'Pending';
+          break;
+
+        case 2:
+          return 'For Checking';
+          break;
+
+        case 3:
+          return 'Validated';
+          break;
+
+        case 4:
+          return 'Report Final';
+          break;
+
+        default:
+      }
+    },
     setPage: function setPage(pageNumber) {
       this.currentPage = pageNumber;
     },
@@ -6395,11 +6425,11 @@ __webpack_require__.r(__webpack_exports__);
   },
   computed: {
     totalPages: function totalPages() {
-      return Math.ceil(Object.values(this.reports).length / this.itemsPerPage);
+      return Math.ceil(this.reports.length / this.itemsPerPage);
     },
     filteredQueues: function filteredQueues() {
       var index = this.currentPage * this.itemsPerPage;
-      var queues_array = Object.values(this.reports).slice(index, index + this.itemsPerPage);
+      var queues_array = this.reports.slice(index, index + this.itemsPerPage);
 
       if (this.currentPage >= this.totalPages) {
         this.currentPage = this.totalPages - 1;
@@ -6418,7 +6448,7 @@ __webpack_require__.r(__webpack_exports__);
       return window.location.origin + '/view-report/';
     },
     verifiedReportLink: function verifiedReportLink() {
-      return window.location.origin + '/verified-report/';
+      return window.location.origin + '/validate-report/';
     }
   }
 });
@@ -6582,11 +6612,34 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['userName', 'companyId', 'locationId', 'operationlineId', 'categoryId', 'areaId', 'processOwnerId'],
+  props: ['userName', 'reportId'],
   components: {
     Multiselect: vue_multiselect__WEBPACK_IMPORTED_MODULE_0___default.a,
     navbarRight: _NavbarRight__WEBPACK_IMPORTED_MODULE_1__["default"],
@@ -6596,8 +6649,8 @@ __webpack_require__.r(__webpack_exports__);
     return {
       reportsPerUser: [],
       comments: [],
+      points_errors: [],
       final_rating: '',
-      show_approved: false,
       show_forChecking: false,
       errors: [],
       currentPage: 0,
@@ -6612,7 +6665,7 @@ __webpack_require__.r(__webpack_exports__);
     fetchReportsPerUser: function fetchReportsPerUser() {
       var _this = this;
 
-      axios.get("/reports-per-user/".concat(this.companyId, "/").concat(this.locationId, "/").concat(this.operationlineId, "/").concat(this.categoryId, "/").concat(this.areaId, "/").concat(this.processOwnerId)).then(function (response) {
+      axios.get("/reports-per-user/".concat(this.reportId)).then(function (response) {
         _this.reportsPerUser = response.data;
       })["catch"](function (error) {
         _this.errors = error.response.data.errors;
@@ -6625,6 +6678,37 @@ __webpack_require__.r(__webpack_exports__);
         return total_points = parseInt(total_points) + parseInt(item.points);
       });
       return this.final_rating = total_points / denominator * 100;
+    },
+    validateReport: function validateReport() {
+      var _this2 = this;
+
+      this.enabledBtn();
+      var report_ids = [];
+      this.reportsPerUser.filter(function (item) {
+        return report_ids.push(item.id);
+      });
+      var t = this;
+      this.points = [];
+      this.points_errors = [];
+      this.reportsPerUser[0].report_detail.filter(function (item, index) {
+        item.rating !== null ? t.points.push(item.points) : t.points_errors.push(index);
+      });
+      axios.post('/report-validate', {
+        ids: report_ids,
+        final_rating: this.final_rating,
+        points: this.points
+      }).then(function (response) {
+        _this2.show_approved = true;
+
+        _this2.disabledBtn();
+
+        _this2.reportsPerUser = response.data;
+        $('#validateModal').modal('hide');
+      })["catch"](function (error) {
+        _this2.errors = error.response.data.errors;
+
+        _this2.enabledBtn();
+      });
     },
     disabledBtn: function disabledBtn() {
       document.getElementById('btn-approved').disabled = true;
@@ -6840,13 +6924,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
 
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['userName', 'companyId', 'locationId', 'operationlineId', 'categoryId', 'areaId', 'processOwnerId'],
+  props: ['userName', 'reportId'],
   components: {
     Multiselect: vue_multiselect__WEBPACK_IMPORTED_MODULE_0___default.a,
     navbarRight: _NavbarRight__WEBPACK_IMPORTED_MODULE_1__["default"],
@@ -6872,7 +6954,7 @@ __webpack_require__.r(__webpack_exports__);
     fetchReportsPerUser: function fetchReportsPerUser() {
       var _this = this;
 
-      axios.get("/reports-per-user/".concat(this.companyId, "/").concat(this.locationId, "/").concat(this.operationlineId, "/").concat(this.categoryId, "/").concat(this.areaId, "/").concat(this.processOwnerId)).then(function (response) {
+      axios.get("/reports-per-user/".concat(this.reportId)).then(function (response) {
         _this.reportsPerUser = response.data;
       })["catch"](function (error) {
         _this.errors = error.response.data.errors;
@@ -7755,6 +7837,7 @@ __webpack_require__.r(__webpack_exports__);
 
         _this5.user_added = true;
         document.getElementById('add_btn').disabled = false;
+        _this5.user = [];
       })["catch"](function (error) {
         _this5.errors = error.response.data.errors;
         _this5.user_added = false;
@@ -52527,47 +52610,25 @@ var render = function() {
                               staticClass: "dropdown-item",
                               attrs: {
                                 target: "_blank",
-                                href:
-                                  _vm.viewReportLink +
-                                  report[0].company.id +
-                                  "/" +
-                                  report[0].location.id +
-                                  "/" +
-                                  report[0].operation_line.id +
-                                  "/" +
-                                  report[0].category.id +
-                                  "/" +
-                                  report[0].area.id +
-                                  "/" +
-                                  report[0].process_owner_id
+                                href: _vm.viewReportLink + report.id
                               }
                             },
                             [_vm._v("View")]
                           ),
                           _vm._v(" "),
-                          _c(
-                            "a",
-                            {
-                              staticClass: "dropdown-item",
-                              attrs: {
-                                target: "_blank",
-                                href:
-                                  _vm.verifiedReportLink +
-                                  report[0].company.id +
-                                  "/" +
-                                  report[0].location.id +
-                                  "/" +
-                                  report[0].operation_line.id +
-                                  "/" +
-                                  report[0].category.id +
-                                  "/" +
-                                  report[0].area.id +
-                                  "/" +
-                                  report[0].process_owner_id
-                              }
-                            },
-                            [_vm._v("Verified")]
-                          ),
+                          report.status == 2
+                            ? _c(
+                                "a",
+                                {
+                                  staticClass: "dropdown-item",
+                                  attrs: {
+                                    target: "_blank",
+                                    href: _vm.verifiedReportLink + report.id
+                                  }
+                                },
+                                [_vm._v("Validate")]
+                              )
+                            : _vm._e(),
                           _vm._v(" "),
                           _c(
                             "a",
@@ -52591,27 +52652,29 @@ var render = function() {
                     ])
                   ]),
                   _vm._v(" "),
-                  _c("td", { attrs: { scope: "row" } }, [_vm._v(_vm._s(r))]),
+                  _c("td", { attrs: { scope: "row" } }, [
+                    _vm._v(_vm._s(report.id))
+                  ]),
                   _vm._v(" "),
-                  _c("td", [_vm._v(_vm._s(report[0].process_owner.name))]),
+                  _c("td", [_vm._v(_vm._s(report.process_owner.name))]),
                   _vm._v(" "),
                   _c("td", [
                     _vm._v(
-                      _vm._s(
-                        report[0].company.name + " " + report[0].location.name
-                      )
+                      _vm._s(report.company.name + " " + report.location.name)
                     )
                   ]),
                   _vm._v(" "),
-                  _c("td", [_vm._v(_vm._s(report[0].operation_line.name))]),
+                  _c("td", [_vm._v(_vm._s(report.operation_line.name))]),
                   _vm._v(" "),
-                  _c("td", [_vm._v(_vm._s(report[0].category.name) + " ")]),
+                  _c("td", [_vm._v(_vm._s(report.category.name) + " ")]),
                   _vm._v(" "),
-                  _c("td", [_vm._v(_vm._s(report[0].area.name) + " ")]),
+                  _c("td", [_vm._v(_vm._s(report.area.name) + " ")]),
                   _vm._v(" "),
-                  _c("td", [_vm._v(_vm._s(report[0].inspector.name))]),
+                  _c("td", [_vm._v(_vm._s(report.inspector.name))]),
                   _vm._v(" "),
-                  _c("td", [_vm._v(_vm._s(report[0].status) + " ")])
+                  _c("td", [
+                    _vm._v(_vm._s(_vm.reportStatus(report.status)) + " ")
+                  ])
                 ])
               }),
               0
@@ -52670,10 +52733,7 @@ var render = function() {
               _c("br"),
               _vm._v(" "),
               _c("span", [
-                _vm._v(
-                  _vm._s(Object.values(this.reports).length) +
-                    " Total Report(s)"
-                )
+                _vm._v(_vm._s(this.reports.length) + " Total Report(s)")
               ])
             ])
           ])
@@ -52690,7 +52750,7 @@ var staticRenderFns = [
       _c("tr", [
         _c("th"),
         _vm._v(" "),
-        _c("th", { attrs: { scope: "col" } }, [_vm._v("#")]),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("ID")]),
         _vm._v(" "),
         _c("th", { attrs: { scope: "col" } }, [_vm._v("Process Owner")]),
         _vm._v(" "),
@@ -52932,7 +52992,10 @@ var render = function() {
                                       _c("span", [
                                         _vm._v(
                                           _vm._s(
-                                            _vm.countRating(this.reportsPerUser)
+                                            _vm.countRating(
+                                              this.reportsPerUser[0]
+                                                .report_detail
+                                            )
                                           ) + " %"
                                         )
                                       ])
@@ -52944,7 +53007,7 @@ var render = function() {
                               ])
                             : _vm._e(),
                           _vm._v(" "),
-                          this.reportsPerUser[0].status == 1
+                          this.reportsPerUser[0].status == 2
                             ? _c("div", { staticClass: "form-group row" }, [
                                 _c("div", { staticClass: "col-sm-3" }),
                                 _vm._v(" "),
@@ -52952,35 +53015,9 @@ var render = function() {
                                 _vm._v(" "),
                                 _c("div", { staticClass: "col-sm-3" })
                               ])
-                            : _vm._e(),
-                          _vm._v(" "),
-                          _c("div", { staticClass: "form-group row" }, [
-                            _vm.show_approved
-                              ? _c(
-                                  "div",
-                                  { staticClass: "alert alert-info col-md-12" },
-                                  [
-                                    _c("strong", [_vm._v("Success!")]),
-                                    _vm._v(
-                                      " Report succesfully approved\n                                        "
-                                    )
-                                  ]
-                                )
-                              : _vm._e(),
-                            _vm._v(" "),
-                            _vm.show_forChecking
-                              ? _c(
-                                  "div",
-                                  { staticClass: "alert alert-info col-md-12" },
-                                  [
-                                    _c("strong", [_vm._v("Success!")]),
-                                    _vm._v(
-                                      " Report succesfully resent for checking\n                                        "
-                                    )
-                                  ]
-                                )
-                              : _vm._e()
-                          ])
+                            : _c("div", { staticClass: "form-group row" }, [
+                                _vm._m(2)
+                              ])
                         ])
                       ]
                     ),
@@ -52998,7 +53035,10 @@ var render = function() {
                             staticClass: "table-responsive",
                             staticStyle: { height: "770px" }
                           },
-                          _vm._l(_vm.reportsPerUser, function(checklist, c) {
+                          _vm._l(_vm.reportsPerUser[0].report_detail, function(
+                            checklist,
+                            c
+                          ) {
                             return _c(
                               "div",
                               {
@@ -53035,6 +53075,10 @@ var render = function() {
                                         staticClass:
                                           "form-control select-points",
                                         staticStyle: { width: "60px" },
+                                        attrs: {
+                                          disabled:
+                                            _vm.reportsPerUser[0].status != 2
+                                        },
                                         on: {
                                           change: function($event) {
                                             var $$selectedVal = Array.prototype.filter
@@ -53163,23 +53207,7 @@ var render = function() {
                                                   )
                                                 }
                                               }
-                                            }),
-                                            _vm._v(" "),
-                                            _vm.errors[
-                                              "comment." + c + 1 + "" + u + 1
-                                            ]
-                                              ? _c(
-                                                  "span",
-                                                  {
-                                                    staticClass: "text-danger"
-                                                  },
-                                                  [
-                                                    _vm._v(
-                                                      " This field is required "
-                                                    )
-                                                  ]
-                                                )
-                                              : _vm._e()
+                                            })
                                           ]
                                         )
                                       }),
@@ -53218,7 +53246,58 @@ var render = function() {
                   ])
             ])
           ])
-        ])
+        ]),
+        _vm._v(" "),
+        _c(
+          "div",
+          {
+            staticClass: "modal fade",
+            attrs: {
+              id: "validateModal",
+              tabindex: "-1",
+              role: "dialog",
+              "aria-labelledby": "exampleModalLabel",
+              "aria-hidden": "true",
+              "data-backdrop": "static"
+            }
+          },
+          [
+            _c(
+              "div",
+              {
+                staticClass: "modal-dialog modal-dialog-centered",
+                attrs: { role: "document" }
+              },
+              [
+                _c("div", { staticClass: "modal-content" }, [
+                  _vm._m(3),
+                  _vm._v(" "),
+                  _vm._m(4),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "modal-footer" }, [
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-secondary",
+                        attrs: { "data-dismiss": "modal" }
+                      },
+                      [_vm._v("Close")]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-primary",
+                        on: { click: _vm.validateReport }
+                      },
+                      [_vm._v("Validate")]
+                    )
+                  ])
+                ])
+              ]
+            )
+          ]
+        )
       ])
     ])
   ])
@@ -53244,11 +53323,63 @@ var staticRenderFns = [
           attrs: {
             id: "btn-approved",
             "data-toggle": "modal",
-            "data-target": "#approveModal"
+            "data-target": "#validateModal"
           }
         },
-        [_vm._v("POST")]
+        [_vm._v("Validate")]
       )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "alert alert-info col-md-12" }, [
+      _c("strong", [_vm._v("Success!")]),
+      _vm._v(
+        " Report succesfully validated\n                                        "
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-header" }, [
+      _c(
+        "h5",
+        { staticClass: "modal-title", attrs: { id: "addCompanyLabel" } },
+        [_vm._v("Validate Report")]
+      ),
+      _vm._v(" "),
+      _c(
+        "button",
+        {
+          staticClass: "close",
+          attrs: {
+            type: "button",
+            "data-dismiss": "modal",
+            "aria-label": "Close"
+          }
+        },
+        [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-body" }, [
+      _c("div", { staticClass: "row" }, [
+        _c("div", { staticClass: "col-md-12" }, [
+          _c("div", { staticClass: "form-group" }, [
+            _vm._v(
+              "\n                                    Are you sure you want to Validate this Report?\n                                "
+            )
+          ])
+        ])
+      ])
     ])
   }
 ]
@@ -53456,7 +53587,10 @@ var render = function() {
                                       _c("span", [
                                         _vm._v(
                                           _vm._s(
-                                            _vm.countRating(this.reportsPerUser)
+                                            _vm.countRating(
+                                              this.reportsPerUser[0]
+                                                .report_detail
+                                            )
                                           ) + " %"
                                         )
                                       ])
@@ -53532,7 +53666,10 @@ var render = function() {
                             staticClass: "table-responsive",
                             staticStyle: { height: "770px" }
                           },
-                          _vm._l(_vm.reportsPerUser, function(checklist, c) {
+                          _vm._l(_vm.reportsPerUser[0].report_detail, function(
+                            checklist,
+                            c
+                          ) {
                             return _c(
                               "div",
                               {
@@ -53602,7 +53739,9 @@ var render = function() {
                                               "form-control comment-input",
                                             attrs: {
                                               type: "text",
-                                              disabled: checklist.status != 1,
+                                              disabled:
+                                                _vm.reportsPerUser[0].status !=
+                                                1,
                                               id: uploadFile.id,
                                               placeholder: "Comment..."
                                             },
@@ -55109,9 +55248,9 @@ var render = function() {
                         0
                       ),
                       _vm._v(" "),
-                      _vm.errors.department
+                      _vm.errors.department_id
                         ? _c("span", { staticClass: "text-danger" }, [
-                            _vm._v(_vm._s(_vm.errors.department[0]))
+                            _vm._v(_vm._s(_vm.errors.department_id[0]))
                           ])
                         : _vm._e()
                     ])

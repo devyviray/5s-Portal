@@ -15,14 +15,10 @@ class Report extends Model
      */
     protected $fillable = [
         'company_id', 'location_id', 'operation_line_id','category_id', 'area_id', 'process_owner_id', 'inspector_id', 
-        'date_of_inspection','time_of_inspection', 'checklist_id','checklist_batch','name','points','status'
+        'date_of_inspection','time_of_inspection', 'ratings','status', 'reporting_month'
     ];
 
     // Relation
-    public function uploadedFiles(){
-        return $this->hasMany(UploadedFile::class);
-    }
-
     public function company(){
         return $this->belongsTo(Company::class);
     }
@@ -49,5 +45,9 @@ class Report extends Model
 
     public function processOwner(){
         return $this->belongsTo(User::class, 'process_owner_id');
+    }
+
+    public function reportDetail(){
+        return $this->hasMany(ReportDetail::class);
     }
 }

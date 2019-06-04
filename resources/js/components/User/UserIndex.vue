@@ -149,7 +149,7 @@
                                     <select class="form-control" v-model="user.department">
                                         <option v-for="(department,d) in departments" v-bind:key="d" :value="department.id"> {{ department.name }}</option>
                                     </select>
-                                    <span class="text-danger" v-if="errors.department">{{ errors.department[0] }}</span>
+                                    <span class="text-danger" v-if="errors.department_id">{{ errors.department_id[0] }}</span>
                                 </div>
                             </div>
                             <div class="col-md-12">
@@ -385,6 +385,7 @@
                     this.users.unshift(response.data);
                     this.user_added = true;
                     document.getElementById('add_btn').disabled = false;
+                    this.user = [];
                 })
                 .catch(error => {
                     this.errors = error.response.data.errors;

@@ -220,6 +220,7 @@
                 })
             },
             addCategory(category){
+                this.category_added = false;
                 document.getElementById('add_btn').disabled = true;
                 this.errors = [];
                 axios.post('/category', {

@@ -43,13 +43,13 @@ class UserController extends Controller
             'email' => 'required|unique:users,email',
             'company' => 'required',
             'company_location' => 'required',
-            'department' => 'required',
+            'department_id' => 'required',
             'role' => 'required'
         ]);
 
         DB::beginTransaction();
         try {
-            if($user = User::create(['password' => 'password'] + $request->all())){
+            if($user = User::create(['password' => bcrypt('password')] + $request->all())){
                 // Assigning of company
                 $user->companies()->sync( (array) $request->company);
                 // Assigning of role

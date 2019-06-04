@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Storage;
 use App\{
     Report,
+    ReportDetail,
     UploadedFile
 };
 
@@ -38,12 +39,10 @@ class ReportController extends Controller
         //     return Carbon::parse($val->date_of_inspection)->format('m');
         // });
 
-       return Report::with('company', 'location', 'operationLine', 'category', 'area', 'inspector', 'processOwner')
+       return Report::with('company', 'location', 'operationLine', 'category', 'area', 'inspector', 'processOwner', 'reportDetail')
         ->when(Auth::user()->level() < 3, function($q){
             $q->where('process_owner_id', Auth::user()->id);
-        })
-        ->get()
-        ->groupBy('process_owner_id');
+        })->orderBy('id', 'desc')->get();
     }
 
     /**
@@ -81,29 +80,35 @@ class ReportController extends Controller
 
         DB::beginTransaction();
         try {
-            $ids = [];
-            foreach(json_decode($request->checklist) as $key => $checklist){
-                $report = Report::create(
-                    [
-                        'company_id' => $request->company,
-                        'location_id' => $request->location,
-                        'operation_line_id' => $request->operation_line,
-                        'category_id' => $request->category,
-                        'area_id' => $request->area,
-                        'process_owner_id' => $request->process_owner,
-                        'inspector_id' => Auth::user()->id,
-                        'date_of_inspection' => $request->date_of_inspection,
-                        'time_of_inspection' => $request->time_of_inspection,
-                        'checklist_id' => $checklist->id,
-                        'checklist_batch' => $checklist->batch,
-                        'name' => $checklist->requirement. ' - '.$checklist->description,
-                        'points' => explode(',',$request->points)[$key],
-                        'status' => 1
-                    ]
-                );
-                $ids[] = $report->id;
+            $data = [
+                'company_id' => $request->company,
+                'location_id' => $request->location,
+                'operation_line_id' => $request->operation_line,
+                'category_id' => $request->category,
+                'area_id' => $request->area,
+                'process_owner_id' => $request->process_owner,
+                'inspector_id' => Auth::user()->id,
+                'date_of_inspection' => $request->date_of_inspection,
+                'time_of_inspection' => $request->time_of_inspection,
+                'status' => 1,
+                'reporting_month' => $request->date_of_inspection
+            ];
+            if($r = Report::create($data)){
+                $ids = [];
+                foreach(json_decode($request->checklist) as $key => $checklist){
+                    $report = ReportDetail::create(
+                        [
+                            'checklist_id' => $checklist->id,
+                            'checklist_batch' => $checklist->batch,
+                            'report_id' => $r->id,
+                            'name' => $checklist->requirement. ' - '.$checklist->description,
+                            'points' => explode(',',$request->points)[$key],
+                        ]
+                    );
+                    $ids[] = $report->id;
+                }
             }
-            
+
             if($request->has('attachments')){
                 $attachments = $request->file('attachments');
                 foreach($attachments as $key => $attachment){
@@ -128,9 +133,9 @@ class ReportController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($companyId,$locationId,$operationLineId,$categoryId,$areaId, $processOwnerId)
+    public function show($reportId)
     {
-        return view('report.view', compact('companyId', 'locationId', 'operationLineId','categoryId','areaId','processOwnerId'));
+        return view('report.view', compact('reportId'));
     }
 
 
@@ -193,21 +198,9 @@ class ReportController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function getReportsPerUser($companyId, $locationId, $operationLineId,$categoryId, $areaId, $processOwnerId){
-        return Report::with('uploadedFiles', 'company','category','operationLine', 'area', 'inspector')
-        ->where('company_id', $companyId)
-        ->where('location_id', $locationId)
-        ->where('operation_line_id', $operationLineId)
-        ->where('category_id', $categoryId)
-        ->where('area_id', $areaId)
-        ->when(Auth::user()->level() < 3, function ($q){
-            $q->where('process_owner_id', Auth::user()->id);
-        })
-        ->when(Auth::user()->level() > 2, function ($q) use ($processOwnerId){
-            $q->where('process_owner_id', $processOwnerId);
-        })
-        // ->where('status', 1)->get();
-        ->get();
+    public function getReportsPerUser($reportId){
+        return Report::with('company','category','operationLine', 'area', 'inspector', 'reportDetail.uploadedFiles')
+        ->where('id', $reportId)->get();
     }
 
 
@@ -226,7 +219,7 @@ class ReportController extends Controller
 
         DB::beginTransaction();
         try {
-            $report = Report::whereIn('id', $request->ids)->update(['status' => 3, 'ratings' => $request->final_rating]);
+            $report = Report::whereIn('id', $request->ids)->update(['status' => 4, 'ratings' => $request->final_rating]);
             DB::commit();
             return  $report;
 
@@ -241,7 +234,7 @@ class ReportController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function checkingReporPerUser(Request $request){
+    public function checkingReportPerUser(Request $request){
         $request->validate([
             'ids' => 'required',
         ]);
@@ -265,13 +258,44 @@ class ReportController extends Controller
     }
 
     /**
-     * Display verified page
+     * Display validate page
      *
      * @return \Illuminate\Http\Response
      */
-    public function verifiedIndex($companyId, $locationId, $operationLineId, $categoryId, $areaId, $processOwnerId){
+    public function validateIndex($reportId){
 
-        return view('report.verified', compact('companyId', 'locationId', 'operationLineId','categoryId','areaId','processOwnerId'));
+        return view('report.verified', compact('reportId'));
+
+    }
+
+
+    /**
+     * Display validate page
+     *
+     * @return \Illuminate\Http\Response
+     */
+
+    public function validateReportPerUser(Request $request){
+        $request->validate([
+            'ids' => 'required',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $r = Report::with('reportDetail')->where('id', $request->ids[0])->first();
+            foreach($r->reportDetail as $key => $value){
+                $value->update(['points' => $request->points[$key]]);
+            }
+
+            Report::where('id', $request->ids[0])->update(['status' => 3]); //Report validated 
+
+            DB::commit();
+
+            return Report::with('company','category','operationLine', 'area', 'inspector', 'reportDetail.uploadedFiles')->where('id', $request->ids[0])->get();
+
+        } catch (Exception $e) {
+            DB::rollBack();
+        }
 
     }
 
@@ -280,11 +304,11 @@ class ReportController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function uploadFiles($user_id,$report_id,$checklist_id,$filename,$path)
+    public function uploadFiles($user_id,$report_detail_id,$checklist_id,$filename,$path)
     {
         $uploadedFile = new UploadedFile;
         $uploadedFile->user_id = $user_id;
-        $uploadedFile->report_id = $report_id;
+        $uploadedFile->report_detail_id = $report_detail_id;
         $uploadedFile->checklist_id = $checklist_id;
         $uploadedFile->uploader_id = Auth::user()->id;
         $uploadedFile->file_name = $filename;

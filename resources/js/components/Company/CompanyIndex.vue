@@ -277,6 +277,7 @@
                 })
             },
             addCompany(company){
+                this.company_added = false;
                 var locationIds = [];
                 if(company.location){
                     company.location.forEach((location) => {
@@ -294,6 +295,7 @@
                     this.companies.unshift(response.data);
                     this.company_added = true;
                     document.getElementById('add_btn').disabled = false;
+                    this.company = [];
                 })
                 .catch(error => {
                     this.errors = error.response.data.errors;

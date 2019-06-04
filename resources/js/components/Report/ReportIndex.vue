@@ -70,7 +70,6 @@
                             </div>
                         </div>
                         <div class="col-md-2">
-                            <!-- <button class="btn btn-sm btn-primary mt-4" @click="viewAction"> Go</button> -->
                             <button class="btn btn-sm btn-primary mt-4" @click="fetchFilteredReport"> Filter</button>
                             <button class="btn btn-sm btn-primary mt-4" @click="createReport"> Create Report</button>
                         </div>
@@ -82,7 +81,7 @@
                     <thead class="thead-light">
                         <tr>
                             <th></th>
-                            <th scope="col">#</th>
+                            <th scope="col">ID</th>
                             <th scope="col">Process Owner</th>
                             <th scope="col">Company</th>
                             <th scope="col">Operation Line</th>
@@ -101,20 +100,20 @@
                                         <i class="fa fa-ellipsis-v"></i>
                                     </a>
                                     <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
-                                        <a class="dropdown-item" target="_blank" :href="viewReportLink+report[0].company.id+'/'+report[0].location.id+'/'+report[0].operation_line.id+'/'+report[0].category.id+'/'+report[0].area.id+'/'+report[0].process_owner_id">View</a>
-                                        <a class="dropdown-item" target="_blank" :href="verifiedReportLink+report[0].company.id+'/'+report[0].location.id+'/'+report[0].operation_line.id+'/'+report[0].category.id+'/'+report[0].area.id+'/'+report[0].process_owner_id">Verified</a>
+                                        <a class="dropdown-item" target="_blank" :href="viewReportLink+report.id">View</a>
+                                        <a v-if="report.status == 2" class="dropdown-item" target="_blank" :href="verifiedReportLink+report.id">Validate</a>
                                         <a class="dropdown-item" data-toggle="modal" data-target="#deleteModal" style="cursor: pointer" @click="copyObject(report)">Delete</a>
                                     </div>
-                                </div>
+                                </div> 
                             </td>
-                            <td scope="row">{{ r }}</td>
-                            <td>{{ report[0].process_owner.name }}</td>
-                            <td>{{ report[0].company.name + ' ' + report[0].location.name }}</td>
-                            <td>{{ report[0].operation_line.name }}</td>
-                            <td>{{ report[0].category.name }} </td>
-                            <td>{{ report[0].area.name }} </td>
-                            <td>{{ report[0].inspector.name }}</td>
-                            <td>{{ report[0].status }} </td>
+                            <td scope="row">{{ report.id }}</td>
+                            <td>{{ report.process_owner.name }}</td>
+                            <td>{{ report.company.name + ' ' + report.location.name }}</td>
+                            <td>{{ report.operation_line.name }}</td>
+                            <td>{{ report.category.name }} </td>
+                            <td>{{ report.area.name }} </td>
+                            <td>{{ report.inspector.name }}</td>
+                            <td>{{ reportStatus(report.status) }} </td>
                         </tr>
                     </tbody>
                 </table>
@@ -128,7 +127,7 @@
             </div>
             <div class="col-6 text-right">
                 <span>{{ filteredQueues.length }} Filtered Report(s)</span><br>
-                <span>{{ Object.values(this.reports).length }} Total Report(s)</span>
+                <span>{{ this.reports.length }} Total Report(s)</span>
             </div>
         </div>
     </div>
@@ -252,6 +251,23 @@
                     this.errors = error.response.data.errors
                 })
             },
+            reportStatus(status){
+                switch(status){
+                    case 1:
+                        return 'Pending'; 
+                        break;
+                    case 2: 
+                        return 'For Checking';
+                        break;
+                    case 3: 
+                        return 'Validated';
+                        break;
+                    case 4: 
+                        return 'Report Final'
+                        break;
+                    default:
+                }
+            },
             setPage(pageNumber) {
                 this.currentPage = pageNumber;
             },
@@ -267,11 +283,11 @@
         },
         computed:{
             totalPages() {
-                return Math.ceil(Object.values(this.reports).length / this.itemsPerPage);
+                return Math.ceil(this.reports.length / this.itemsPerPage);
             },
             filteredQueues() {
                 var index = this.currentPage * this.itemsPerPage;
-                var queues_array = Object.values(this.reports).slice(index, index + this.itemsPerPage);
+                var queues_array = this.reports.slice(index, index + this.itemsPerPage);
 
                 if(this.currentPage >= this.totalPages) {
                     this.currentPage = this.totalPages - 1
@@ -288,7 +304,7 @@
                return window.location.origin+'/view-report/'; 
             },
             verifiedReportLink(){
-                return window.location.origin+'/verified-report/'; 
+                return window.location.origin+'/validate-report/'; 
             }
         }
     }

@@ -220,6 +220,7 @@
                 })
             },
             addOperationLine(operation_line){
+                this.operation_line_added = false;
                 document.getElementById('add_btn').disabled = true;
                 this.errors = [];
                 axios.post('/operation-line', {

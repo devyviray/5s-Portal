@@ -229,6 +229,7 @@
                     this.areas.unshift(response.data);
                     this.area_added = true;
                     document.getElementById('add_btn').disabled = false;
+                    this.area = [];
                 })
                 .catch(error => {
                     this.errors = error.response.data.errors;

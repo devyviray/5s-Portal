@@ -79,10 +79,10 @@ Route::group(['middleware' => 'auth'], function(){
     Route::patch('/report/{report}', 'ReportController@update');
     Route::delete('/report/{report}', 'ReportController@destroy');
     Route::post('/report-approve', 'ReportController@approveReportPerUser');
-    Route::post('/report-checking', 'ReportController@checkingReporPerUser');
+    Route::post('/report-checking', 'ReportController@checkingReportPerUser');
     Route::get('/create-report', 'ReportController@create');
-    Route::get('/view-report/{companyId}/{locationId}/{operationLineId}/{categoryId}/{areaId}/{processOwnerId}', 'ReportController@show');
-    Route::get('/reports-per-user/{companyId}/{locationId}/{operationLineId}/{categoryId}/{areaId}/{processOwnerId}', 'ReportController@getReportsPerUser');
+    Route::get('/view-report/{reportId}', 'ReportController@show');
+    Route::get('/reports-per-user/{reportId}', 'ReportController@getReportsPerUser');
 
     // operation line
     Route::get('/operation-lines', 'OperationLineController@index')->name('operation-lines');
@@ -120,5 +120,6 @@ Route::group(['middleware' => ['auth', 'role:it|administrator|inspector']], func
     //Report
     Route::get('/create-report', 'ReportController@create');
     Route::post('/report-filtered', 'ReportController@getFilteredReports');
-    Route::get('/verified-report/{companyId}/{locationId}/{operationLineId}/{categoryId}/{areaId}/{processOwnerId}', 'ReportController@verifiedIndex');
+    Route::get('/validate-report/{reportId}', 'ReportController@validateIndex');
+    Route::post('/report-validate', 'ReportController@validateReportPerUser');
 });
