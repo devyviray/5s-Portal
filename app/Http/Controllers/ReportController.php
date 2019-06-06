@@ -32,13 +32,6 @@ class ReportController extends Controller
      */
     public function indexData()
     {
-        // return Report::with('company', 'location', 'operationLine', 'category', 'area', 'inspector')
-        // ->where('process_owner', Auth::user()->id)
-        // ->where('status', 1)->get()
-        // ->groupBy(function($val){
-        //     return Carbon::parse($val->date_of_inspection)->format('m');
-        // });
-
        return Report::with('company', 'location', 'operationLine', 'category', 'area', 'inspector', 'processOwner', 'reportDetail')
         ->when(Auth::user()->level() < 3, function($q){
             $q->where('process_owner_id', Auth::user()->id);
@@ -66,7 +59,7 @@ class ReportController extends Controller
         $request->validate([
             'company' => 'required',
             'location' => 'required',
-            'operation_line' => 'required',
+            // 'operation_line' => 'required',
             'category' => 'required',
             'area' => 'required',
             'process_owner' => 'required',
@@ -135,7 +128,8 @@ class ReportController extends Controller
      */
     public function show($reportId)
     {
-        return view('report.view', compact('reportId'));
+        $userId = Auth::user()->id;
+        return view('report.view', compact('reportId', 'userId'));
     }
 
 
@@ -175,20 +169,20 @@ class ReportController extends Controller
         $request->validate([
             'company' => 'required',
             'location' => 'required',
-            'operation_line' => 'required',
-            'category' => 'required',
-            'area' => 'required'
         ]);
 
-        return Report::with('company', 'location', 'operationLine', 'category', 'area', 'inspector', 'processOwner')
+        return Report::with('company', 'location', 'operationLine', 'category', 'area', 'inspector', 'processOwner', 'reportDetail')
         ->where('company_id', $request->company)
         ->where('location_id', $request->location)
-        ->where('operation_line_id', $request->operation_line)
-        ->where('category_id', $request->category)
-        ->where('area_id', $request->area)
-        ->get()
-        ->groupBy('process_owner_id');
-
+        ->when($request->category, function($q) use ($request){
+            $q->where('category_id', $request->category);
+        })->when($request->operation_line, function($q) use ($request){
+            $q->where('operation_line_id', $request->operation_line);
+        })->when($request->area, function($q) use ($request){
+            $q->where('area_id', $request->area);
+        })->when(Auth::user()->level() < 3, function($q){
+            $q->where('process_owner_id', Auth::user()->id);
+        })->orderBy('id', 'desc')->get();
     }
 
     /**

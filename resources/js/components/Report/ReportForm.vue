@@ -8,7 +8,7 @@
                 <span class="span-username">Hi, {{ this.userName }}</span>
             </div>
             <div class="col-md-1">
-                <navbarRight></navbarRight>
+                <navbarRight :user-role="userRole"></navbarRight>
             </div>
         </div>
     </nav>
@@ -46,6 +46,15 @@
                                     </div>
                                 </div>
                                 <div class="form-group row">
+                                    <span class="col-sm-5">Category:</span>
+                                    <div class="col-sm-7">
+                                        <select class="form-control" v-model="category"  @change="changeCompany('', '')">
+                                            <option v-for="(category,c) in categories" v-bind:key="c" :value="category"> {{ category.name }}</option>
+                                        </select>
+                                        <span class="text-danger" v-if="errors.category  ">{{ errors.category[0] }}</span>
+                                    </div>
+                                </div>
+                                <div class="form-group row" v-if="show_operation_line">
                                     <span class="col-sm-5">Operation Line:</span>
                                     <div class="col-sm-7">
                                         <select class="form-control" v-model="operation_line" @change="changeCompany('', '')">
@@ -55,19 +64,10 @@
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <span class="col-sm-5">Category:</span>
-                                    <div class="col-sm-7">
-                                        <select class="form-control" v-model="category"  @change="changeCompany('', '')">
-                                            <option v-for="(category,c) in categories" v-bind:key="c" :value="category"> {{ category.name }}</option>
-                                        </select>
-                                        <span class="text-danger" v-if="errors.category  ">{{ errors.category[0] }}</span>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
                                     <span class="col-sm-5">Area:</span>
                                     <div class="col-sm-7">
                                         <select class="form-control" v-model="area"  @change="changeCompany('', '')">
-                                            <option v-for="(area,a) in areas" v-bind:key="a" :value="area.area"> {{ area.area.name }}</option>
+                                            <option v-for="(area,a) in areas" v-bind:key="a" :value="area"> {{ area.name }}</option>
                                         </select>
                                         <span class="text-danger" v-if="errors.area  ">{{ errors.area[0] }}</span>
                                     </div>
@@ -178,7 +178,7 @@
     import breadcrumb from '../Breadcrumb';
     import loader from '../Loader';
     export default {
-        props: ['userName'],
+        props: ['userName', 'userRole'],
         components:{
             Multiselect,
             navbarRight,
@@ -222,6 +222,7 @@
                 formData: new FormData(),
                 show_added: false,
                 loading: false,
+                show_operation_line: false
             }
         },
         created(){
@@ -231,6 +232,9 @@
             this.fetchChecklist();
         },
         methods:{
+            showLoader(){
+               this.loading = true;
+            },
             prepareFields(){
                 if(this.attachments.length > 0){
                     for(var i = 0; i < this.attachments.length; i++){
@@ -301,10 +305,16 @@
                         this.errors = error.response.data.errors;
                     })
                 }else {
+                    if(this.category.id == 1){
+                        this.show_operation_line = true;
+                    }else{
+                        this.show_operation_line = false;
+                        this.operation_line = '';
+                    }
                     if(this.company && this.location ){
                         this.fetchProccessOwner();
                     }
-                    if(this.company && this.location && this.operation_line && this.category){
+                    if(this.company && this.location && this.category){
                         this.fetchCompayAreas();
                     }
                 }
@@ -337,9 +347,9 @@
                 }); 
             },
             fetchCompayAreas(){
-                axios.get(`/company-areas-per-company/${this.company.id}/${this.location.id}/${this.operation_line.id},${this.category.id}`)
+                axios.get(`/company-areas-per-company/${this.company.id}/${this.location.id}/${this.category.id}/${this.operation_line.id}`)
                  .then(response => {
-                    this.areas = response.data;
+                    this.areas = response.data[0].areas;
                 })
                 .catch(error => { 
                     this.errors = error.response.data.errors;
@@ -373,6 +383,7 @@
                 removeElements( document.querySelectorAll(".attachments"));
             },
             addReport(selected_checklist,points){
+
                 this.loading = true;
                 this.formData = new FormData();
                 let t = this;
@@ -391,7 +402,7 @@
                 this.formData.append('location', this.location.id ? this.location.id : '');
                 this.formData.append('operation_line', this.operation_line.id ? this.operation_line.id : '');
                 this.formData.append('category', this.category.id ? this.category.id : '');
-                this.formData.append('area', this.area.id ? this.area.id : '');
+                this.formData.append('area', this.area ? this.area.id : '');
                 this.formData.append('process_owner', this.process_owner ? this.process_owner : '');
                 this.formData.append('date_of_inspection', this.date_of_inspection ? this.date_of_inspection : '');
                 this.formData.append('time_of_inspection', this.time_of_inspection ? this.time_of_inspection : '');
@@ -405,6 +416,7 @@
                     this.resetForm();
                     this.show_added = true;
                     this.loading = false;
+                    this.checklist.rating = [];
                 })
                 .catch(error => {
                     this.errors = error.response.data.errors;

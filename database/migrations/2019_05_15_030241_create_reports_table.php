@@ -17,7 +17,7 @@ class CreateReportsTable extends Migration
             $table->bigIncrements('id');
             $table->integer('company_id');
             $table->integer('location_id');
-            $table->integer('operation_line_id');
+            $table->integer('operation_line_id')->nullable();
             $table->integer('category_id');
             $table->integer('area_id');
             $table->integer('process_owner_id');

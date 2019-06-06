@@ -8,7 +8,7 @@
                 <span class="span-username">Hi, {{ this.userName }}</span>
             </div>
             <div class="col-md-1">
-                <navbarRight></navbarRight>
+                <navbarRight :user-role="userRole"></navbarRight>
             </div>
         </div>
     </nav>
@@ -37,7 +37,7 @@
                                             <span> {{ this.reportsPerUser[0].company.name }} </span>
                                         </div>
                                     </div>
-                                    <div class="form-group row">
+                                    <div class="form-group row" v-if="this.reportsPerUser[0].operation_line">
                                         <span class="col-sm-4 ">Operation Line:</span>
                                         <div class="col-sm-8">
                                             <span> {{ this.reportsPerUser[0].operation_line.name }} </span>
@@ -82,7 +82,7 @@
                                             <a class="summary-btn" href="javascript:void(0)">View Summary Report</a>
                                         </div>   
                                     </div>
-                                    <div class="form-group row" v-if="this.reportsPerUser[0].status == 1">
+                                    <div class="form-group row" v-if="this.reportsPerUser[0].status == 1 && this.userId == this.reportsPerUser[0].process_owner_id">
                                         <div class="col-sm-6">
                                             <button id="btn-checking" class="btn btn-block btn-danger" @click="forCheckingReport">FOR CHECKING</button>
                                         </div>
@@ -175,7 +175,7 @@
     import breadcrumb from '../Breadcrumb';
     import loader from '../Loader';
     export default {
-        props: ['userName', 'reportId'],
+        props: ['userName', 'userRole' ,'reportId', 'userId'],
         components:{
             Multiselect,
             navbarRight,
@@ -200,6 +200,9 @@
             this.fetchReportsPerUser();
         },
         methods:{
+            showLoader(){
+               this.loading = true;
+            },
             fetchReportsPerUser(){
                 axios.get(`/reports-per-user/${this.reportId}`)
                 .then(response => {

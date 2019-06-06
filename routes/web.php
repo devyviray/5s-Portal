@@ -20,6 +20,21 @@ Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 
 Route::group(['middleware' => 'auth'], function(){
+    // faq
+    Route::get('/faqs-page', 'FaqController@indexPage');
+
+    // Reports
+    Route::get('/reports', 'ReportController@index')->name('reports');
+    Route::get('/reports-all', 'ReportController@indexData');
+    Route::post('/report-approve', 'ReportController@approveReportPerUser');
+    Route::post('/report-checking', 'ReportController@checkingReportPerUser');
+    Route::get('/view-report/{reportId}', 'ReportController@show');
+    Route::get('/reports-per-user/{reportId}', 'ReportController@getReportsPerUser');
+});
+
+// Accessible routes for admin , inspector and IT
+Route::group(['middleware' => ['auth', 'role:it|administrator|inspector']], function () {
+
     // Departments
     Route::get('/departments', 'DepartmentController@index')->name('departments');
     Route::get('/departments-all', 'DepartmentController@indexData');
@@ -42,13 +57,13 @@ Route::group(['middleware' => 'auth'], function(){
     Route::delete('/company/{company}', 'CompanyController@destroy');
     Route::get('/company-location/{id}', 'CompanyController@companyLocation');
 
-    // users
-    Route::get('/users', 'UserController@index')->name('users');
-    Route::get('/users-all', 'UserController@indexData');
-    Route::post('/user', 'UserController@store');
-    Route::patch('/user/{user}', 'UserController@update');
-    Route::delete('/user/{user}', 'UserController@destroy');
-    Route::get('/user-process-owner/{companyId}/{locationId}', 'UserController@getProcessOwnerPerCompany');
+     // users
+     Route::get('/users', 'UserController@index')->name('users');
+     Route::get('/users-all', 'UserController@indexData');
+     Route::post('/user', 'UserController@store');
+     Route::patch('/user/{user}', 'UserController@update');
+     Route::delete('/user/{user}', 'UserController@destroy');
+     Route::get('/user-process-owner/{companyId}/{locationId}', 'UserController@getProcessOwnerPerCompany');
 
     // roles
     Route::get('/roles', 'RoleController@index')->name('roles');
@@ -70,19 +85,17 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/faq', 'FaqController@store');
     Route::patch('/faq/{faq}', 'FaqController@update');
     Route::delete('/faq/{faq}', 'FaqController@destroy');
-    Route::get('/faqs-page', 'FaqController@indexPage');
 
-    // Reports
-    Route::get('/reports', 'ReportController@index')->name('reports');
-    Route::get('/reports-all', 'ReportController@indexData');
+
+    //Report
+    Route::get('/create-report', 'ReportController@create');
+    Route::post('/report-filtered', 'ReportController@getFilteredReports');
+    Route::get('/validate-report/{reportId}', 'ReportController@validateIndex');
+    Route::post('/report-validate', 'ReportController@validateReportPerUser');
     Route::post('/report', 'ReportController@store');
     Route::patch('/report/{report}', 'ReportController@update');
     Route::delete('/report/{report}', 'ReportController@destroy');
-    Route::post('/report-approve', 'ReportController@approveReportPerUser');
-    Route::post('/report-checking', 'ReportController@checkingReportPerUser');
     Route::get('/create-report', 'ReportController@create');
-    Route::get('/view-report/{reportId}', 'ReportController@show');
-    Route::get('/reports-per-user/{reportId}', 'ReportController@getReportsPerUser');
 
     // operation line
     Route::get('/operation-lines', 'OperationLineController@index')->name('operation-lines');
@@ -97,7 +110,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/category', 'CategoryController@store');
     Route::patch('/category/{category}', 'CategoryController@update');
     Route::delete('/category/{category}', 'CategoryController@destroy');
-
+ 
     // areas
     Route::get('/areas', 'AreaController@index')->name('categories');
     Route::get('/areas-all', 'AreaController@indexData');
@@ -105,21 +118,12 @@ Route::group(['middleware' => 'auth'], function(){
     Route::patch('/area/{area}', 'AreaController@update');
     Route::delete('/area/{area}', 'AreaController@destroy');
 
-    // company areas
-    Route::get('/company-areas', 'CompanyAreaController@index')->name('company-areas');
-    Route::get('/company-areas-all', 'CompanyAreaController@indexData');
-    Route::post('/company-area', 'CompanyAreaController@store');
-    Route::patch('/company-area/{companyArea}', 'CompanyAreaController@update');
-    Route::delete('/company-area/{companyArea}', 'CompanyAreaController@destroy');
-    Route::get('/company-areas-per-company/{companyId}/{locationId}/{operationLineId},{categoryId}', 'CompanyAreaController@companyAreaPerCompany');
-});
+    // company categories
+    Route::get('/company-areas', 'CompanyCategoryController@index')->name('company-categories');
+    Route::get('/company-areas-all', 'CompanyCategoryController@indexData');
+    Route::post('/company-area', 'CompanyCategoryController@store');
+    Route::patch('/company-area/{companyCategory}', 'CompanyCategoryController@update');
+    Route::delete('/company-area/{companyCategory}', 'CompanyCategoryController@destroy');
+    Route::get('/company-areas-per-company/{companyId}/{locationId}/{categoryId}/{operationLineId}', 'CompanyCategoryController@companyAreaPerCompany');
 
-// Accessible routes for admin , inspector and IT
-Route::group(['middleware' => ['auth', 'role:it|administrator|inspector']], function () {
-    
-    //Report
-    Route::get('/create-report', 'ReportController@create');
-    Route::post('/report-filtered', 'ReportController@getFilteredReports');
-    Route::get('/validate-report/{reportId}', 'ReportController@validateIndex');
-    Route::post('/report-validate', 'ReportController@validateReportPerUser');
 });

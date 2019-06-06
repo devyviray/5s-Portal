@@ -5,7 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class CompanyArea extends Model
+class CompanyCategory extends Model
 {
     use SoftDeletes;
 
@@ -18,8 +18,7 @@ class CompanyArea extends Model
         'company_id',
         'location_id',
         'operation_line_id',
-        'category_id',
-        'area_id'
+        'category_id'
     ];
 
     // Relation
@@ -39,7 +38,7 @@ class CompanyArea extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function area(){
-        return $this->belongsTo(Area::class);
+    public function areas(){
+        return $this->belongsToMany(Area::class);
     }
 }

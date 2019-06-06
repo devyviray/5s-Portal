@@ -8,7 +8,7 @@
                     <span class="span-username">Hi, {{ this.userName }}</span>
                 </div>
                 <div class="col-md-1">
-                    <navbarRight></navbarRight>
+                    <navbarRight :user-role="userRole"></navbarRight>
                 </div>
             </div>
         </nav>
@@ -285,9 +285,9 @@
     import vSelect from 'vue-select';
     import navbarRight from '../NavbarRight';
     import breadcrumb from '../Breadcrumb';
-    import loader from '../Loader'
+    import loader from '../Loader';
     export default {
-        props: ['userName'],
+        props: ['userName', 'userRole'],
         components:{
             Multiselect,
             vSelect,

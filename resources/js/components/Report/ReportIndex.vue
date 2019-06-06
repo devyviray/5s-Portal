@@ -1,5 +1,6 @@
 <template>
     <div id="wrapper">
+    <loader v-if="loading"></loader>
     <nav class="navbar navbar-default top-navbar" role="navigation">
         <div class="row">
             <div class="col-md-9"></div>
@@ -7,7 +8,7 @@
                 <span class="span-username">Hi, {{ this.userName }}</span>
             </div>
             <div class="col-md-1">
-                <navbarRight></navbarRight>
+                <navbarRight :user-role="userRole"></navbarRight>
             </div>
         </div>
     </nav>
@@ -44,6 +45,15 @@
                         </div>
                         <div class="col-md-2">
                             <div class="form-group">
+                                <label class="form-control-label" for="role">Category</label>
+                                <select class="form-control" v-model="category"  @change="changeCompany('', '')">
+                                    <option v-for="(category,c) in categories" v-bind:key="c" :value="category"> {{ category.name }}</option>
+                                </select>
+                                <span class="text-danger" v-if="errors.category  ">{{ errors.category[0] }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-2" v-if="show_operation_line">
+                            <div class="form-group">
                                 <label class="form-control-label" for="role">Operation Line</label>
                                 <select class="form-control" v-model="operation_line" @change="changeCompany('', '')">
                                     <option v-for="(operation_line,o) in operation_lines" v-bind:key="o" :value="operation_line"> {{ operation_line.name }}</option>
@@ -53,18 +63,9 @@
                         </div>
                         <div class="col-md-2">
                             <div class="form-group">
-                                <label class="form-control-label" for="role">Category</label>
-                                <select class="form-control" v-model="category"  @change="changeCompany('', '')">
-                                    <option v-for="(category,c) in categories" v-bind:key="c" :value="category"> {{ category.name }}</option>
-                                </select>
-                                <span class="text-danger" v-if="errors.category  ">{{ errors.category[0] }}</span>
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="form-group">
                                 <label class="form-control-label" for="role">AREA</label>
                                 <select class="form-control" v-model="area"  @change="changeCompany('', '')">
-                                    <option v-for="(area,a) in areas" v-bind:key="a" :value="area.area"> {{ area.area.name }}</option>
+                                    <option v-for="(area,a) in areas" v-bind:key="a" :value="area"> {{ area.name }}</option>
                                 </select>
                                 <span class="text-danger" v-if="errors.area  ">{{ errors.area[0] }}</span>
                             </div>
@@ -84,8 +85,8 @@
                             <th scope="col">ID</th>
                             <th scope="col">Process Owner</th>
                             <th scope="col">Company</th>
-                            <th scope="col">Operation Line</th>
                             <th scope="col">Category</th>
+                            <th scope="col">Operation Line</th>
                             <th scope="col">Area</th>
                             <th scope="col">Inspector</th>
                             <th scope="col">Status</th>
@@ -109,8 +110,9 @@
                             <td scope="row">{{ report.id }}</td>
                             <td>{{ report.process_owner.name }}</td>
                             <td>{{ report.company.name + ' ' + report.location.name }}</td>
-                            <td>{{ report.operation_line.name }}</td>
                             <td>{{ report.category.name }} </td>
+                            <td v-if="report.operation_line">{{ report.operation_line.name }}</td>
+                            <td v-else></td>
                             <td>{{ report.area.name }} </td>
                             <td>{{ report.inspector.name }}</td>
                             <td>{{ reportStatus(report.status) }} </td>
@@ -139,12 +141,14 @@
     import Multiselect from 'vue-multiselect';
     import navbarRight from '../NavbarRight';
     import breadcrumb from '../Breadcrumb';
+    import loader from '../Loader';
     export default {
         props: ['userName', 'userRole'],
         components:{
             Multiselect,
             navbarRight,
-            breadcrumb
+            breadcrumb,
+            loader
         },
         data(){
             return {
@@ -164,6 +168,8 @@
                 currentPage: 0,
                 itemsPerPage: 15,
                 keywords: '',
+                loading: false,
+                show_operation_line: false
             }
         },
         created(){
@@ -173,6 +179,9 @@
             this.fetchReports();
         },
         methods:{
+            showLoader(){
+               this.loading = true;
+            },
             createReport(){
                 return window.location.href = window.location.origin+'/create-report';
             },
@@ -186,7 +195,13 @@
                         this.errors = error.response.data.errors;
                     })
                 }else {
-                    if(this.company && this.location && this.operation_line && this.category){
+                    if(this.category.id == 1){
+                         this.show_operation_line = true
+                    }else{
+                        this.show_operation_line = false;
+                        this.operation_line = '';
+                    }
+                    if(this.company && this.location && this.category){
                         this.fetchCompayAreas();
                     }
                 }
@@ -228,9 +243,9 @@
                 }); 
             },
             fetchCompayAreas(){
-                axios.get(`/company-areas-per-company/${this.company.id}/${this.location.id}/${this.operation_line.id},${this.category.id}`)
+                axios.get(`/company-areas-per-company/${this.company.id}/${this.location.id}/${this.category.id}/${this.operation_line.id}`)
                  .then(response => {
-                    this.areas = response.data;
+                    this.areas = response.data[0].areas;
                 })
                 .catch(error => { 
                     this.errors = error.response.data.errors;

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateCompanyAreasTable extends Migration
+class CreateCompanyCategoriesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,12 @@ class CreateCompanyAreasTable extends Migration
      */
     public function up()
     {
-        Schema::create('company_areas', function (Blueprint $table) {
+        Schema::create('company_categories', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->integer('company_id');
             $table->integer('location_id');
-            $table->integer('operation_line_id');
             $table->integer('category_id');
-            $table->integer('area_id');
+            $table->integer('operation_line_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

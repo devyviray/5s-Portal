@@ -8,7 +8,7 @@
                     <span class="span-username">Hi, {{ this.userName }}</span>
                 </div>
                 <div class="col-md-1">
-                    <navbarRight></navbarRight>
+                    <navbarRight :user-role="userRole"></navbarRight>
                 </div>
             </div>
         </nav>
@@ -224,7 +224,7 @@
     import breadcrumb from '../Breadcrumb';
     import loader from '../Loader';
     export default {
-        props: ['userName'],
+        props: ['userName', 'userRole'],
         components:{
             Multiselect,
             navbarRight,
