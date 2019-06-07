@@ -5,12 +5,20 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Auth;
 use DB;
-use Carbon\Carbon;
+use Mail; 
 use Storage;
+use Carbon\Carbon;
 use App\{
+    User,
     Report,
     ReportDetail,
     UploadedFile
+};
+use App\Mail\{
+    ReportCreated,
+    ProcessOwnerApprovedReport,
+    ProcessOwnerForCheckingReport,
+    InspectorValidateReport
 };
 
 class ReportController extends Controller
@@ -110,9 +118,12 @@ class ReportController extends Controller
     
                     $uploadedFile = $this->uploadFiles($request->process_owner,$ids[explode(',',$request->attachment_index)[$key]],explode(',',$request->attachment_ids)[$key], $filename,$path);
                 }
-
             }
+            // Send email to process owner
+            Mail::to(User::findOrFail($request->process_owner))->send(new ReportCreated(Auth::user()->id, $r->id));
+
             DB::commit();
+
             return Report::all();
 
         } catch (Exception $e) {
@@ -132,39 +143,13 @@ class ReportController extends Controller
         return view('report.view', compact('reportId', 'userId'));
     }
 
-
-
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
-
-     /**
      *Fetch All Filtered Reports  
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-
-
+    *
+    * @param  int  $id
+    * @return \Illuminate\Http\Response
+    */
+    
     public function getFilteredReports(Request $request){
         $request->validate([
             'company' => 'required',
@@ -197,7 +182,6 @@ class ReportController extends Controller
         ->where('id', $reportId)->get();
     }
 
-
      /**
      *Approve reports per user  
      *
@@ -213,8 +197,14 @@ class ReportController extends Controller
 
         DB::beginTransaction();
         try {
-            $report = Report::whereIn('id', $request->ids)->update(['status' => 4, 'ratings' => $request->final_rating]);
+            Report::whereIn('id', $request->ids)->update(['status' => 4, 'ratings' => $request->final_rating]);
+
+            // Send email to inspector
+            $report = Report::findOrFail($request->ids[0]);
+            Mail::to(User::findOrFail($report->inspector_id))->send(new ProcessOwnerApprovedReport($report->process_owner_id, $report->id));
+
             DB::commit();
+
             return  $report;
 
         } catch (Exception $e) {
@@ -241,7 +231,11 @@ class ReportController extends Controller
                 $uploadedFile->update(['comment' => $comment['text']]);
                 $ids[] = $comment['id'];
             }
-            $report = Report::whereIn('id', $request->ids)->update(['status' => 2]); //Status for checking 
+            Report::whereIn('id', $request->ids)->update(['status' => 2]); //Status for checking 
+            // Send email to inspector
+            $report = Report::findOrFail($request->ids[0]);
+            Mail::to(User::findOrFail($report->inspector_id))->send(new ProcessOwnerForCheckingReport($report->process_owner_id, $report->id));
+
             DB::commit();
             return  $report;
 
@@ -262,7 +256,6 @@ class ReportController extends Controller
 
     }
 
-
     /**
      * Display validate page
      *
@@ -282,6 +275,9 @@ class ReportController extends Controller
             }
 
             Report::where('id', $request->ids[0])->update(['status' => 3]); //Report validated 
+            // Send email to inspector
+            $report = Report::findOrFail($request->ids[0]);
+            Mail::to(User::findOrFail($report->process_owner_id))->send(new InspectorValidateReport($report->process_owner_id, $report->id));
 
             DB::commit();
 

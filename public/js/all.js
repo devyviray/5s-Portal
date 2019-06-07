@@ -60298,23 +60298,26 @@ var render = function() {
                             ])
                           ]),
                           _vm._v(" "),
-                          _c("div", { staticClass: "form-group row" }, [
-                            _c("span", { staticClass: "col-sm-4 " }, [
-                              _vm._v("Operation Line:")
-                            ]),
-                            _vm._v(" "),
-                            _c("div", { staticClass: "col-sm-8" }, [
-                              _c("span", [
-                                _vm._v(
-                                  " " +
-                                    _vm._s(
-                                      this.reportsPerUser[0].operation_line.name
-                                    ) +
-                                    " "
-                                )
+                          this.reportsPerUser[0].operation_line
+                            ? _c("div", { staticClass: "form-group row" }, [
+                                _c("span", { staticClass: "col-sm-4 " }, [
+                                  _vm._v("Operation Line:")
+                                ]),
+                                _vm._v(" "),
+                                _c("div", { staticClass: "col-sm-8" }, [
+                                  _c("span", [
+                                    _vm._v(
+                                      " " +
+                                        _vm._s(
+                                          this.reportsPerUser[0].operation_line
+                                            .name
+                                        ) +
+                                        " "
+                                    )
+                                  ])
+                                ])
                               ])
-                            ])
-                          ]),
+                            : _vm._e(),
                           _vm._v(" "),
                           _c("div", { staticClass: "form-group row" }, [
                             _c("span", { staticClass: "col-sm-4 " }, [

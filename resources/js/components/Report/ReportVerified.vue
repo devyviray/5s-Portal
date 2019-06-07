@@ -36,7 +36,7 @@
                                                 <span> {{ this.reportsPerUser[0].company.name }} </span>
                                             </div>
                                         </div>
-                                        <div class="form-group row">
+                                        <div class="form-group row" v-if="this.reportsPerUser[0].operation_line">
                                             <span class="col-sm-4 ">Operation Line:</span>
                                             <div class="col-sm-8">
                                                 <span> {{ this.reportsPerUser[0].operation_line.name }} </span>
