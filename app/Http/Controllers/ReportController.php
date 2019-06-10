@@ -8,6 +8,7 @@ use DB;
 use Mail; 
 use Storage;
 use Carbon\Carbon;
+use App\Rules\ReportingMonthRule;
 use App\{
     User,
     Report,
@@ -70,7 +71,7 @@ class ReportController extends Controller
             // 'operation_line' => 'required',
             'category' => 'required',
             'area' => 'required',
-            'process_owner' => 'required',
+            'process_owner' => ['required', new ReportingMonthRule($request->company,$request->location,$request->operation_line,$request->category,$request->area,$request->date_of_inspection)],
             'date_of_inspection' => 'required',
             'time_of_inspection' => 'required',
             'checklist' => 'required',
@@ -81,6 +82,8 @@ class ReportController extends Controller
 
         DB::beginTransaction();
         try {
+            $date = Carbon::parse($request->date_of_inspection);
+
             $data = [
                 'company_id' => $request->company,
                 'location_id' => $request->location,
@@ -92,7 +95,7 @@ class ReportController extends Controller
                 'date_of_inspection' => $request->date_of_inspection,
                 'time_of_inspection' => $request->time_of_inspection,
                 'status' => 1,
-                'reporting_month' => $request->date_of_inspection
+                'reporting_month' => $date->isoFormat('M')
             ];
             if($r = Report::create($data)){
                 $ids = [];

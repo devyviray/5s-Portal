@@ -85,11 +85,18 @@
                                     <label for="colFormLabel" class="col-sm-5 col-form-label">Date of Inspection</label>
                                     <div class="col-sm-7">
                                         <input type="date" class="form-control" id="colFormLabel" v-model="date_of_inspection">
-                                        <span class="text-danger" v-if="errors.process_owner  ">{{ errors.date_of_inspection[0] }}</span>
+                                        <span class="text-danger" v-if="errors.date_of_inspection  ">{{ errors.date_of_inspection[0] }}</span>
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label for="colFormLabel" class="col-sm-5 col-form-label">Time</label>
+                                    <label for="colFormLabel" class="col-sm-5 col-form-label">Start Time</label>
+                                    <div class="col-sm-7">
+                                        <input type="email" class="form-control" id="colFormLabel" v-model="time_of_inspection">
+                                        <span class="text-danger" v-if="errors.time_of_inspection  ">{{ errors.time_of_inspection[0] }}</span>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="colFormLabel" class="col-sm-5 col-form-label">End Time</label>
                                     <div class="col-sm-7">
                                         <input type="email" class="form-control" id="colFormLabel" v-model="time_of_inspection">
                                         <span class="text-danger" v-if="errors.time_of_inspection  ">{{ errors.time_of_inspection[0] }}</span>

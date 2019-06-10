@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Rules\CompanyAreaRule;
 use DB;
 use App\{
     CompanyCategory
@@ -42,7 +43,7 @@ class CompanyCategoryController extends Controller
             'areas' => 'required',
             'category' => 'required',
             'operation_line' => 'required_if:category,==,1',
-            'company' => 'required',
+            'company' => ['required', new CompanyAreaRule($request->company,$request->location,$request->operation_line,$request->category)],
             'location' => 'required',
             
         ]);
@@ -82,7 +83,7 @@ class CompanyCategoryController extends Controller
         $request->validate([
             'areas' => 'required',
             'category_id' => 'required',
-            'company_id' => 'required',
+            'company' => ['required', new CompanyAreaRule($request->company,$request->location_id,$request->operation_line,$request->category_id,$companyCategory->id)],
             'location_id' => 'required',
             'operation_line' => 'required_if:category,==,1',
         ]);
@@ -90,7 +91,7 @@ class CompanyCategoryController extends Controller
         DB::beginTransaction();
         try {
             $area_details = [
-                'company_id' => $request->company_id,
+                'company_id' => $request->company,
                 'location_id' => $request->location_id,
                 'operation_line_id' => $request->operation_line,
                 'category_id' => $request->category_id,

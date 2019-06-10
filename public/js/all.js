@@ -10669,7 +10669,7 @@ __webpack_require__.r(__webpack_exports__);
       }
 
       axios.post("/company-area/".concat(company_area_copied.id), {
-        company_id: company_area_copied.company_id,
+        company: company_area_copied.company_id,
         location_id: company_area_copied.location_id,
         operation_line: company_area_copied.operation_line_id,
         category_id: company_area_copied.category_id,
@@ -12569,6 +12569,13 @@ function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = 
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -59149,7 +59156,7 @@ var render = function() {
                           }
                         }),
                         _vm._v(" "),
-                        _vm.errors.process_owner
+                        _vm.errors.date_of_inspection
                           ? _c("span", { staticClass: "text-danger" }, [
                               _vm._v(_vm._s(_vm.errors.date_of_inspection[0]))
                             ])
@@ -59164,7 +59171,48 @@ var render = function() {
                           staticClass: "col-sm-5 col-form-label",
                           attrs: { for: "colFormLabel" }
                         },
-                        [_vm._v("Time")]
+                        [_vm._v("Start Time")]
+                      ),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col-sm-7" }, [
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.time_of_inspection,
+                              expression: "time_of_inspection"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          attrs: { type: "email", id: "colFormLabel" },
+                          domProps: { value: _vm.time_of_inspection },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.time_of_inspection = $event.target.value
+                            }
+                          }
+                        }),
+                        _vm._v(" "),
+                        _vm.errors.time_of_inspection
+                          ? _c("span", { staticClass: "text-danger" }, [
+                              _vm._v(_vm._s(_vm.errors.time_of_inspection[0]))
+                            ])
+                          : _vm._e()
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "form-group row" }, [
+                      _c(
+                        "label",
+                        {
+                          staticClass: "col-sm-5 col-form-label",
+                          attrs: { for: "colFormLabel" }
+                        },
+                        [_vm._v("End Time")]
                       ),
                       _vm._v(" "),
                       _c("div", { staticClass: "col-sm-7" }, [

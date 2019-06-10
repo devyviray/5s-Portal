@@ -457,7 +457,7 @@
                     });
                 }
                 axios.post(`/company-area/${company_area_copied.id}`, {
-                    company_id: company_area_copied.company_id,
+                    company: company_area_copied.company_id,
                     location_id: company_area_copied.location_id,
                     operation_line: company_area_copied.operation_line_id,
                     category_id: company_area_copied.category_id,

@@ -26,7 +26,7 @@ class CreateReportsTable extends Migration
             $table->string('time_of_inspection');
             $table->integer('ratings')->nullable();
             $table->integer('status');
-            $table->date('reporting_month');
+            $table->integer('reporting_month');
             $table->integer('validated_by')->nullable();
             $table->timestamps();
             $table->softDeletes();
