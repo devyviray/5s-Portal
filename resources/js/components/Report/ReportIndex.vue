@@ -73,8 +73,8 @@
                         <div class="col-md-2">
                             <button class="btn btn-sm btn-primary mt-4" @click="fetchFilteredReport"> Filter</button>
                             <button class="btn btn-sm btn-primary mt-4" @click="createReport"> Create Report</button>
+                            <button class="btn btn-sm btn-primary mt-4" @click="trendAndAnalysis"> Trend and Analysis</button>
                         </div>
-                        <div class="col-md-4"></div>
                     </div>
                 </div>
                 
@@ -184,6 +184,9 @@
             },
             createReport(){
                 return window.location.href = window.location.origin+'/create-report';
+            },
+            trendAndAnalysis(){
+                return window.location.href = window.location.origin+'/trend-and-analysis';
             },
             changeCompany(company,action){
                 if(action == 'getCompanies'){

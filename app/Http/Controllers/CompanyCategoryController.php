@@ -6,7 +6,8 @@ use Illuminate\Http\Request;
 use App\Rules\CompanyAreaRule;
 use DB;
 use App\{
-    CompanyCategory
+    CompanyCategory,
+    Report
 };
 
 class CompanyCategoryController extends Controller
@@ -132,6 +133,13 @@ class CompanyCategoryController extends Controller
         }
     }
 
+    /**
+     * Get all areas per company
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+
     public function companyAreaPerCompany($companyId, $locationId, $categoryId, $operationLineId = null){
         
         return CompanyCategory::with('areas')
@@ -141,6 +149,29 @@ class CompanyCategoryController extends Controller
         ->when($operationLineId !== 'undefined', function ($q) use ($operationLineId){
             $q->where('operation_line_id', $operationLineId);
         })->get();
+
+    }
+
+     /**
+     * Get all company with operation line
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+
+    public function companyWithOperationLine(){
+        
+        $query = CompanyCategory::with('company', 'location', 'operationLine')
+        ->whereNotNull('operation_line_id')->get();
+
+        foreach($query as $q){
+            $q['reports'] = Report::where('company_id',$q->company_id)
+            ->where('location_id', $q->location_id)
+            ->where('operation_line_id',$q->operation_line_id)
+            ->orderBy('reporting_month', 'asc')->get();
+        }
+
+        return $query;
 
     }
 }

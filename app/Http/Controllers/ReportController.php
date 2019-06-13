@@ -260,7 +260,7 @@ class ReportController extends Controller
     }
 
     /**
-     * Display validate page
+     * Validate Report
      *
      * @return \Illuminate\Http\Response
      */
@@ -289,6 +289,17 @@ class ReportController extends Controller
         } catch (Exception $e) {
             DB::rollBack();
         }
+
+    }
+
+     /**
+     * Display validate page
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function trendIndex(){
+
+        return view('report.trend');
 
     }
 

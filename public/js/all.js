@@ -13310,6 +13310,9 @@ __webpack_require__.r(__webpack_exports__);
     createReport: function createReport() {
       return window.location.href = window.location.origin + '/create-report';
     },
+    trendAndAnalysis: function trendAndAnalysis() {
+      return window.location.href = window.location.origin + '/trend-and-analysis';
+    },
     changeCompany: function changeCompany(company, action) {
       var _this = this;
 
@@ -13452,6 +13455,172 @@ __webpack_require__.r(__webpack_exports__);
     },
     verifiedReportLink: function verifiedReportLink() {
       return window.location.origin + '/validate-report/';
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Report/ReportTrend.vue?vue&type=script&lang=js&":
+/*!*****************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Report/ReportTrend.vue?vue&type=script&lang=js& ***!
+  \*****************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var vue_multiselect__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue-multiselect */ "./node_modules/vue-multiselect/dist/vue-multiselect.min.js");
+/* harmony import */ var vue_multiselect__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue_multiselect__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _NavbarRight__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../NavbarRight */ "./resources/js/components/NavbarRight.vue");
+/* harmony import */ var _Breadcrumb__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../Breadcrumb */ "./resources/js/components/Breadcrumb.vue");
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  props: ['userName', 'userRole', 'reportId'],
+  components: {
+    Multiselect: vue_multiselect__WEBPACK_IMPORTED_MODULE_0___default.a,
+    navbarRight: _NavbarRight__WEBPACK_IMPORTED_MODULE_1__["default"],
+    breadcrumb: _Breadcrumb__WEBPACK_IMPORTED_MODULE_2__["default"]
+  },
+  data: function data() {
+    return {
+      companies: [],
+      trendAndAnalysis: [],
+      errors: []
+    };
+  },
+  created: function created() {
+    this.fetchCompanies();
+  },
+  methods: {
+    getRating: function getRating(reports, item) {
+      if (reports.length) {
+        var rating = '-';
+        reports.filter(function (report) {
+          if (report.reporting_month == item && report.ratings) {
+            rating = report.ratings;
+          }
+        });
+        return rating;
+      } else {
+        return '-';
+      }
+    },
+    getAverage: function getAverage(reports) {
+      var average = 0;
+      var count = 0;
+      reports.filter(function (report) {
+        if (report.ratings) {
+          average = average + report.ratings;
+          count = count + 1;
+        }
+      });
+      var total = average / count;
+
+      if (isNaN(total)) {
+        return '-';
+      } else {
+        return total;
+      }
+    },
+    fetchCompanies: function fetchCompanies() {
+      var _this = this;
+
+      axios.get('/companies-with-operation-line').then(function (response) {
+        _this.companies = response.data;
+      })["catch"](function (error) {
+        _this.errors = error.response.data.errors;
+      });
+    }
+  },
+  computed: {
+    logoLink: function logoLink() {
+      return window.location.origin + '/img/lafil-logo.png';
     }
   }
 });
@@ -60017,10 +60186,17 @@ var render = function() {
                           on: { click: _vm.createReport }
                         },
                         [_vm._v(" Create Report")]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "button",
+                        {
+                          staticClass: "btn btn-sm btn-primary mt-4",
+                          on: { click: _vm.trendAndAnalysis }
+                        },
+                        [_vm._v(" Trend and Analysis")]
                       )
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "col-md-4" })
+                    ])
                   ])
                 ])
               : _vm._e(),
@@ -60235,6 +60411,253 @@ var staticRenderFns = [
       },
       [_c("i", { staticClass: "fa fa-ellipsis-v" })]
     )
+  }
+]
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Report/ReportTrend.vue?vue&type=template&id=e2d3ca0e&":
+/*!*********************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Report/ReportTrend.vue?vue&type=template&id=e2d3ca0e& ***!
+  \*********************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { attrs: { id: "wrapper" } }, [
+    _c(
+      "nav",
+      {
+        staticClass: "navbar navbar-default top-navbar",
+        attrs: { role: "navigation" }
+      },
+      [
+        _c("div", { staticClass: "row" }, [
+          _c("div", { staticClass: "col-md-9" }),
+          _vm._v(" "),
+          _c("div", { staticClass: "col-md-2" }, [
+            _c("span", { staticClass: "span-username" }, [
+              _vm._v("Hi, " + _vm._s(this.userName))
+            ])
+          ]),
+          _vm._v(" "),
+          _c(
+            "div",
+            { staticClass: "col-md-1" },
+            [_c("navbarRight", { attrs: { "user-role": _vm.userRole } })],
+            1
+          )
+        ])
+      ]
+    ),
+    _vm._v(" "),
+    _c("div", { attrs: { id: "page-wrapper" } }, [
+      _c("div", { staticClass: "div-spacing" }),
+      _vm._v(" "),
+      _c(
+        "div",
+        { staticClass: "header" },
+        [
+          _c("h1", { staticClass: "page-header" }, [
+            _c("img", {
+              staticClass: "lafil-logo",
+              attrs: { src: _vm.logoLink }
+            }),
+            _vm._v(" "),
+            _c("b", [_vm._v("5S PORTAL - REPORT & RATING ")])
+          ]),
+          _vm._v(" "),
+          _c("breadcrumb")
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c("div", { attrs: { id: "page-inner" } }, [
+        _c("div", { staticClass: "card" }, [
+          _c("div", { staticClass: "card-body" }, [
+            _c(
+              "table",
+              { staticClass: "table align-items-center table-flush" },
+              [
+                _vm._m(0),
+                _vm._v(" "),
+                _c(
+                  "tbody",
+                  [
+                    _vm._m(1),
+                    _vm._v(" "),
+                    _vm._l(_vm.companies, function(company, c) {
+                      return _c("tr", { key: c }, [
+                        _c("td", [
+                          _vm._v(
+                            _vm._s(
+                              company.company.name +
+                                " " +
+                                company.location.name +
+                                " - " +
+                                company.operation_line.name
+                            )
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c("td", [
+                          _vm._v(_vm._s(_vm.getRating(company.reports, 1)))
+                        ]),
+                        _vm._v(" "),
+                        _c("td", [
+                          _vm._v(_vm._s(_vm.getRating(company.reports, 2)))
+                        ]),
+                        _vm._v(" "),
+                        _c("td", [
+                          _vm._v(_vm._s(_vm.getRating(company.reports, 3)))
+                        ]),
+                        _vm._v(" "),
+                        _c("td", [
+                          _vm._v(_vm._s(_vm.getRating(company.reports, 4)))
+                        ]),
+                        _vm._v(" "),
+                        _c("td", [
+                          _vm._v(_vm._s(_vm.getRating(company.reports, 5)))
+                        ]),
+                        _vm._v(" "),
+                        _c("td", [
+                          _vm._v(_vm._s(_vm.getRating(company.reports, 6)))
+                        ]),
+                        _vm._v(" "),
+                        _c("td", [
+                          _vm._v(_vm._s(_vm.getRating(company.reports, 7)))
+                        ]),
+                        _vm._v(" "),
+                        _c("td", [
+                          _vm._v(_vm._s(_vm.getRating(company.reports, 8)))
+                        ]),
+                        _vm._v(" "),
+                        _c("td", [
+                          _vm._v(_vm._s(_vm.getRating(company.reports, 9)))
+                        ]),
+                        _vm._v(" "),
+                        _c("td", [
+                          _vm._v(_vm._s(_vm.getRating(company.reports, 10)))
+                        ]),
+                        _vm._v(" "),
+                        _c("td", [
+                          _vm._v(_vm._s(_vm.getRating(company.reports, 11)))
+                        ]),
+                        _vm._v(" "),
+                        _c("td", [
+                          _vm._v(_vm._s(_vm.getRating(company.reports, 12)))
+                        ]),
+                        _vm._v(" "),
+                        _c("td", [
+                          _vm._v(_vm._s(_vm.getAverage(company.reports)))
+                        ])
+                      ])
+                    })
+                  ],
+                  2
+                )
+              ]
+            ),
+            _vm._v(" "),
+            _vm._m(2)
+          ])
+        ])
+      ])
+    ])
+  ])
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", { staticClass: "thead-light" }, [
+      _c("tr", [
+        _c("td", { attrs: { rowspan: "2" } }, [_vm._v("Area Inspected")]),
+        _vm._v(" "),
+        _c(
+          "td",
+          { staticStyle: { "text-align": "center" }, attrs: { colspan: "14" } },
+          [_vm._v("5s Rating")]
+        )
+      ]),
+      _vm._v(" "),
+      _c("tr", [
+        _c("td", { attrs: { scope: "col" } }, [_vm._v("Jan")]),
+        _vm._v(" "),
+        _c("td", { attrs: { scope: "col" } }, [_vm._v("Feb")]),
+        _vm._v(" "),
+        _c("td", { attrs: { scope: "col" } }, [_vm._v("Mar")]),
+        _vm._v(" "),
+        _c("td", { attrs: { scope: "col" } }, [_vm._v("Apr")]),
+        _vm._v(" "),
+        _c("td", { attrs: { scope: "col" } }, [_vm._v("May")]),
+        _vm._v(" "),
+        _c("td", { attrs: { scope: "col" } }, [_vm._v("Jun")]),
+        _vm._v(" "),
+        _c("td", { attrs: { scope: "col" } }, [_vm._v("Jul")]),
+        _vm._v(" "),
+        _c("td", { attrs: { scope: "col" } }, [_vm._v("Aug")]),
+        _vm._v(" "),
+        _c("td", { attrs: { scope: "col" } }, [_vm._v("Sep")]),
+        _vm._v(" "),
+        _c("td", { attrs: { scope: "col" } }, [_vm._v("Oct")]),
+        _vm._v(" "),
+        _c("td", { attrs: { scope: "col" } }, [_vm._v("Nov")]),
+        _vm._v(" "),
+        _c("td", { attrs: { scope: "col" } }, [_vm._v("Dec")]),
+        _vm._v(" "),
+        _c("td", { attrs: { scope: "col" } }, [_vm._v("Ave.(ytd)")])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("tr", { staticStyle: { "background-color": "#EDEDED" } }, [
+      _c("td", { attrs: { colspan: "14" } }, [_vm._v("Operations")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "row mt-4" }, [
+      _c("div", { staticClass: "col-md-4" }),
+      _vm._v(" "),
+      _c("div", { staticClass: "col-md-4" }),
+      _vm._v(" "),
+      _c("div", { staticClass: "col-md-4 text-right" }, [
+        _c(
+          "button",
+          {
+            staticClass: "btn btn-primary btn-round btn-fill",
+            attrs: { id: "add_btn", type: "button" }
+          },
+          [_vm._v("Print as PDF")]
+        ),
+        _vm._v(" "),
+        _c(
+          "button",
+          {
+            staticClass: "btn btn-primary btn-round btn-fill",
+            attrs: { id: "add_btn", type: "button" }
+          },
+          [_vm._v("Export as excel File")]
+        )
+      ])
+    ])
   }
 ]
 render._withStripped = true
@@ -75728,7 +76151,8 @@ Vue.component('faq-index-page', __webpack_require__(/*! ./components/Faq/FaqInde
 Vue.component('report-index', __webpack_require__(/*! ./components/Report/ReportIndex.vue */ "./resources/js/components/Report/ReportIndex.vue")["default"]);
 Vue.component('report-form', __webpack_require__(/*! ./components/Report/ReportForm.vue */ "./resources/js/components/Report/ReportForm.vue")["default"]);
 Vue.component('report-view', __webpack_require__(/*! ./components/Report/ReportView.vue */ "./resources/js/components/Report/ReportView.vue")["default"]);
-Vue.component('report-verified', __webpack_require__(/*! ./components/Report/ReportVerified.vue */ "./resources/js/components/Report/ReportVerified.vue")["default"]); // operation line page
+Vue.component('report-verified', __webpack_require__(/*! ./components/Report/ReportVerified.vue */ "./resources/js/components/Report/ReportVerified.vue")["default"]);
+Vue.component('report-trend', __webpack_require__(/*! ./components/Report/ReportTrend.vue */ "./resources/js/components/Report/ReportTrend.vue")["default"]); // operation line page
 
 Vue.component('operation-line-index', __webpack_require__(/*! ./components/Operation/OperationLineIndex.vue */ "./resources/js/components/Operation/OperationLineIndex.vue")["default"]); // category page
 
@@ -76992,6 +77416,77 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ReportIndex_vue_vue_type_template_id_4cf89fae___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ReportIndex_vue_vue_type_template_id_4cf89fae___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/Report/ReportTrend.vue":
+/*!********************************************************!*\
+  !*** ./resources/js/components/Report/ReportTrend.vue ***!
+  \********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _ReportTrend_vue_vue_type_template_id_e2d3ca0e___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ReportTrend.vue?vue&type=template&id=e2d3ca0e& */ "./resources/js/components/Report/ReportTrend.vue?vue&type=template&id=e2d3ca0e&");
+/* harmony import */ var _ReportTrend_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ReportTrend.vue?vue&type=script&lang=js& */ "./resources/js/components/Report/ReportTrend.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var vue_multiselect_dist_vue_multiselect_min_css_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vue-multiselect/dist/vue-multiselect.min.css?vue&type=style&index=0&lang=css& */ "./node_modules/vue-multiselect/dist/vue-multiselect.min.css?vue&type=style&index=0&lang=css&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
+  _ReportTrend_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _ReportTrend_vue_vue_type_template_id_e2d3ca0e___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _ReportTrend_vue_vue_type_template_id_e2d3ca0e___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/Report/ReportTrend.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/Report/ReportTrend.vue?vue&type=script&lang=js&":
+/*!*********************************************************************************!*\
+  !*** ./resources/js/components/Report/ReportTrend.vue?vue&type=script&lang=js& ***!
+  \*********************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ReportTrend_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./ReportTrend.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Report/ReportTrend.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ReportTrend_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/Report/ReportTrend.vue?vue&type=template&id=e2d3ca0e&":
+/*!***************************************************************************************!*\
+  !*** ./resources/js/components/Report/ReportTrend.vue?vue&type=template&id=e2d3ca0e& ***!
+  \***************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ReportTrend_vue_vue_type_template_id_e2d3ca0e___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./ReportTrend.vue?vue&type=template&id=e2d3ca0e& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Report/ReportTrend.vue?vue&type=template&id=e2d3ca0e&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ReportTrend_vue_vue_type_template_id_e2d3ca0e___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ReportTrend_vue_vue_type_template_id_e2d3ca0e___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 
