@@ -11733,10 +11733,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
-    ClimbingBoxLoader: _saeris_vue_spinners__WEBPACK_IMPORTED_MODULE_0__["ClimbingBoxLoader"]
+    MoonLoader: _saeris_vue_spinners__WEBPACK_IMPORTED_MODULE_0__["MoonLoader"]
   }
 });
 
@@ -12780,7 +12781,8 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
       process_owners: [],
       process_owner: '',
       date_of_inspection: '',
-      time_of_inspection: '',
+      start_time_of_inspection: '',
+      end_time_of_inspection: '',
       selected_data: [],
       points: [],
       attachments: [],
@@ -12996,6 +12998,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
       });
 
       if (this.points_errors.length) {
+        this.loading = false;
         return false;
       }
 
@@ -13009,7 +13012,8 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
       this.formData.append('area', this.area ? this.area.id : '');
       this.formData.append('process_owner', this.process_owner ? this.process_owner : '');
       this.formData.append('date_of_inspection', this.date_of_inspection ? this.date_of_inspection : '');
-      this.formData.append('time_of_inspection', this.time_of_inspection ? this.time_of_inspection : '');
+      this.formData.append('start_time_of_inspection', this.start_time_of_inspection ? this.start_time_of_inspection : '');
+      this.formData.append('end_time_of_inspection', this.end_time_of_inspection ? this.end_time_of_inspection : '');
       this.formData.append('checklist', selected_checklist ? JSON.stringify(selected_checklist) : '');
       this.formData.append('points', this.points.length == 0 ? '' : this.points);
       this.formData.append('attachment_ids', this.attachment_ids.length > 0 ? this.attachment_ids : '');
@@ -13019,7 +13023,6 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
         _this9.show_added = true;
         _this9.loading = false;
-        _this9.checklist.rating = [];
       })["catch"](function (error) {
         _this9.errors = error.response.data.errors;
         _this9.show_added = false;
@@ -13027,9 +13030,15 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
       });
     },
     resetForm: function resetForm() {
+      this.company = '';
+      this.location = '';
+      this.category = '';
+      this.operation_line = '';
+      this.area = '';
       this.process_owner = '';
       this.date_of_inspection = '';
-      this.time_of_inspection = '';
+      this.start_time_of_inspection = '';
+      this.end_time_of_inspection = '';
       this.points = [];
       this.attachments = [];
 
@@ -13040,6 +13049,9 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
       };
 
       removeElements(document.querySelectorAll(".attachments"));
+      this.selected_checklist.filter(function (checklist) {
+        checklist.rating = '';
+      });
     },
     disabledBtn: function disabledBtn() {
       document.getElementById('btn-checking').disabled = true;
@@ -13569,13 +13581,12 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
-      companies: [],
       trendAndAnalysis: [],
       errors: []
     };
   },
   created: function created() {
-    this.fetchCompanies();
+    this.fetchTrendAndAnalysis();
   },
   methods: {
     getRating: function getRating(reports, item) {
@@ -13608,11 +13619,11 @@ __webpack_require__.r(__webpack_exports__);
         return total;
       }
     },
-    fetchCompanies: function fetchCompanies() {
+    fetchTrendAndAnalysis: function fetchTrendAndAnalysis() {
       var _this = this;
 
-      axios.get('/companies-with-operation-line').then(function (response) {
-        _this.companies = response.data;
+      axios.get('/trend-and-analysis-data').then(function (response) {
+        _this.trendAndAnalysis = response.data;
       })["catch"](function (error) {
         _this.errors = error.response.data.errors;
       });
@@ -13621,6 +13632,9 @@ __webpack_require__.r(__webpack_exports__);
   computed: {
     logoLink: function logoLink() {
       return window.location.origin + '/img/lafil-logo.png';
+    },
+    pdfLink: function pdfLink() {
+      return window.location.origin + '/generate-pdf';
     }
   }
 });
@@ -57286,12 +57300,7 @@ var render = function() {
     _c(
       "div",
       { staticClass: "loader-div" },
-      [
-        _c("climbing-box-loader", {
-          staticClass: "custom-class",
-          attrs: { color: "#A8C897" }
-        })
-      ],
+      [_c("moon-loader", { staticClass: "custom-class" })],
       1
     )
   ])
@@ -59349,26 +59358,28 @@ var render = function() {
                             {
                               name: "model",
                               rawName: "v-model",
-                              value: _vm.time_of_inspection,
-                              expression: "time_of_inspection"
+                              value: _vm.start_time_of_inspection,
+                              expression: "start_time_of_inspection"
                             }
                           ],
                           staticClass: "form-control",
-                          attrs: { type: "email", id: "colFormLabel" },
-                          domProps: { value: _vm.time_of_inspection },
+                          attrs: { type: "time", id: "colFormLabel" },
+                          domProps: { value: _vm.start_time_of_inspection },
                           on: {
                             input: function($event) {
                               if ($event.target.composing) {
                                 return
                               }
-                              _vm.time_of_inspection = $event.target.value
+                              _vm.start_time_of_inspection = $event.target.value
                             }
                           }
                         }),
                         _vm._v(" "),
-                        _vm.errors.time_of_inspection
+                        _vm.errors.start_time_of_inspection
                           ? _c("span", { staticClass: "text-danger" }, [
-                              _vm._v(_vm._s(_vm.errors.time_of_inspection[0]))
+                              _vm._v(
+                                _vm._s(_vm.errors.start_time_of_inspection[0])
+                              )
                             ])
                           : _vm._e()
                       ])
@@ -59390,26 +59401,28 @@ var render = function() {
                             {
                               name: "model",
                               rawName: "v-model",
-                              value: _vm.time_of_inspection,
-                              expression: "time_of_inspection"
+                              value: _vm.end_time_of_inspection,
+                              expression: "end_time_of_inspection"
                             }
                           ],
                           staticClass: "form-control",
-                          attrs: { type: "email", id: "colFormLabel" },
-                          domProps: { value: _vm.time_of_inspection },
+                          attrs: { type: "time", id: "colFormLabel" },
+                          domProps: { value: _vm.end_time_of_inspection },
                           on: {
                             input: function($event) {
                               if ($event.target.composing) {
                                 return
                               }
-                              _vm.time_of_inspection = $event.target.value
+                              _vm.end_time_of_inspection = $event.target.value
                             }
                           }
                         }),
                         _vm._v(" "),
-                        _vm.errors.time_of_inspection
+                        _vm.errors.end_time_of_inspection
                           ? _c("span", { staticClass: "text-danger" }, [
-                              _vm._v(_vm._s(_vm.errors.time_of_inspection[0]))
+                              _vm._v(
+                                _vm._s(_vm.errors.end_time_of_inspection[0])
+                              )
                             ])
                           : _vm._e()
                       ])
@@ -60203,7 +60216,7 @@ var render = function() {
             _vm._v(" "),
             _c(
               "table",
-              { staticClass: "table align-items-center table-flush" },
+              { staticClass: "table align-items-center table-flush " },
               [
                 _vm._m(0),
                 _vm._v(" "),
@@ -60496,70 +60509,70 @@ var render = function() {
                   [
                     _vm._m(1),
                     _vm._v(" "),
-                    _vm._l(_vm.companies, function(company, c) {
-                      return _c("tr", { key: c }, [
+                    _vm._l(_vm.trendAndAnalysis, function(trend, t) {
+                      return _c("tr", { key: t }, [
                         _c("td", [
                           _vm._v(
                             _vm._s(
-                              company.company.name +
+                              trend.company.name +
                                 " " +
-                                company.location.name +
+                                trend.location.name +
                                 " - " +
-                                company.operation_line.name
+                                trend.operation_line.name
                             )
                           )
                         ]),
                         _vm._v(" "),
                         _c("td", [
-                          _vm._v(_vm._s(_vm.getRating(company.reports, 1)))
+                          _vm._v(_vm._s(_vm.getRating(trend.reports, 1)))
                         ]),
                         _vm._v(" "),
                         _c("td", [
-                          _vm._v(_vm._s(_vm.getRating(company.reports, 2)))
+                          _vm._v(_vm._s(_vm.getRating(trend.reports, 2)))
                         ]),
                         _vm._v(" "),
                         _c("td", [
-                          _vm._v(_vm._s(_vm.getRating(company.reports, 3)))
+                          _vm._v(_vm._s(_vm.getRating(trend.reports, 3)))
                         ]),
                         _vm._v(" "),
                         _c("td", [
-                          _vm._v(_vm._s(_vm.getRating(company.reports, 4)))
+                          _vm._v(_vm._s(_vm.getRating(trend.reports, 4)))
                         ]),
                         _vm._v(" "),
                         _c("td", [
-                          _vm._v(_vm._s(_vm.getRating(company.reports, 5)))
+                          _vm._v(_vm._s(_vm.getRating(trend.reports, 5)))
                         ]),
                         _vm._v(" "),
                         _c("td", [
-                          _vm._v(_vm._s(_vm.getRating(company.reports, 6)))
+                          _vm._v(_vm._s(_vm.getRating(trend.reports, 6)))
                         ]),
                         _vm._v(" "),
                         _c("td", [
-                          _vm._v(_vm._s(_vm.getRating(company.reports, 7)))
+                          _vm._v(_vm._s(_vm.getRating(trend.reports, 7)))
                         ]),
                         _vm._v(" "),
                         _c("td", [
-                          _vm._v(_vm._s(_vm.getRating(company.reports, 8)))
+                          _vm._v(_vm._s(_vm.getRating(trend.reports, 8)))
                         ]),
                         _vm._v(" "),
                         _c("td", [
-                          _vm._v(_vm._s(_vm.getRating(company.reports, 9)))
+                          _vm._v(_vm._s(_vm.getRating(trend.reports, 9)))
                         ]),
                         _vm._v(" "),
                         _c("td", [
-                          _vm._v(_vm._s(_vm.getRating(company.reports, 10)))
+                          _vm._v(_vm._s(_vm.getRating(trend.reports, 10)))
                         ]),
                         _vm._v(" "),
                         _c("td", [
-                          _vm._v(_vm._s(_vm.getRating(company.reports, 11)))
+                          _vm._v(_vm._s(_vm.getRating(trend.reports, 11)))
                         ]),
                         _vm._v(" "),
                         _c("td", [
-                          _vm._v(_vm._s(_vm.getRating(company.reports, 12)))
+                          _vm._v(_vm._s(_vm.getRating(trend.reports, 12)))
                         ]),
                         _vm._v(" "),
                         _c("td", [
-                          _vm._v(_vm._s(_vm.getAverage(company.reports)))
+                          _vm._v(_vm._s(_vm.getAverage(trend.reports)))
                         ])
                       ])
                     })
@@ -60569,7 +60582,31 @@ var render = function() {
               ]
             ),
             _vm._v(" "),
-            _vm._m(2)
+            _c("div", { staticClass: "row mt-4" }, [
+              _c("div", { staticClass: "col-md-4" }),
+              _vm._v(" "),
+              _c("div", { staticClass: "col-md-4" }),
+              _vm._v(" "),
+              _c("div", { staticClass: "col-md-4 text-right" }, [
+                _c(
+                  "a",
+                  {
+                    staticClass: "btn btn-primary btn-round btn-fill",
+                    attrs: { href: _vm.pdfLink, target: "_blank" }
+                  },
+                  [_vm._v("Print as PDF")]
+                ),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-primary btn-round btn-fill",
+                    attrs: { id: "add_btn", type: "button" }
+                  },
+                  [_vm._v("Export as excel File")]
+                )
+              ])
+            ])
           ])
         ])
       ])
@@ -60627,36 +60664,6 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("tr", { staticStyle: { "background-color": "#EDEDED" } }, [
       _c("td", { attrs: { colspan: "14" } }, [_vm._v("Operations")])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "row mt-4" }, [
-      _c("div", { staticClass: "col-md-4" }),
-      _vm._v(" "),
-      _c("div", { staticClass: "col-md-4" }),
-      _vm._v(" "),
-      _c("div", { staticClass: "col-md-4 text-right" }, [
-        _c(
-          "button",
-          {
-            staticClass: "btn btn-primary btn-round btn-fill",
-            attrs: { id: "add_btn", type: "button" }
-          },
-          [_vm._v("Print as PDF")]
-        ),
-        _vm._v(" "),
-        _c(
-          "button",
-          {
-            staticClass: "btn btn-primary btn-round btn-fill",
-            attrs: { id: "add_btn", type: "button" }
-          },
-          [_vm._v("Export as excel File")]
-        )
-      ])
     ])
   }
 ]
@@ -60853,8 +60860,11 @@ var render = function() {
                                       _vm._v(
                                         _vm._s(
                                           this.reportsPerUser[0]
-                                            .time_of_inspection
-                                        )
+                                            .start_time_of_inspection +
+                                            " - " +
+                                            this.reportsPerUser[0]
+                                              .end_time_of_inspection
+                                        ) + " "
                                       )
                                     ])
                                   ])
@@ -61461,8 +61471,11 @@ var render = function() {
                                         _vm._v(
                                           _vm._s(
                                             this.reportsPerUser[0]
-                                              .time_of_inspection
-                                          )
+                                              .start_time_of_inspection +
+                                              " - " +
+                                              this.reportsPerUser[0]
+                                                .end_time_of_inspection
+                                          ) + " "
                                         )
                                       ])
                                     ])

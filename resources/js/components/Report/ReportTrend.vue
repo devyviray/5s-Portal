@@ -47,21 +47,21 @@
                             </thead>
                             <tbody>
                                 <tr style="background-color: #EDEDED"><td colspan="14">Operations</td></tr>
-                                <tr v-for="(company, c) in companies" :key="c">
-                                    <td>{{ company.company.name + ' ' + company.location.name + ' - ' +  company.operation_line.name }}</td>
-                                    <td>{{ getRating(company.reports, 1) }}</td>
-                                    <td>{{ getRating(company.reports, 2) }}</td>
-                                    <td>{{ getRating(company.reports, 3) }}</td>
-                                    <td>{{ getRating(company.reports, 4) }}</td>
-                                    <td>{{ getRating(company.reports, 5) }}</td>
-                                    <td>{{ getRating(company.reports, 6) }}</td>
-                                    <td>{{ getRating(company.reports, 7) }}</td>
-                                    <td>{{ getRating(company.reports, 8) }}</td>
-                                    <td>{{ getRating(company.reports, 9) }}</td>
-                                    <td>{{ getRating(company.reports, 10) }}</td>
-                                    <td>{{ getRating(company.reports, 11) }}</td>
-                                    <td>{{ getRating(company.reports, 12) }}</td>
-                                    <td>{{ getAverage(company.reports) }}</td>
+                                <tr v-for="(trend, t) in trendAndAnalysis" :key="t">
+                                    <td>{{ trend.company.name + ' ' + trend.location.name + ' - ' +  trend.operation_line.name }}</td>
+                                    <td>{{ getRating(trend.reports, 1) }}</td>
+                                    <td>{{ getRating(trend.reports, 2) }}</td>
+                                    <td>{{ getRating(trend.reports, 3) }}</td>
+                                    <td>{{ getRating(trend.reports, 4) }}</td>
+                                    <td>{{ getRating(trend.reports, 5) }}</td>
+                                    <td>{{ getRating(trend.reports, 6) }}</td>
+                                    <td>{{ getRating(trend.reports, 7) }}</td>
+                                    <td>{{ getRating(trend.reports, 8) }}</td>
+                                    <td>{{ getRating(trend.reports, 9) }}</td>
+                                    <td>{{ getRating(trend.reports, 10) }}</td>
+                                    <td>{{ getRating(trend.reports, 11) }}</td>
+                                    <td>{{ getRating(trend.reports, 12) }}</td>
+                                    <td>{{ getAverage(trend.reports) }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -69,7 +69,7 @@
                             <div class="col-md-4"></div>
                             <div class="col-md-4"></div>
                             <div class="col-md-4 text-right">
-                                <button id="add_btn" type="button" class="btn btn-primary btn-round btn-fill">Print as PDF</button>
+                                <a :href="pdfLink" target="_blank" class="btn btn-primary btn-round btn-fill">Print as PDF</a>  
                                 <button id="add_btn" type="button" class="btn btn-primary btn-round btn-fill">Export as excel File</button>
                             </div>
                         </div> 
@@ -94,13 +94,12 @@
         },
         data(){
             return {
-                companies: [],
                 trendAndAnalysis: [],
                 errors: [] 
             }
         },
         created(){
-            this.fetchCompanies();
+            this.fetchTrendAndAnalysis();
         },
         methods:{
             getRating(reports, item){
@@ -132,10 +131,10 @@
                     return total;
                 }
             },
-            fetchCompanies(){
-                axios.get('/companies-with-operation-line')
+            fetchTrendAndAnalysis(){
+                axios.get('/trend-and-analysis-data')
                 .then(response => {
-                    this.companies = response.data;
+                    this.trendAndAnalysis = response.data;
                 })
                 .catch(error => { 
                     this.errors = error.response.data.errors;
@@ -145,6 +144,9 @@
         computed:{
             logoLink(){
                 return window.location.origin+'/img/lafil-logo.png';
+            },
+            pdfLink(){
+                return window.location.origin+'/generate-pdf';  
             }
         }
     }

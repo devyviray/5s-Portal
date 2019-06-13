@@ -78,7 +78,7 @@
                     </div>
                 </div>
                 
-                <table class="table align-items-center table-flush">
+                <table class="table align-items-center table-flush ">
                     <thead class="thead-light">
                         <tr>
                             <th></th>

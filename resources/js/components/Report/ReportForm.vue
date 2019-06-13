@@ -91,15 +91,15 @@
                                 <div class="form-group row">
                                     <label for="colFormLabel" class="col-sm-5 col-form-label">Start Time</label>
                                     <div class="col-sm-7">
-                                        <input type="email" class="form-control" id="colFormLabel" v-model="time_of_inspection">
-                                        <span class="text-danger" v-if="errors.time_of_inspection  ">{{ errors.time_of_inspection[0] }}</span>
+                                        <input type="time" class="form-control" id="colFormLabel" v-model="start_time_of_inspection">
+                                        <span class="text-danger" v-if="errors.start_time_of_inspection  ">{{ errors.start_time_of_inspection[0] }}</span>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label for="colFormLabel" class="col-sm-5 col-form-label">End Time</label>
                                     <div class="col-sm-7">
-                                        <input type="email" class="form-control" id="colFormLabel" v-model="time_of_inspection">
-                                        <span class="text-danger" v-if="errors.time_of_inspection  ">{{ errors.time_of_inspection[0] }}</span>
+                                        <input type="time" class="form-control" id="colFormLabel" v-model="end_time_of_inspection">
+                                        <span class="text-danger" v-if="errors.end_time_of_inspection  ">{{ errors.end_time_of_inspection[0] }}</span>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -210,7 +210,8 @@
                 process_owners: [],
                 process_owner: '',
                 date_of_inspection: '',
-                time_of_inspection: '',
+                start_time_of_inspection: '',
+                end_time_of_inspection: '',
                 selected_data: [],
                 points: [],
                 attachments: [],
@@ -400,6 +401,7 @@
                     item.rating !== null ? t.points.push(item.rating) : t.points_errors.push(index);
                 });
                 if(this.points_errors.length){
+                    this.loading = false;
                     return false;
                 }
                 this.show_added = false;
@@ -412,7 +414,8 @@
                 this.formData.append('area', this.area ? this.area.id : '');
                 this.formData.append('process_owner', this.process_owner ? this.process_owner : '');
                 this.formData.append('date_of_inspection', this.date_of_inspection ? this.date_of_inspection : '');
-                this.formData.append('time_of_inspection', this.time_of_inspection ? this.time_of_inspection : '');
+                this.formData.append('start_time_of_inspection', this.start_time_of_inspection ? this.start_time_of_inspection : '');
+                this.formData.append('end_time_of_inspection', this.end_time_of_inspection ? this.end_time_of_inspection : '');
                 this.formData.append('checklist', selected_checklist ? JSON.stringify(selected_checklist) : '');
                 this.formData.append('points', this.points.length == 0 ? '' : this.points);
                 this.formData.append('attachment_ids',this.attachment_ids.length > 0 ? this.attachment_ids : '');  
@@ -423,7 +426,6 @@
                     this.resetForm();
                     this.show_added = true;
                     this.loading = false;
-                    this.checklist.rating = [];
                 })
                 .catch(error => {
                     this.errors = error.response.data.errors;
@@ -432,13 +434,22 @@
                 });
             },
             resetForm(){
+                this.company = '';
+                this.location = '';
+                this.category = '';
+                this.operation_line = '';
+                this.area = '';
                 this.process_owner = '';
                 this.date_of_inspection = '';
-                this.time_of_inspection = '';
+                this.start_time_of_inspection = '';
+                this.end_time_of_inspection = '';
                 this.points = [];
                 this.attachments = [];
                 var removeElements = (elms) => [...elms].forEach(el => el.value = "");
                 removeElements( document.querySelectorAll(".attachments"));
+                this.selected_checklist.filter(checklist => {
+                    checklist.rating = '';
+                });
             },
             disabledBtn(){
                 document.getElementById('btn-checking').disabled = true;

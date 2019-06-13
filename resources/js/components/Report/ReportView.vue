@@ -65,7 +65,7 @@
                                         <div class="form-group row">
                                             <span class="col-sm-4">Time</span>
                                             <div class="col-sm-8">
-                                                <span>{{ this.reportsPerUser[0].time_of_inspection }}</span>
+                                                <span>{{ this.reportsPerUser[0].start_time_of_inspection + ' - ' + this.reportsPerUser[0].end_time_of_inspection  }} </span>
                                             </div>
                                         </div>
                                         <div class="row">

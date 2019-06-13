@@ -86,7 +86,6 @@ Route::group(['middleware' => ['auth', 'role:it|administrator|inspector']], func
     Route::patch('/faq/{faq}', 'FaqController@update');
     Route::delete('/faq/{faq}', 'FaqController@destroy');
 
-
     //Report
     Route::get('/create-report', 'ReportController@create');
     Route::post('/report-filtered', 'ReportController@getFilteredReports');
@@ -97,6 +96,8 @@ Route::group(['middleware' => ['auth', 'role:it|administrator|inspector']], func
     Route::delete('/report/{report}', 'ReportController@destroy');
     Route::get('/create-report', 'ReportController@create');
     Route::get('/trend-and-analysis', 'ReportController@trendIndex');
+    Route::get('/trend-and-analysis-data', 'ReportController@trendAndAnalysisData');
+    Route::get('/generate-pdf', 'ReportController@generatePDF');
 
     // operation line
     Route::get('/operation-lines', 'OperationLineController@index')->name('operation-lines');
@@ -126,6 +127,5 @@ Route::group(['middleware' => ['auth', 'role:it|administrator|inspector']], func
     Route::patch('/company-area/{companyCategory}', 'CompanyCategoryController@update');
     Route::delete('/company-area/{companyCategory}', 'CompanyCategoryController@destroy');
     Route::get('/company-areas-per-company/{companyId}/{locationId}/{categoryId}/{operationLineId}', 'CompanyCategoryController@companyAreaPerCompany');
-    Route::get('/companies-with-operation-line', 'CompanyCategoryController@companyWithOperationLine');
 
 });

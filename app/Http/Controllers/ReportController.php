@@ -7,13 +7,15 @@ use Auth;
 use DB;
 use Mail; 
 use Storage;
+use PDF;
 use Carbon\Carbon;
 use App\Rules\ReportingMonthRule;
 use App\{
     User,
     Report,
     ReportDetail,
-    UploadedFile
+    UploadedFile,
+    CompanyCategory
 };
 use App\Mail\{
     ReportCreated,
@@ -73,7 +75,8 @@ class ReportController extends Controller
             'area' => 'required',
             'process_owner' => ['required', new ReportingMonthRule($request->company,$request->location,$request->operation_line,$request->category,$request->area,$request->date_of_inspection)],
             'date_of_inspection' => 'required',
-            'time_of_inspection' => 'required',
+            'start_time_of_inspection' => 'required',
+            'end_time_of_inspection' => 'required',
             'checklist' => 'required',
             'points' => 'required',
             'points.*' => 'required',
@@ -93,9 +96,11 @@ class ReportController extends Controller
                 'process_owner_id' => $request->process_owner,
                 'inspector_id' => Auth::user()->id,
                 'date_of_inspection' => $request->date_of_inspection,
-                'time_of_inspection' => $request->time_of_inspection,
+                'start_time_of_inspection' => $request->start_time_of_inspection,
+                'end_time_of_inspection' => $request->end_time_of_inspection,
                 'status' => 1,
-                'reporting_month' => $date->isoFormat('M')
+                'reporting_month' => $date->isoFormat('M'),
+                'reporting_year' => $date->isoFormat('Y')
             ];
             if($r = Report::create($data)){
                 $ids = [];
@@ -319,5 +324,42 @@ class ReportController extends Controller
         $uploadedFile->file_path = $path;
         $uploadedFile->model = 'App\Report';
         $uploadedFile->save();
+    }
+
+
+     /**
+     *  Get Trend and analysis data
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+
+    public function trendAndAnalysisData(){
+        
+        $query = CompanyCategory::with('company', 'location', 'operationLine')
+        ->whereNotNull('operation_line_id')->get();
+
+        foreach($query as $q){
+            $q['reports'] = Report::where('company_id',$q->company_id)
+            ->where('location_id', $q->location_id)
+            ->where('operation_line_id',$q->operation_line_id)
+            ->orderBy('reporting_month', 'asc')->get();
+        }
+
+        return $query;
+
+    }
+
+
+    /**
+     * Generate trend and analysis to PDF
+     *
+     * @return \Illuminate\Http\Response
+     */
+    
+    public function generatePDF(){
+        $pdf = PDF::loadView('report.pdf', ['data' => $this->trendAndAnalysisData()])->setPaper('a4', 'landscape');
+
+        return $pdf->stream('report.pdf');
     }
 }

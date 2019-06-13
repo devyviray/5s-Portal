@@ -47,7 +47,8 @@ class ReportingMonthRule implements Rule
             $q->where('operation_line_id', $this->operationLine);
         })
         ->where('process_owner_id', $value)
-        ->where('reporting_month',  $date->isoFormat('M'))->first();
+        ->where('reporting_month',  $date->isoFormat('M'))
+        ->where('reporting_year',  $date->isoFormat('Y'))->first();
         
         if($processOwner){
             return false;

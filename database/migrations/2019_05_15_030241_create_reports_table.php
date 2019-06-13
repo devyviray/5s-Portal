@@ -23,10 +23,12 @@ class CreateReportsTable extends Migration
             $table->integer('process_owner_id');
             $table->integer('inspector_id');
             $table->date('date_of_inspection');
-            $table->string('time_of_inspection');
+            $table->time('start_time_of_inspection');
+            $table->time('end_time_of_inspection');
             $table->integer('ratings')->nullable();
             $table->integer('status');
             $table->integer('reporting_month');
+            $table->string('reporting_year');
             $table->integer('validated_by')->nullable();
             $table->timestamps();
             $table->softDeletes();

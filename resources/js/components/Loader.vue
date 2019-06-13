@@ -1,16 +1,17 @@
 <template>
     <div class="outer">
         <div class="loader-div">
-            <climbing-box-loader class="custom-class" color="#A8C897" ></climbing-box-loader>
+            <!-- <moon-loader class="custom-class" color="#A8C897" ></moon-loader> -->
+            <moon-loader class="custom-class" ></moon-loader>
         </div>
     </div>
 </template>
 
 <script>
-import { ClimbingBoxLoader } from '@saeris/vue-spinners'
+import { MoonLoader } from '@saeris/vue-spinners'
 export default {
     components:{
-       ClimbingBoxLoader
+       MoonLoader
     }
     
 }

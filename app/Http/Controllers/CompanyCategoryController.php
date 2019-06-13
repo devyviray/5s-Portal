@@ -151,27 +151,4 @@ class CompanyCategoryController extends Controller
         })->get();
 
     }
-
-     /**
-     * Get all company with operation line
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-
-    public function companyWithOperationLine(){
-        
-        $query = CompanyCategory::with('company', 'location', 'operationLine')
-        ->whereNotNull('operation_line_id')->get();
-
-        foreach($query as $q){
-            $q['reports'] = Report::where('company_id',$q->company_id)
-            ->where('location_id', $q->location_id)
-            ->where('operation_line_id',$q->operation_line_id)
-            ->orderBy('reporting_month', 'asc')->get();
-        }
-
-        return $query;
-
-    }
 }
