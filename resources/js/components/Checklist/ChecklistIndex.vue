@@ -211,7 +211,6 @@
             </div>
         </div>
 
-
         <!-- Delete User Modal -->
         <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
             <span class="closed" data-dismiss="modal">&times;</span>
@@ -316,10 +315,6 @@
             },
             addRow(action){
                 if(action == 'Add'){
-                    // this.checklistAdds.splice(c + 1, 0,{
-                    //     requirement: '',
-                    //     description: ''
-                    // })
                     this.checklistAdds.push({
                         requirement: '',
                         description: ''
@@ -353,12 +348,18 @@
                     checklistAdds: checklistAdds
                 })
                 .then(response => {
-                    this.checklists.unshift(response.data);
+                    this.checklists = [];
+                    this.checklists = response.data;
                     this.checklist_added = true;
                     document.getElementById('add_btn').disabled = false;
+                    this.checklist_name = '';
+                    this.checklistAdds.filter(item => { 
+                        item.requirement = '';
+                        item.description = '';
+                    });
                 })
                 .catch(error => {
-                    this.errors = error.response.data.errors;
+                    this.errors = error.response.data;
                     this.checklist_added = false;
                     document.getElementById('add_btn').disabled = false;
                 })

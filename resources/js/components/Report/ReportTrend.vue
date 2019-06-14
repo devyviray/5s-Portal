@@ -69,8 +69,7 @@
                             <div class="col-md-4"></div>
                             <div class="col-md-4"></div>
                             <div class="col-md-4 text-right">
-                                <a :href="pdfLink" target="_blank" class="btn btn-primary btn-round btn-fill">Print as PDF</a>  
-                                <button id="add_btn" type="button" class="btn btn-primary btn-round btn-fill">Export as excel File</button>
+                                <a :href="pdfLink" target="_blank" class="btn btn-primary btn-round btn-fill">Print as PDF</a>
                             </div>
                         </div> 
                     </div>

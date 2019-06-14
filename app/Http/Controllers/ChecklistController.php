@@ -55,7 +55,7 @@ class ChecklistController extends Controller
                 $checklist = Checklist::create(['requirement'=> $checklistAdd['requirement'], 'description' => $checklistAdd['description'], 'batch' => $batch, 'name' => $request->name]);
             }
             DB::commit();
-            return $checklist;
+            return Checklist::orderBy('id','asc')->get()->groupBy('batch');
 
         } catch (Exception $e) {
             DB::rollBack();

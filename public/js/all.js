@@ -9559,7 +9559,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
 
 
 
@@ -9631,10 +9630,6 @@ __webpack_require__.r(__webpack_exports__);
     },
     addRow: function addRow(action) {
       if (action == 'Add') {
-        // this.checklistAdds.splice(c + 1, 0,{
-        //     requirement: '',
-        //     description: ''
-        // })
         this.checklistAdds.push({
           requirement: '',
           description: ''
@@ -9670,12 +9665,18 @@ __webpack_require__.r(__webpack_exports__);
         name: this.checklist_name,
         checklistAdds: checklistAdds
       }).then(function (response) {
-        _this2.checklists.unshift(response.data);
-
+        _this2.checklists = [];
+        _this2.checklists = response.data;
         _this2.checklist_added = true;
         document.getElementById('add_btn').disabled = false;
+        _this2.checklist_name = '';
+
+        _this2.checklistAdds.filter(function (item) {
+          item.requirement = '';
+          item.description = '';
+        });
       })["catch"](function (error) {
-        _this2.errors = error.response.data.errors;
+        _this2.errors = error.response.data;
         _this2.checklist_added = false;
         document.getElementById('add_btn').disabled = false;
       });
@@ -13486,7 +13487,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue_multiselect__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue_multiselect__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _NavbarRight__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../NavbarRight */ "./resources/js/components/NavbarRight.vue");
 /* harmony import */ var _Breadcrumb__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../Breadcrumb */ "./resources/js/components/Breadcrumb.vue");
-//
 //
 //
 //
@@ -60595,15 +60595,6 @@ var render = function() {
                     attrs: { href: _vm.pdfLink, target: "_blank" }
                   },
                   [_vm._v("Print as PDF")]
-                ),
-                _vm._v(" "),
-                _c(
-                  "button",
-                  {
-                    staticClass: "btn btn-primary btn-round btn-fill",
-                    attrs: { id: "add_btn", type: "button" }
-                  },
-                  [_vm._v("Export as excel File")]
                 )
               ])
             ])

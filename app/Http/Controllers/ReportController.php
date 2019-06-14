@@ -343,6 +343,7 @@ class ReportController extends Controller
             $q['reports'] = Report::where('company_id',$q->company_id)
             ->where('location_id', $q->location_id)
             ->where('operation_line_id',$q->operation_line_id)
+            ->where('reporting_year', Carbon::now()->year)
             ->orderBy('reporting_month', 'asc')->get();
         }
 
