@@ -227,6 +227,7 @@
                 })
             },
             addLocation(location){
+                this.showLoader();
                 document.getElementById('add_btn').disabled = true;
                 this.errors = [];
                 axios.post('/location', {
@@ -237,14 +238,17 @@
                     this.location_added = true;
                     document.getElementById('add_btn').disabled = false;
                     this.location = [];
+                    this.loading = false;
                 })
                 .catch(error => {
                     this.errors = error.response.data.errors;
                     this.location_added = false;
                     document.getElementById('add_btn').disabled = false;
+                    this.loading = false;
                 })
             },
             updateLocation(location_copied){
+                this.showLoader();
                 document.getElementById('edit_btn').disabled = true;
                 this.location_updated = false;
                 this.errors = [];
@@ -257,7 +261,7 @@
                     this.location_updated = true;
                     this.locations.splice(index,1,response.data);
                     document.getElementById('edit_btn').disabled = false;
-                    // this.loading = false;
+                    this.loading = false;
                 })
                 .catch(error => {
                     this.location_updated = false;
@@ -267,15 +271,18 @@
                 })
             },
             deleteLocation(){
+                this.showLoader();
                 var index = this.locations.findIndex(item => item.id == this.location_id);
                 axios.delete(`/location/${this.location_id}`)
                 .then(response => {
                     $('#deleteModal').modal('hide');
                     alert('Location successfully deleted');
                     this.locations.splice(index,1);
+                    this.loading = false;
                 })
                 .catch(error => {
                     this.errors = error.response.data.errors;
+                    this.loading = false;
                 })
             },
             setPage(pageNumber) {

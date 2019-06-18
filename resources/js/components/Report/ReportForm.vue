@@ -355,7 +355,8 @@
                 }); 
             },
             fetchCompayAreas(){
-                axios.get(`/company-areas-per-company/${this.company.id}/${this.location.id}/${this.category.id}/${this.operation_line.id}`)
+                var operationId = this.operation_line ? this.operation_line.id : 0;
+                axios.get(`/company-areas-per-company/${this.company.id}/${this.location.id}/${this.category.id}/${operationId}`)
                  .then(response => {
                     this.areas = response.data[0].areas;
                 })

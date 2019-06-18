@@ -415,6 +415,7 @@
                 })
             },
             addCompanyArea(company_area){
+                this.showLoader();
                 var areas_ids = [];
                 if(company_area.areas){
                     company_area.areas.forEach((area) => {
@@ -432,19 +433,21 @@
                     areas: areas_ids
                 })
                 .then(response => {
-                    // this.company_areas.unshift(response.data);
                     this.company_area_added = true;
                     document.getElementById('add_btn').disabled = false;
                     this.fetchCompanyAreas();
                     this.company_area = [];
+                    this.loading = false;
                 })
                 .catch(error => {
                     this.errors = error.response.data.errors;
                     this.company_area_added = false;
                     document.getElementById('add_btn').disabled = false;
+                    this.loading = false;
                 })
             },
             updateCompanyArea(company_area_copied){
+                this.showLoader();
                 document.getElementById('edit_btn').disabled = true;
                 this.company_area_updated = false;
                 this.errors = [];
@@ -468,7 +471,7 @@
                     this.company_area_updated = true;
                     this.company_areas.splice(index,1,response.data);
                     document.getElementById('edit_btn').disabled = false;
-                    // this.loading = false;
+                    this.loading = false;
                 })
                 .catch(error => {
                     this.company_area_updated = false;
@@ -478,29 +481,29 @@
                 })
             },
             deleteCompanyArea(){
+                this.showLoader();
                 var index = this.company_areas.findIndex(item => item.id == this.company_area_id);
                 axios.delete(`/company-area/${this.company_area_id}`)
                 .then(response => {
                     $('#deleteModal').modal('hide');
                     alert('Company Area successfully deleted');
                     this.company_areas.splice(index,1);
+                    this.loading = false;
                 })
                 .catch(error => {
                     this.errors = error.response.data.errors;
+                    this.loading = false;
                 })
             },
             setPage(pageNumber) {
                 this.currentPage = pageNumber;
             },
-
             resetStartRow() {
                 this.currentPage = 0;
             },
-
             showPreviousLink() {
                 return this.currentPage == 0 ? false : true;
             },
-
             showNextLink() {
                 return this.currentPage == (this.totalPages - 1) ? false : true;
             }   

@@ -111,7 +111,7 @@
                                                     <img class="report-img mb-2"  :src="attachmentLink + uploadFile.file_path"><br>
 
                                                     <span>{{ c + 1 +'.' }} </span> <span> {{  u + 1  }} </span>
-                                                    <input type="text" :disabled="reportsPerUser[0].status != 1" :id="uploadFile.id" class="form-control comment-input"  placeholder="Comment..." v-model="uploadFile.comment">
+                                                    <input type="text" :disabled="reportsPerUser[0].status != 1 || reportsPerUser[0].process_owner_id != userId" :id="uploadFile.id" class="form-control comment-input"  placeholder="Comment..." v-model="uploadFile.comment">
                                                     <span class="text-danger" v-if="errors['comment.'+c + 1 +'' + u + 1]"> This field is required </span> 
                                                 </div> 
                                             </div>

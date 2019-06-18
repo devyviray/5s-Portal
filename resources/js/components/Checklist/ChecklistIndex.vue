@@ -340,6 +340,7 @@
                 }
             },
             addChecklist(checklistAdds){
+                this.showLoader();
                 document.getElementById('add_btn').disabled = true;
                 this.checklist_added = false;
                 this.errors = [];
@@ -357,14 +358,17 @@
                         item.requirement = '';
                         item.description = '';
                     });
+                    this.loading = false;
                 })
                 .catch(error => {
                     this.errors = error.response.data;
                     this.checklist_added = false;
                     document.getElementById('add_btn').disabled = false;
+                    this.loading = false;
                 })
             },
             updateChecklist(checklist_copieds){
+                this.showLoader();
                 var batch = checklist_copieds.length == 1 ? checklist_copieds[0].batch : checklist_copieds[1].batch;
                 document.getElementById('edit_btn').disabled = true;
                 this.checklist_updated = false;
@@ -386,22 +390,27 @@
                 .then(response => {
                     this.checklist_updated = true;
                     document.getElementById('edit_btn').disabled = false;
+                    this.loading = false;
                     window.location.reload();
                 })
                 .catch(error => {
                     this.checklist_updated = false;
                     document.getElementById('edit_btn').disabled = false;
+                    this.loading = false;
                 })
             },
             deleteChecklist(){
+                this.showLoader();
                 axios.delete(`/checklist/${this.checklist_copieds_batch}`)
                 .then(response => {
+                    this.loading = false;
                     $('#deleteModal').modal('hide');
                     alert('Checklist successfully deleted');
                     window.location.reload();
                 })
                 .catch(error => {
                     this.errors = error.response.data.errors;
+                    this.loading = false;
                 })
             },
             fetchChecklists (){

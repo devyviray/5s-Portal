@@ -249,6 +249,7 @@
                 })
             },
             addFaq(faq){
+                this.showLoader();
                 document.getElementById('add_btn').disabled = true;
                 this.errors = [];
                 axios.post('/faq', {
@@ -260,15 +261,17 @@
                     this.faq_added = true;
                     this.faq = [];
                     document.getElementById('add_btn').disabled = false;
+                    this.loading = false;
                 })
                 .catch(error => {
                     this.errors = error.response.data.errors;
                     this.faq_added = false;
                     document.getElementById('add_btn').disabled = false;
+                    this.loading = false;
                 })
             },
             updateFaq(faq_copied){
-
+                this.showLoader();
                 document.getElementById('edit_btn').disabled = true;
                 this.faq_updated = false;
                 this.errors = [];
@@ -282,37 +285,39 @@
                     this.faq_updated = true;
                     this.faqs.splice(index,1,response.data);
                     document.getElementById('edit_btn').disabled = false;
+                    this.loading = false;
                 })
                 .catch(error => {
                     this.faq_updated = false;
                     this.errors = error.response.data.errors;
                     document.getElementById('edit_btn').disabled = false;
+                    this.loading = false;
                 })
             },
             deleteFaq(){
+                this.showLoader();
                 var index = this.faqs.findIndex(item => item.id == this.faq_id);
                 axios.delete(`/faq/${this.faq_id}`)
                 .then(response => {
+                    this.loading = false;
                     $('#deleteModal').modal('hide');
                     alert('FAQ successfully deleted');
                     this.faqs.splice(index,1);
                 })
                 .catch(error => {
+                    this.loading = false;
                     this.errors = error.response.data.errors;
                 })
             },
             setPage(pageNumber) {
                 this.currentPage = pageNumber;
             },
-
             resetStartRow() {
                 this.currentPage = 0;
             },
-
             showPreviousLink() {
                 return this.currentPage == 0 ? false : true;
             },
-
             showNextLink() {
                 return this.currentPage == (this.totalPages - 1) ? false : true;
             }   

@@ -168,7 +168,9 @@ padding: 18px 10px 13px 0;color: #5D5D5D;}
 
 }
 .panel-default {
-  border-color: #ECECEC;
+    border-color: #ECECEC;
+    background: #FFFFFF;
+    padding: 2px 5px 2px 5px;
 }
 .panel-default > .panel-heading {color: #555;
 border-color: #FFF;

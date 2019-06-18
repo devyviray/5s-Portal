@@ -227,6 +227,7 @@
                 })
             },
             addArea(area){
+                this.showLoader();
                 document.getElementById('add_btn').disabled = true;
                 this.errors = [];
                 axios.post('/area', {
@@ -237,14 +238,17 @@
                     this.area_added = true;
                     document.getElementById('add_btn').disabled = false;
                     this.area = [];
+                    this.loading = false;
                 })
                 .catch(error => {
                     this.errors = error.response.data.errors;
                     this.area_added = false;
                     document.getElementById('add_btn').disabled = false;
+                    this.loading = false;
                 })
             },
             updateArea(area_copied){
+                this.showLoader();
                 document.getElementById('edit_btn').disabled = true;
                 this.area_updated = false;
                 this.errors = [];
@@ -257,7 +261,7 @@
                     this.area_updated = true;
                     this.areas.splice(index,1,response.data);
                     document.getElementById('edit_btn').disabled = false;
-                    // this.loading = false;
+                    this.loading = false;
                 })
                 .catch(error => {
                     this.area_updated = false;
@@ -267,15 +271,18 @@
                 })
             },
             deleteArea(){
+                this.showLoader();
                 var index = this.areas.findIndex(item => item.id == this.area_id);
                 axios.delete(`/area/${this.area_id}`)
                 .then(response => {
                     $('#deleteModal').modal('hide');
                     alert('Area successfully deleted');
                     this.areas.splice(index,1);
+                    this.loading = false;
                 })
                 .catch(error => {
                     this.errors = error.response.data.errors;
+                    this.loading = false;
                 })
             },
             setPage(pageNumber) {

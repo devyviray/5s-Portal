@@ -43,10 +43,19 @@ class ReportController extends Controller
      */
     public function indexData()
     {
-       return Report::with('company', 'location', 'operationLine', 'category', 'area', 'inspector', 'processOwner', 'reportDetail')
-        ->when(Auth::user()->level() < 3, function($q){
-            $q->where('process_owner_id', Auth::user()->id);
-        })->orderBy('id', 'desc')->get();
+        $user = Auth::user();
+        return Report::with('company', 'location', 'operationLine', 'category', 'area', 'inspector', 'processOwner', 'reportDetail')
+            ->when(Auth::user()->level() == 2, function($q){
+                $q->where('process_owner_id', $user->id);
+            })->when(Auth::user()->level() == 1, function($query) use ($user){
+                $query->whereHas('processOwner', function($q) use ($user){
+                    $q->where('department_id',$user->department_id);
+                })
+                ->where('company_id', $user->companies[0]->id)
+                ->where('location_id', $user->location->id);
+                
+            })
+            ->orderBy('id', 'desc')->get();
     }
 
     /**

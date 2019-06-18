@@ -284,6 +284,7 @@
                 })
             },
             addCompany(company){
+                this.showLoader();
                 this.company_added = false;
                 var locationIds = [];
                 if(company.location){
@@ -303,14 +304,17 @@
                     this.company_added = true;
                     document.getElementById('add_btn').disabled = false;
                     this.company = [];
+                    this.loading = false;
                 })
                 .catch(error => {
                     this.errors = error.response.data.errors;
                     this.company_added = false;
                     document.getElementById('add_btn').disabled = false;
+                    this.loading = false;
                 })
             },
             updateCompany(company_copied){
+                this.showLoader();
                 var locationIds = [];
                 if(company_copied.locations){
                     company_copied.locations.forEach((location) => {
@@ -331,7 +335,7 @@
                     this.company_updated = true;
                     this.companies.splice(index,1,response.data);
                     document.getElementById('edit_btn').disabled = false;
-                    // this.loading = false;
+                    this.loading = false;
                 })
                 .catch(error => {
                     this.company_updated = false;
@@ -341,15 +345,18 @@
                 })
             },
             deleteCompany(){
+                this.showLoader();
                 var index = this.companies.findIndex(item => item.id == this.company_id);
                 axios.delete(`/company/${this.company_id}`)
                 .then(response => {
                     $('#deleteModal').modal('hide');
                     alert('Company successfully deleted');
                     this.companies.splice(index,1);
+                    this.loading = false;
                 })
                 .catch(error => {
                     this.errors = error.response.data.errors;
+                    this.loading = false;
                 })
             },
             setPage(pageNumber) {

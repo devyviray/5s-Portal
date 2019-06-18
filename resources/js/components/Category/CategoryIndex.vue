@@ -227,6 +227,7 @@
                 })
             },
             addCategory(category){
+                this.showLoader();
                 this.category_added = false;
                 document.getElementById('add_btn').disabled = true;
                 this.errors = [];
@@ -238,16 +239,19 @@
                     this.category_added = true;
                     this.category.name = "";
                     document.getElementById('add_btn').disabled = false;
+                    this.loading = false;
                 })
                 .catch(error => {
                     this.errors = error.response.data.errors;
                     this.category_added = false;
                     document.getElementById('add_btn').disabled = false;
+                    this.loading = false;
                 })
             },
             updateCategory(category_copied){
+                this.showLoader();
                 document.getElementById('edit_btn').disabled = true;
-                this.category_copied = false;
+                this.category_updated = false;
                 this.errors = [];
                 var index = this.categories.findIndex(item => item.id == category_copied.id);
                 axios.post(`/category/${category_copied.id}`, {
@@ -258,7 +262,7 @@
                     this.category_updated = true;
                     this.categories.splice(index,1,response.data);
                     document.getElementById('edit_btn').disabled = false;
-                    // this.loading = false;
+                    this.loading = false;
                 })
                 .catch(error => {
                     this.category_updated = false;
@@ -268,15 +272,18 @@
                 })
             },
             deleteCategory(){
+                this.showLoader();
                 var index = this.categories.findIndex(item => item.id == this.category_id);
                 axios.delete(`/category/${this.category_id}`)
                 .then(response => {
                     $('#deleteModal').modal('hide');
                     alert('Category successfully deleted');
                     this.categories.splice(index,1);
+                    this.loading = false;
                 })
                 .catch(error => {
                     this.errors = error.response.data.errors;
+                    this.loading = false;
                 })
             },
             setPage(pageNumber) {

@@ -247,6 +247,7 @@
                 })
             },
             addRole(role){
+                this.showLoader();
                 document.getElementById('add_btn').disabled = true;
                 this.errors = [];
                 axios.post('/role', {
@@ -257,14 +258,17 @@
                     this.roles.unshift(response.data);
                     this.role_added = true;
                     document.getElementById('add_btn').disabled = false;
+                    this.loading = false;
                 })
                 .catch(error => {
                     this.errors = error.response.data.errors;
                     this.role_added = false;
                     document.getElementById('add_btn').disabled = false;
+                    this.loading = false;
                 })
             },
             updateRole(role_copied){
+                this.showLoader();
                 document.getElementById('edit_btn').disabled = true;
                 this.role_updated = false;
                 this.errors = [];
@@ -278,7 +282,7 @@
                     this.role_updated = true;
                     this.roles.splice(index,1,response.data);
                     document.getElementById('edit_btn').disabled = false;
-                    // this.loading = false;
+                    this.loading = false;
                 })
                 .catch(error => {
                     this.role_updated = false;
@@ -288,15 +292,18 @@
                 })
             },
             deleteRole(){
+                this.showLoader();
                 var index = this.roles.findIndex(item => item.id == this.role_id);
                 axios.delete(`/role/${this.role_id}`)
                 .then(response => {
                     $('#deleteModal').modal('hide');
                     alert('Location successfully deleted');
                     this.roles.splice(index,1);
+                    this.loading = false;
                 })
                 .catch(error => {
                     this.errors = error.response.data.errors;
+                    this.loading = false;
                 })
             },
             setPage(pageNumber) {

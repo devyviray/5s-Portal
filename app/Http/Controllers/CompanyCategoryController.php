@@ -140,13 +140,13 @@ class CompanyCategoryController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function companyAreaPerCompany($companyId, $locationId, $categoryId, $operationLineId = null){
+    public function companyAreaPerCompany($companyId, $locationId, $categoryId, $operationLineId){
         
         return CompanyCategory::with('areas')
         ->where('company_id', $companyId)
         ->where('location_id', $locationId)
         ->where('category_id', $categoryId)
-        ->when($operationLineId !== 'undefined', function ($q) use ($operationLineId){
+        ->when($operationLineId !== '0', function ($q) use ($operationLineId){
             $q->where('operation_line_id', $operationLineId);
         })->get();
 

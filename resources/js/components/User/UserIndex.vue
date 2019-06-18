@@ -378,6 +378,7 @@
                 })
             },
             addUser(user){
+                this.showLoader();
                 document.getElementById('add_btn').disabled = true;
                 this.errors = [];
                 axios.post('/user', {
@@ -393,14 +394,17 @@
                     this.user_added = true;
                     document.getElementById('add_btn').disabled = false;
                     this.user = [];
+                    this.loading = false;
                 })
                 .catch(error => {
                     this.errors = error.response.data.errors;
                     this.user_added = false;
                     document.getElementById('add_btn').disabled = false;
+                    this.loading = false;
                 })
             },
             updateUser(user_copied){
+                this.showLoader();
                 document.getElementById('edit_btn').disabled = true;
                 this.user_updated = false;
                 this.errors = [];
@@ -418,7 +422,7 @@
                     this.user_updated = true;
                     this.users.splice(index,1,response.data);
                     document.getElementById('edit_btn').disabled = false;
-                    // this.loading = false;
+                    this.loading = false;
                 })
                 .catch(error => {
                     this.user_updated = false;
@@ -428,15 +432,18 @@
                 })
             },
             deleteUser(){
+                this.showLoader();
                 var index = this.users.findIndex(item => item.id == this.user_id);
                 axios.delete(`/user/${this.user_id}`)
                 .then(response => {
                     $('#deleteModal').modal('hide');
                     alert('User successfully deleted');
                     this.users.splice(index,1);
+                    this.loading = false;
                 })
                 .catch(error => {
                     this.errors = error.response.data.errors;
+                    this.loading = false;
                 })
             },
             fetchCompanyLocation(company){

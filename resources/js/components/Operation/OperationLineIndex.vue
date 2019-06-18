@@ -227,6 +227,7 @@
                 })
             },
             addOperationLine(operation_line){
+                this.showLoader();
                 this.operation_line_added = false;
                 document.getElementById('add_btn').disabled = true;
                 this.errors = [];
@@ -238,14 +239,17 @@
                     this.operation_line_added = true;
                     this.operation_line.name = "";
                     document.getElementById('add_btn').disabled = false;
+                    this.loading = false;
                 })
                 .catch(error => {
                     this.errors = error.response.data.errors;
                     this.operation_line_added = false;
                     document.getElementById('add_btn').disabled = false;
+                    this.loading = false;
                 })
             },
             updateOperationLine(operation_line_copied){
+                this.showLoader();
                 document.getElementById('edit_btn').disabled = true;
                 this.operation_line_updated = false;
                 this.errors = [];
@@ -258,7 +262,7 @@
                     this.operation_line_updated = true;
                     this.operation_lines.splice(index,1,response.data);
                     document.getElementById('edit_btn').disabled = false;
-                    // this.loading = false;
+                    this.loading = false;
                 })
                 .catch(error => {
                     this.operation_line_updated = false;
@@ -268,6 +272,7 @@
                 })
             },
             deleteOperationLine(){
+                this.showLoader();
                 var index = this.operation_lines.findIndex(item => item.id == this.operation_line_id);
                 axios.delete(`/operation-line/${this.operation_line_id}`)
                 .then(response => {

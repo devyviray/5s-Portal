@@ -23,7 +23,14 @@
         </div>
         <div id="page-inner">
             <div class="card">
-                <div class="card-header" v-if="userRole > 2"> 
+                <div class="card-header" v-if="userRole > 2">
+                    <div class="row ml-2">
+                        <div class="col-md-10"></div>
+                        <div class="col-md-2">
+                            <button class="btn btn-sm btn-primary" @click="createReport"> Create Report</button>
+                            <button class="btn btn-sm btn-primary" @click="trendAndAnalysis"> Trend and Analysis</button> 
+                        </div>
+                    </div>
                     <div class="row ml-2">
                         <div class="col-md-2">
                             <div class="form-group">
@@ -36,7 +43,7 @@
                         </div>
                         <div class="col-md-2">
                             <div class="form-group">
-                                <label class="form-control-label" for="role">Company Location</label>
+                                <label class="form-control-label" for="role">Location</label>
                                 <select class="form-control" v-model="location" @change="changeCompany('', '')">
                                     <option v-for="(location,l) in locations" v-bind:key="l" :value="location"> {{ location.name }}</option>
                                 </select>
@@ -72,8 +79,6 @@
                         </div>
                         <div class="col-md-2">
                             <button class="btn btn-sm btn-primary mt-4" @click="fetchFilteredReport"> Filter</button>
-                            <button class="btn btn-sm btn-primary mt-4" @click="createReport"> Create Report</button>
-                            <button class="btn btn-sm btn-primary mt-4" @click="trendAndAnalysis"> Trend and Analysis</button>
                         </div>
                     </div>
                 </div>
@@ -246,7 +251,8 @@
                 }); 
             },
             fetchCompayAreas(){
-                axios.get(`/company-areas-per-company/${this.company.id}/${this.location.id}/${this.category.id}/${this.operation_line.id}`)
+                var operationId = this.operation_line ? this.operation_line.id : 0;
+                axios.get(`/company-areas-per-company/${this.company.id}/${this.location.id}/${this.category.id}/${operationId}`)
                  .then(response => {
                     this.areas = response.data[0].areas;
                 })

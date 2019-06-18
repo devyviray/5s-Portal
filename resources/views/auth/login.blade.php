@@ -54,7 +54,7 @@
                                 </div>
                                 <div class="col-md-2"></div>
                             </div>
-                            <div class="form-group row mb-0">
+                            <div class="form-group mb-0">
                                 <div class="col-md-12">
                                     <button type="submit" class="btn btn-submit">
                                         {{ __('Sign in') }}

@@ -33,7 +33,7 @@ Route::group(['middleware' => 'auth'], function(){
 });
 
 // Accessible routes for admin , inspector and IT
-Route::group(['middleware' => ['auth', 'role:it|administrator|inspector']], function () {
+Route::group(['middleware' => ['auth', 'role:it|administrator|inspector|department member']], function () {
 
     // Departments
     Route::get('/departments', 'DepartmentController@index')->name('departments');

@@ -26,7 +26,7 @@ class ProcessOwnerForCheckingReport extends Mailable
      */
     public function __construct($processOwner, $report)
     {
-        $this->inspector = User::findOrFail($processOwner);
+        $this->processOwner = User::findOrFail($processOwner);
         $this->report = Report::findOrFail($report);
     }
 

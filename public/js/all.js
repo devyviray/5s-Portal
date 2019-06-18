@@ -8812,6 +8812,7 @@ __webpack_require__.r(__webpack_exports__);
     addArea: function addArea(area) {
       var _this2 = this;
 
+      this.showLoader();
       document.getElementById('add_btn').disabled = true;
       this.errors = [];
       axios.post('/area', {
@@ -8822,15 +8823,18 @@ __webpack_require__.r(__webpack_exports__);
         _this2.area_added = true;
         document.getElementById('add_btn').disabled = false;
         _this2.area = [];
+        _this2.loading = false;
       })["catch"](function (error) {
         _this2.errors = error.response.data.errors;
         _this2.area_added = false;
         document.getElementById('add_btn').disabled = false;
+        _this2.loading = false;
       });
     },
     updateArea: function updateArea(area_copied) {
       var _this3 = this;
 
+      this.showLoader();
       document.getElementById('edit_btn').disabled = true;
       this.area_updated = false;
       this.errors = [];
@@ -8845,7 +8849,8 @@ __webpack_require__.r(__webpack_exports__);
 
         _this3.areas.splice(index, 1, response.data);
 
-        document.getElementById('edit_btn').disabled = false; // this.loading = false;
+        document.getElementById('edit_btn').disabled = false;
+        _this3.loading = false;
       })["catch"](function (error) {
         _this3.area_updated = false;
         _this3.errors = error.response.data.errors;
@@ -8856,6 +8861,7 @@ __webpack_require__.r(__webpack_exports__);
     deleteArea: function deleteArea() {
       var _this4 = this;
 
+      this.showLoader();
       var index = this.areas.findIndex(function (item) {
         return item.id == _this4.area_id;
       });
@@ -8864,8 +8870,11 @@ __webpack_require__.r(__webpack_exports__);
         alert('Area successfully deleted');
 
         _this4.areas.splice(index, 1);
+
+        _this4.loading = false;
       })["catch"](function (error) {
         _this4.errors = error.response.data.errors;
+        _this4.loading = false;
       });
     },
     setPage: function setPage(pageNumber) {
@@ -9194,6 +9203,7 @@ __webpack_require__.r(__webpack_exports__);
     addCategory: function addCategory(category) {
       var _this2 = this;
 
+      this.showLoader();
       this.category_added = false;
       document.getElementById('add_btn').disabled = true;
       this.errors = [];
@@ -9205,17 +9215,20 @@ __webpack_require__.r(__webpack_exports__);
         _this2.category_added = true;
         _this2.category.name = "";
         document.getElementById('add_btn').disabled = false;
+        _this2.loading = false;
       })["catch"](function (error) {
         _this2.errors = error.response.data.errors;
         _this2.category_added = false;
         document.getElementById('add_btn').disabled = false;
+        _this2.loading = false;
       });
     },
     updateCategory: function updateCategory(category_copied) {
       var _this3 = this;
 
+      this.showLoader();
       document.getElementById('edit_btn').disabled = true;
-      this.category_copied = false;
+      this.category_updated = false;
       this.errors = [];
       var index = this.categories.findIndex(function (item) {
         return item.id == category_copied.id;
@@ -9228,7 +9241,8 @@ __webpack_require__.r(__webpack_exports__);
 
         _this3.categories.splice(index, 1, response.data);
 
-        document.getElementById('edit_btn').disabled = false; // this.loading = false;
+        document.getElementById('edit_btn').disabled = false;
+        _this3.loading = false;
       })["catch"](function (error) {
         _this3.category_updated = false;
         _this3.errors = error.response.data.errors;
@@ -9239,6 +9253,7 @@ __webpack_require__.r(__webpack_exports__);
     deleteCategory: function deleteCategory() {
       var _this4 = this;
 
+      this.showLoader();
       var index = this.categories.findIndex(function (item) {
         return item.id == _this4.category_id;
       });
@@ -9247,8 +9262,11 @@ __webpack_require__.r(__webpack_exports__);
         alert('Category successfully deleted');
 
         _this4.categories.splice(index, 1);
+
+        _this4.loading = false;
       })["catch"](function (error) {
         _this4.errors = error.response.data.errors;
+        _this4.loading = false;
       });
     },
     setPage: function setPage(pageNumber) {
@@ -9658,6 +9676,7 @@ __webpack_require__.r(__webpack_exports__);
     addChecklist: function addChecklist(checklistAdds) {
       var _this2 = this;
 
+      this.showLoader();
       document.getElementById('add_btn').disabled = true;
       this.checklist_added = false;
       this.errors = [];
@@ -9675,15 +9694,19 @@ __webpack_require__.r(__webpack_exports__);
           item.requirement = '';
           item.description = '';
         });
+
+        _this2.loading = false;
       })["catch"](function (error) {
         _this2.errors = error.response.data;
         _this2.checklist_added = false;
         document.getElementById('add_btn').disabled = false;
+        _this2.loading = false;
       });
     },
     updateChecklist: function updateChecklist(checklist_copieds) {
       var _this3 = this;
 
+      this.showLoader();
       var batch = checklist_copieds.length == 1 ? checklist_copieds[0].batch : checklist_copieds[1].batch;
       document.getElementById('edit_btn').disabled = true;
       this.checklist_updated = false;
@@ -9703,21 +9726,26 @@ __webpack_require__.r(__webpack_exports__);
       }).then(function (response) {
         _this3.checklist_updated = true;
         document.getElementById('edit_btn').disabled = false;
+        _this3.loading = false;
         window.location.reload();
       })["catch"](function (error) {
         _this3.checklist_updated = false;
         document.getElementById('edit_btn').disabled = false;
+        _this3.loading = false;
       });
     },
     deleteChecklist: function deleteChecklist() {
       var _this4 = this;
 
+      this.showLoader();
       axios["delete"]("/checklist/".concat(this.checklist_copieds_batch)).then(function (response) {
+        _this4.loading = false;
         $('#deleteModal').modal('hide');
         alert('Checklist successfully deleted');
         window.location.reload();
       })["catch"](function (error) {
         _this4.errors = error.response.data.errors;
+        _this4.loading = false;
       });
     },
     fetchChecklists: function fetchChecklists() {
@@ -10069,6 +10097,7 @@ __webpack_require__.r(__webpack_exports__);
     addCompany: function addCompany(company) {
       var _this3 = this;
 
+      this.showLoader();
       this.company_added = false;
       var locationIds = [];
 
@@ -10089,15 +10118,18 @@ __webpack_require__.r(__webpack_exports__);
         _this3.company_added = true;
         document.getElementById('add_btn').disabled = false;
         _this3.company = [];
+        _this3.loading = false;
       })["catch"](function (error) {
         _this3.errors = error.response.data.errors;
         _this3.company_added = false;
         document.getElementById('add_btn').disabled = false;
+        _this3.loading = false;
       });
     },
     updateCompany: function updateCompany(company_copied) {
       var _this4 = this;
 
+      this.showLoader();
       var locationIds = [];
 
       if (company_copied.locations) {
@@ -10121,7 +10153,8 @@ __webpack_require__.r(__webpack_exports__);
 
         _this4.companies.splice(index, 1, response.data);
 
-        document.getElementById('edit_btn').disabled = false; // this.loading = false;
+        document.getElementById('edit_btn').disabled = false;
+        _this4.loading = false;
       })["catch"](function (error) {
         _this4.company_updated = false;
         _this4.errors = error.response.data.errors;
@@ -10132,6 +10165,7 @@ __webpack_require__.r(__webpack_exports__);
     deleteCompany: function deleteCompany() {
       var _this5 = this;
 
+      this.showLoader();
       var index = this.companies.findIndex(function (item) {
         return item.id == _this5.company_id;
       });
@@ -10140,8 +10174,11 @@ __webpack_require__.r(__webpack_exports__);
         alert('Company successfully deleted');
 
         _this5.companies.splice(index, 1);
+
+        _this5.loading = false;
       })["catch"](function (error) {
         _this5.errors = error.response.data.errors;
+        _this5.loading = false;
       });
     },
     setPage: function setPage(pageNumber) {
@@ -10622,6 +10659,7 @@ __webpack_require__.r(__webpack_exports__);
     addCompanyArea: function addCompanyArea(company_area) {
       var _this7 = this;
 
+      this.showLoader();
       var areas_ids = [];
 
       if (company_area.areas) {
@@ -10639,22 +10677,24 @@ __webpack_require__.r(__webpack_exports__);
         operation_line: company_area.category == 1 ? company_area.operation_line : '',
         areas: areas_ids
       }).then(function (response) {
-        // this.company_areas.unshift(response.data);
         _this7.company_area_added = true;
         document.getElementById('add_btn').disabled = false;
 
         _this7.fetchCompanyAreas();
 
         _this7.company_area = [];
+        _this7.loading = false;
       })["catch"](function (error) {
         _this7.errors = error.response.data.errors;
         _this7.company_area_added = false;
         document.getElementById('add_btn').disabled = false;
+        _this7.loading = false;
       });
     },
     updateCompanyArea: function updateCompanyArea(company_area_copied) {
       var _this8 = this;
 
+      this.showLoader();
       document.getElementById('edit_btn').disabled = true;
       this.company_area_updated = false;
       this.errors = [];
@@ -10681,7 +10721,8 @@ __webpack_require__.r(__webpack_exports__);
 
         _this8.company_areas.splice(index, 1, response.data);
 
-        document.getElementById('edit_btn').disabled = false; // this.loading = false;
+        document.getElementById('edit_btn').disabled = false;
+        _this8.loading = false;
       })["catch"](function (error) {
         _this8.company_area_updated = false;
         _this8.errors = error.response.data.errors;
@@ -10692,6 +10733,7 @@ __webpack_require__.r(__webpack_exports__);
     deleteCompanyArea: function deleteCompanyArea() {
       var _this9 = this;
 
+      this.showLoader();
       var index = this.company_areas.findIndex(function (item) {
         return item.id == _this9.company_area_id;
       });
@@ -10700,8 +10742,11 @@ __webpack_require__.r(__webpack_exports__);
         alert('Company Area successfully deleted');
 
         _this9.company_areas.splice(index, 1);
+
+        _this9.loading = false;
       })["catch"](function (error) {
         _this9.errors = error.response.data.errors;
+        _this9.loading = false;
       });
     },
     setPage: function setPage(pageNumber) {
@@ -11093,6 +11138,7 @@ __webpack_require__.r(__webpack_exports__);
     addDepartment: function addDepartment(department) {
       var _this2 = this;
 
+      this.showLoader();
       this.department_added = false;
       document.getElementById('add_btn').disabled = true;
       this.errors = [];
@@ -11104,15 +11150,18 @@ __webpack_require__.r(__webpack_exports__);
         _this2.department_added = true;
         document.getElementById('add_btn').disabled = false;
         _this2.department = [];
+        _this2.loading = false;
       })["catch"](function (error) {
         _this2.errors = error.response.data.errors;
         _this2.department_added = false;
         document.getElementById('add_btn').disabled = false;
+        _this2.loading = false;
       });
     },
     updateDepartment: function updateDepartment(department_copied) {
       var _this3 = this;
 
+      this.showLoader();
       document.getElementById('edit_btn').disabled = true;
       this.department_updated = false;
       this.errors = [];
@@ -11127,7 +11176,8 @@ __webpack_require__.r(__webpack_exports__);
 
         _this3.departments.splice(index, 1, response.data);
 
-        document.getElementById('edit_btn').disabled = false; // this.loading = false;
+        document.getElementById('edit_btn').disabled = false;
+        _this3.loading = false;
       })["catch"](function (error) {
         _this3.department_updated = false;
         _this3.errors = error.response.data.errors;
@@ -11138,6 +11188,7 @@ __webpack_require__.r(__webpack_exports__);
     deleteDepartment: function deleteDepartment() {
       var _this4 = this;
 
+      this.showLoader();
       var index = this.departments.findIndex(function (item) {
         return item.id == _this4.department_id;
       });
@@ -11146,8 +11197,11 @@ __webpack_require__.r(__webpack_exports__);
         alert('Department successfully deleted');
 
         _this4.departments.splice(index, 1);
+
+        _this4.loading = false;
       })["catch"](function (error) {
         _this4.errors = error.response.data.errors;
+        _this4.loading = false;
       });
     },
     setPage: function setPage(pageNumber) {
@@ -11496,6 +11550,7 @@ __webpack_require__.r(__webpack_exports__);
     addFaq: function addFaq(faq) {
       var _this2 = this;
 
+      this.showLoader();
       document.getElementById('add_btn').disabled = true;
       this.errors = [];
       axios.post('/faq', {
@@ -11507,15 +11562,18 @@ __webpack_require__.r(__webpack_exports__);
         _this2.faq_added = true;
         _this2.faq = [];
         document.getElementById('add_btn').disabled = false;
+        _this2.loading = false;
       })["catch"](function (error) {
         _this2.errors = error.response.data.errors;
         _this2.faq_added = false;
         document.getElementById('add_btn').disabled = false;
+        _this2.loading = false;
       });
     },
     updateFaq: function updateFaq(faq_copied) {
       var _this3 = this;
 
+      this.showLoader();
       document.getElementById('edit_btn').disabled = true;
       this.faq_updated = false;
       this.errors = [];
@@ -11532,24 +11590,29 @@ __webpack_require__.r(__webpack_exports__);
         _this3.faqs.splice(index, 1, response.data);
 
         document.getElementById('edit_btn').disabled = false;
+        _this3.loading = false;
       })["catch"](function (error) {
         _this3.faq_updated = false;
         _this3.errors = error.response.data.errors;
         document.getElementById('edit_btn').disabled = false;
+        _this3.loading = false;
       });
     },
     deleteFaq: function deleteFaq() {
       var _this4 = this;
 
+      this.showLoader();
       var index = this.faqs.findIndex(function (item) {
         return item.id == _this4.faq_id;
       });
       axios["delete"]("/faq/".concat(this.faq_id)).then(function (response) {
+        _this4.loading = false;
         $('#deleteModal').modal('hide');
         alert('FAQ successfully deleted');
 
         _this4.faqs.splice(index, 1);
       })["catch"](function (error) {
+        _this4.loading = false;
         _this4.errors = error.response.data.errors;
       });
     },
@@ -11986,6 +12049,7 @@ __webpack_require__.r(__webpack_exports__);
     addLocation: function addLocation(location) {
       var _this2 = this;
 
+      this.showLoader();
       document.getElementById('add_btn').disabled = true;
       this.errors = [];
       axios.post('/location', {
@@ -11996,15 +12060,18 @@ __webpack_require__.r(__webpack_exports__);
         _this2.location_added = true;
         document.getElementById('add_btn').disabled = false;
         _this2.location = [];
+        _this2.loading = false;
       })["catch"](function (error) {
         _this2.errors = error.response.data.errors;
         _this2.location_added = false;
         document.getElementById('add_btn').disabled = false;
+        _this2.loading = false;
       });
     },
     updateLocation: function updateLocation(location_copied) {
       var _this3 = this;
 
+      this.showLoader();
       document.getElementById('edit_btn').disabled = true;
       this.location_updated = false;
       this.errors = [];
@@ -12019,7 +12086,8 @@ __webpack_require__.r(__webpack_exports__);
 
         _this3.locations.splice(index, 1, response.data);
 
-        document.getElementById('edit_btn').disabled = false; // this.loading = false;
+        document.getElementById('edit_btn').disabled = false;
+        _this3.loading = false;
       })["catch"](function (error) {
         _this3.location_updated = false;
         _this3.errors = error.response.data.errors;
@@ -12030,6 +12098,7 @@ __webpack_require__.r(__webpack_exports__);
     deleteLocation: function deleteLocation() {
       var _this4 = this;
 
+      this.showLoader();
       var index = this.locations.findIndex(function (item) {
         return item.id == _this4.location_id;
       });
@@ -12038,8 +12107,11 @@ __webpack_require__.r(__webpack_exports__);
         alert('Location successfully deleted');
 
         _this4.locations.splice(index, 1);
+
+        _this4.loading = false;
       })["catch"](function (error) {
         _this4.errors = error.response.data.errors;
+        _this4.loading = false;
       });
     },
     setPage: function setPage(pageNumber) {
@@ -12437,6 +12509,7 @@ __webpack_require__.r(__webpack_exports__);
     addOperationLine: function addOperationLine(operation_line) {
       var _this2 = this;
 
+      this.showLoader();
       this.operation_line_added = false;
       document.getElementById('add_btn').disabled = true;
       this.errors = [];
@@ -12448,15 +12521,18 @@ __webpack_require__.r(__webpack_exports__);
         _this2.operation_line_added = true;
         _this2.operation_line.name = "";
         document.getElementById('add_btn').disabled = false;
+        _this2.loading = false;
       })["catch"](function (error) {
         _this2.errors = error.response.data.errors;
         _this2.operation_line_added = false;
         document.getElementById('add_btn').disabled = false;
+        _this2.loading = false;
       });
     },
     updateOperationLine: function updateOperationLine(operation_line_copied) {
       var _this3 = this;
 
+      this.showLoader();
       document.getElementById('edit_btn').disabled = true;
       this.operation_line_updated = false;
       this.errors = [];
@@ -12471,7 +12547,8 @@ __webpack_require__.r(__webpack_exports__);
 
         _this3.operation_lines.splice(index, 1, response.data);
 
-        document.getElementById('edit_btn').disabled = false; // this.loading = false;
+        document.getElementById('edit_btn').disabled = false;
+        _this3.loading = false;
       })["catch"](function (error) {
         _this3.operation_line_updated = false;
         _this3.errors = error.response.data.errors;
@@ -12482,6 +12559,7 @@ __webpack_require__.r(__webpack_exports__);
     deleteOperationLine: function deleteOperationLine() {
       var _this4 = this;
 
+      this.showLoader();
       var index = this.operation_lines.findIndex(function (item) {
         return item.id == _this4.operation_line_id;
       });
@@ -12947,7 +13025,8 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
     fetchCompayAreas: function fetchCompayAreas() {
       var _this6 = this;
 
-      axios.get("/company-areas-per-company/".concat(this.company.id, "/").concat(this.location.id, "/").concat(this.category.id, "/").concat(this.operation_line.id)).then(function (response) {
+      var operationId = this.operation_line ? this.operation_line.id : 0;
+      axios.get("/company-areas-per-company/".concat(this.company.id, "/").concat(this.location.id, "/").concat(this.category.id, "/").concat(operationId)).then(function (response) {
         _this6.areas = response.data[0].areas;
       })["catch"](function (error) {
         _this6.errors = error.response.data.errors;
@@ -13276,6 +13355,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 
 
 
@@ -13387,7 +13471,8 @@ __webpack_require__.r(__webpack_exports__);
     fetchCompayAreas: function fetchCompayAreas() {
       var _this6 = this;
 
-      axios.get("/company-areas-per-company/".concat(this.company.id, "/").concat(this.location.id, "/").concat(this.category.id, "/").concat(this.operation_line.id)).then(function (response) {
+      var operationId = this.operation_line ? this.operation_line.id : 0;
+      axios.get("/company-areas-per-company/".concat(this.company.id, "/").concat(this.location.id, "/").concat(this.category.id, "/").concat(operationId)).then(function (response) {
         _this6.areas = response.data[0].areas;
       })["catch"](function (error) {
         _this6.errors = error.response.data.errors;
@@ -14540,6 +14625,7 @@ __webpack_require__.r(__webpack_exports__);
     addRole: function addRole(role) {
       var _this2 = this;
 
+      this.showLoader();
       document.getElementById('add_btn').disabled = true;
       this.errors = [];
       axios.post('/role', {
@@ -14550,15 +14636,18 @@ __webpack_require__.r(__webpack_exports__);
 
         _this2.role_added = true;
         document.getElementById('add_btn').disabled = false;
+        _this2.loading = false;
       })["catch"](function (error) {
         _this2.errors = error.response.data.errors;
         _this2.role_added = false;
         document.getElementById('add_btn').disabled = false;
+        _this2.loading = false;
       });
     },
     updateRole: function updateRole(role_copied) {
       var _this3 = this;
 
+      this.showLoader();
       document.getElementById('edit_btn').disabled = true;
       this.role_updated = false;
       this.errors = [];
@@ -14574,7 +14663,8 @@ __webpack_require__.r(__webpack_exports__);
 
         _this3.roles.splice(index, 1, response.data);
 
-        document.getElementById('edit_btn').disabled = false; // this.loading = false;
+        document.getElementById('edit_btn').disabled = false;
+        _this3.loading = false;
       })["catch"](function (error) {
         _this3.role_updated = false;
         _this3.errors = error.response.data.errors;
@@ -14585,6 +14675,7 @@ __webpack_require__.r(__webpack_exports__);
     deleteRole: function deleteRole() {
       var _this4 = this;
 
+      this.showLoader();
       var index = this.roles.findIndex(function (item) {
         return item.id == _this4.role_id;
       });
@@ -14593,8 +14684,11 @@ __webpack_require__.r(__webpack_exports__);
         alert('Location successfully deleted');
 
         _this4.roles.splice(index, 1);
+
+        _this4.loading = false;
       })["catch"](function (error) {
         _this4.errors = error.response.data.errors;
+        _this4.loading = false;
       });
     },
     setPage: function setPage(pageNumber) {
@@ -15041,6 +15135,7 @@ __webpack_require__.r(__webpack_exports__);
     addUser: function addUser(user) {
       var _this5 = this;
 
+      this.showLoader();
       document.getElementById('add_btn').disabled = true;
       this.errors = [];
       axios.post('/user', {
@@ -15056,15 +15151,18 @@ __webpack_require__.r(__webpack_exports__);
         _this5.user_added = true;
         document.getElementById('add_btn').disabled = false;
         _this5.user = [];
+        _this5.loading = false;
       })["catch"](function (error) {
         _this5.errors = error.response.data.errors;
         _this5.user_added = false;
         document.getElementById('add_btn').disabled = false;
+        _this5.loading = false;
       });
     },
     updateUser: function updateUser(user_copied) {
       var _this6 = this;
 
+      this.showLoader();
       document.getElementById('edit_btn').disabled = true;
       this.user_updated = false;
       this.errors = [];
@@ -15084,7 +15182,8 @@ __webpack_require__.r(__webpack_exports__);
 
         _this6.users.splice(index, 1, response.data);
 
-        document.getElementById('edit_btn').disabled = false; // this.loading = false;
+        document.getElementById('edit_btn').disabled = false;
+        _this6.loading = false;
       })["catch"](function (error) {
         _this6.user_updated = false;
         _this6.errors = error.response.data.errors;
@@ -15095,6 +15194,7 @@ __webpack_require__.r(__webpack_exports__);
     deleteUser: function deleteUser() {
       var _this7 = this;
 
+      this.showLoader();
       var index = this.users.findIndex(function (item) {
         return item.id == _this7.user_id;
       });
@@ -15103,8 +15203,11 @@ __webpack_require__.r(__webpack_exports__);
         alert('User successfully deleted');
 
         _this7.users.splice(index, 1);
+
+        _this7.loading = false;
       })["catch"](function (error) {
         _this7.errors = error.response.data.errors;
+        _this7.loading = false;
       });
     },
     fetchCompanyLocation: function fetchCompanyLocation(company) {
@@ -59853,6 +59956,30 @@ var render = function() {
             _vm.userRole > 2
               ? _c("div", { staticClass: "card-header" }, [
                   _c("div", { staticClass: "row ml-2" }, [
+                    _c("div", { staticClass: "col-md-10" }),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "col-md-2" }, [
+                      _c(
+                        "button",
+                        {
+                          staticClass: "btn btn-sm btn-primary",
+                          on: { click: _vm.createReport }
+                        },
+                        [_vm._v(" Create Report")]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "button",
+                        {
+                          staticClass: "btn btn-sm btn-primary",
+                          on: { click: _vm.trendAndAnalysis }
+                        },
+                        [_vm._v(" Trend and Analysis")]
+                      )
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "row ml-2" }, [
                     _c("div", { staticClass: "col-md-2" }, [
                       _c("div", { staticClass: "form-group" }, [
                         _c(
@@ -59927,7 +60054,7 @@ var render = function() {
                             staticClass: "form-control-label",
                             attrs: { for: "role" }
                           },
-                          [_vm._v("Company Location")]
+                          [_vm._v("Location")]
                         ),
                         _vm._v(" "),
                         _c(
@@ -60190,24 +60317,6 @@ var render = function() {
                           on: { click: _vm.fetchFilteredReport }
                         },
                         [_vm._v(" Filter")]
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "button",
-                        {
-                          staticClass: "btn btn-sm btn-primary mt-4",
-                          on: { click: _vm.createReport }
-                        },
-                        [_vm._v(" Create Report")]
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "button",
-                        {
-                          staticClass: "btn btn-sm btn-primary mt-4",
-                          on: { click: _vm.trendAndAnalysis }
-                        },
-                        [_vm._v(" Trend and Analysis")]
                       )
                     ])
                   ])
@@ -61651,7 +61760,10 @@ var render = function() {
                                                     type: "text",
                                                     disabled:
                                                       _vm.reportsPerUser[0]
-                                                        .status != 1,
+                                                        .status != 1 ||
+                                                      _vm.reportsPerUser[0]
+                                                        .process_owner_id !=
+                                                        _vm.userId,
                                                     id: uploadFile.id,
                                                     placeholder: "Comment..."
                                                   },
