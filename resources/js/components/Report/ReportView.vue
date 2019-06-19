@@ -8,7 +8,7 @@
                 <span class="span-username">Hi, {{ this.userName }}</span>
             </div>
             <div class="col-md-1">
-                <navbarRight :user-role="userRole"></navbarRight>
+                <navbarRight :user-role="userRole" :user-id="userId"></navbarRight>
             </div>
         </div>
     </nav>
@@ -174,6 +174,7 @@
     import navbarRight from '../NavbarRight';
     import breadcrumb from '../Breadcrumb';
     import loader from '../Loader';
+    import moment from 'moment';
     export default {
         props: ['userName', 'userRole' ,'reportId', 'userId'],
         components:{
@@ -200,6 +201,7 @@
             this.fetchReportsPerUser();
         },
         methods:{
+            moment,
             showLoader(){
                this.loading = true;
             },

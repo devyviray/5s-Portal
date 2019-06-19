@@ -804,6 +804,10 @@ tbody{
     color: #010502;
     text-align: center;
 }
+.modal-backdrop {
+    z-index: 0 !important;
+}
+
 
 /* vue-carousel css */
 .VueCarousel-slide{

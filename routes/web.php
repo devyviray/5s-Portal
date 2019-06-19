@@ -64,6 +64,7 @@ Route::group(['middleware' => ['auth', 'role:it|administrator|inspector|departme
      Route::patch('/user/{user}', 'UserController@update');
      Route::delete('/user/{user}', 'UserController@destroy');
      Route::get('/user-process-owner/{companyId}/{locationId}', 'UserController@getProcessOwnerPerCompany');
+     Route::post('/change-password', 'UserController@changePassword');
 
     // roles
     Route::get('/roles', 'RoleController@index')->name('roles');

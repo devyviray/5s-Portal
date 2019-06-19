@@ -7,7 +7,7 @@
                     <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
                 </a>
                 <ul class="dropdown-menu dropdown-user">
-                    <li> <a href="#"><i class="fa fa-user fa-fw"></i> User Profile</a> </li>
+                    <li> <a href="#changePasswordModal" data-toggle="modal"><i class="fa fa-user fa-fw"></i> Change Password</a> </li>
                     <li v-if="userRole > 2"> <a :href="userLink"><i class="fa fa-users fa-fw"></i> Users</a> </li>
                     <li v-if="userRole > 2"> <a :href="roleLink"><i class="fa fa-user-md fa-fw"></i> Roles</a> </li>
                     <li v-if="userRole > 2"> <a :href="companyLink"><i class="fa fa-building-o fa-fw"></i> Companies</a> </li>
@@ -24,19 +24,66 @@
                 </ul>
             </li>
         </ul>
+
+        <!-- Change password Modal -->
+        <div class="modal fade" id="changePasswordModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
+            <span class="closed" data-dismiss="modal">&times;</span>
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div>
+                        <button type="button" class="close mt-2 mr-2" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-header">
+                        <h2 class="col-12 modal-title" id="addCompanyLabel">Change Password</h2>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-success" v-if="password_changed">
+                            <strong>Success!</strong> Password succesfully changed
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="role">New password*</label> 
+                                    <input type="password"  class="form-control" v-model="user.new_password">
+                                    <span class="text-danger" v-if="errors.new_password">{{ errors.new_password[0] }}</span>
+                                </div>
+                            </div>  
+                        </div>
+                        <div class=row>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="role">Confirm password*</label> 
+                                    <input type="password" class="form-control" v-model="user.new_password_confirmation">
+                                    <span class="text-danger" v-if="errors.new_password_confirmation">{{ errors.new_password_confirmation[0] }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="add_btn" type="button" class="btn btn-primary btn-round btn-fill" @click="changePassword(user)">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </template>
 
 <script>
 import loader from './Loader';
 export default {
-    props: ['userRole'],
+    props: ['userRole', 'userId'],
     components:{
         loader
     },
     data(){
         return {
+            user: [],
+            password_changed: false,
             loading: false,
+            errors: []
         }
     },
     methods:{
@@ -51,6 +98,25 @@ export default {
             .catch(error => { 
                 this.errors = error.response.data.errors;
             })
+        },
+         changePassword(user){
+            this.errors = [];
+            axios.post('/change-password', {
+                user_id: this.userId,
+                new_password: user.new_password,
+                new_password_confirmation: user.new_password_confirmation
+            })
+            .then(response => {
+                this.password_changed = true;
+                this.resetForm();
+            })
+            .catch(error => {
+                this.errors = error.response.data.errors;
+            })
+        },
+        resetForm(){
+            this.errors = [];
+            this.user = [];
         },
     },
     computed:{

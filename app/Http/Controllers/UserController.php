@@ -126,4 +126,31 @@ class UserController extends Controller
                 $q->where('role_id', 4); //Process owner
             })->where('company_location', $locationId)->get();
     }
+
+
+     /*
+     * Change password 
+     * 
+     * @return \Illuminate\Http\Response
+     */
+
+    public function changePassword(Request $request){
+
+        $request->validate([
+            'user_id' => 'required',
+            'new_password' => 'required|confirmed',
+            'new_password_confirmation' => 'required'
+        ]);
+        
+        DB::beginTransaction();
+        try {
+            $user = User::findOrFail($request->user_id);
+            $user->update(['password' => bcrypt($request->input('new_password'))]);
+            DB::commit();
+
+            return $user;
+        } catch (Exception $e) {
+            DB::rollBack();
+        }
+    }
 }

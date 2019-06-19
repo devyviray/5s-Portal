@@ -45,7 +45,7 @@ class ReportController extends Controller
     {
         $user = Auth::user();
         return Report::with('company', 'location', 'operationLine', 'category', 'area', 'inspector', 'processOwner', 'reportDetail')
-            ->when(Auth::user()->level() == 2, function($q){
+            ->when(Auth::user()->level() == 2, function($q) use ($user){
                 $q->where('process_owner_id', $user->id);
             })->when(Auth::user()->level() == 1, function($query) use ($user){
                 $query->whereHas('processOwner', function($q) use ($user){
