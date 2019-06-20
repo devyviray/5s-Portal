@@ -1,6 +1,8 @@
 <div>
-    <p>Process owner {{ $processOwner->name }} approved report for the month of <br>
-        Please click the link to view report
+    <p>
+    Good Day!<br><br>
+
+    {{ $processOwner->name }} has already approved the submitted 5S Report.         
     </p><br>
-    <a href="{{ url('view-report', ['reportId' => $report->id]) }}">{{ url('view-report', ['reportId' => $report->id]) }}</a>
+    <a href="{{ url('view-report', ['reportId' => $report->id]) }}">Thank you for using this application. </a>
 </div>

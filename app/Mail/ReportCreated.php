@@ -8,6 +8,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use App\{
     User,
+    Area,
     Report
 };
 
@@ -16,6 +17,7 @@ class ReportCreated extends Mailable
     use Queueable, SerializesModels;
 
     protected $inspector;
+    protected $area;
     protected $report;
 
     /**
@@ -23,9 +25,10 @@ class ReportCreated extends Mailable
      *
      * @return void
      */
-    public function __construct($inspector, $report)
+    public function __construct($inspector, $area, $report)
     { 
         $this->inspector = User::findOrFail($inspector);
+        $this->area = Area::findOrFail($area);
         $this->report = Report::findOrFail($report);
     }
 
@@ -36,9 +39,10 @@ class ReportCreated extends Mailable
      */
     public function build()
     {
-        $report = $this->report;
         $inspector = $this->inspector;
+        $area = $this->area;
+        $report = $this->report;
 
-        return $this->view('mail.report-created', compact('report', 'inspector'));
+        return $this->view('mail.report-created', compact('inspector', 'area' , 'report'));
     }
 }

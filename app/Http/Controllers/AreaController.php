@@ -89,7 +89,7 @@ class AreaController extends Controller
     {
         DB::beginTransaction();
         try {
-            
+
             $area->delete();
             DB::commit();
             return $area;

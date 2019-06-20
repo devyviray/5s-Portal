@@ -25,6 +25,9 @@ Vue.component('example-component', require('./components/ExampleComponent.vue').
 // Dashboard
 Vue.component('dashboard-index', require('./components/Dashboard/DashboardIndex.vue').default);
 
+// Homepage
+Vue.component('home-page-index', require('./components/HomePage/HomePageIndex.vue').default);
+
 // Department
 Vue.component('department-index', require('./components/Department/DepartmentIndex.vue').default);
 

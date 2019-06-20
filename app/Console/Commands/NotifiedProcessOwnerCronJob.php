@@ -51,7 +51,7 @@ class NotifiedProcessOwnerCronJob extends Command
 
         foreach($reports as $report){
           // Send email to process owner
-          Mail::to(User::findOrFail($report->process_owner_id))->send(new NotifiedProcessOwner($report->id));
+          Mail::to(User::findOrFail($report->process_owner_id))->send(new NotifiedProcessOwner($report->inspector_id,$report->area_id,$report->id));
         }
     }
 }

@@ -1,6 +1,10 @@
 <div>
-    <p>Inspector {{ $inspector->name }} validate report for the month of <br>
-        Please click the link to view report
+    <p>
+    Good Day!<br><br>
+
+    {{ $inspector->name }} has submitted reviewed your comments. Please see updated report in the portal.    
+            
     </p><br>
-    <a href="{{ url('view-report', ['reportId' => $report->id]) }}">{{ url('view-report', ['reportId' => $report->id]) }}</a>
+    <a href="{{ url('view-report', ['reportId' => $report->id]) }}"></a><br>
+    <p> Thank you for using this application. </p>
 </div>

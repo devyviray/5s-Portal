@@ -8,6 +8,7 @@
                 </a>
                 <ul class="dropdown-menu dropdown-user">
                     <li> <a href="#changePasswordModal" data-toggle="modal"><i class="fa fa-user fa-fw"></i> Change Password</a> </li>
+                    <li v-if="userRole > 2"> <a :href="homePageLink"><i class="fa fa-trello fa-fw"></i> Home Page</a> </li>
                     <li v-if="userRole > 2"> <a :href="userLink"><i class="fa fa-users fa-fw"></i> Users</a> </li>
                     <li v-if="userRole > 2"> <a :href="roleLink"><i class="fa fa-user-md fa-fw"></i> Roles</a> </li>
                     <li v-if="userRole > 2"> <a :href="companyLink"><i class="fa fa-building-o fa-fw"></i> Companies</a> </li>
@@ -121,7 +122,10 @@ export default {
     },
     computed:{
         logoLink(){
-                return window.location.origin+'/img/lafil-logo.png';
+            return window.location.origin+'/img/lafil-logo.png';
+        },
+        homePageLink(){
+            return window.location.origin+'/home-page'
         },
         departmentLink(){
             return window.location.origin+'/departments'

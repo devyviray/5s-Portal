@@ -732,7 +732,7 @@ body, #app, .py-4, .wrap-div {
     color: #FFFF;
 }
 .breadcrumb>li {
-    width: 19%;
+    width: 24%;
     text-align: center;
 }
 .breadcrumb>li+li:before {

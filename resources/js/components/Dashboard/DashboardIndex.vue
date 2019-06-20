@@ -17,7 +17,7 @@
             <div class="header">
                 <h1 class="page-header">
                     <img class="lafil-logo" :src="logoLink">
-                    <b>5S PORTAL - DASHBOARD</b>
+                    <b>5S PORTAL - HOME PAGE</b>
                 </h1>
                 <breadcrumb></breadcrumb>
             </div>
@@ -27,23 +27,8 @@
                     :loop="true"
                     :perPage=1
                     :autoplayTimeout="2500">
-                    <slide>
-                        <img :src="logoLink" class="carouselImg">
-                    </slide>
-                    <slide>
-                        <img :src="logoLink" class="carouselImg">
-                    </slide>
-                    <slide>
-                        <img :src="logoLink" class="carouselImg">
-                    </slide>
-                    <slide>
-                        <img :src="logoLink" class="carouselImg">
-                    </slide>
-                    <slide>
-                        <img :src="logoLink" class="carouselImg">
-                    </slide>
-                    <slide>
-                        <img :src="logoLink" class="carouselImg">
+                    <slide v-for="(image, i) in images" :key="i">
+                        <img :src="imageLink+image.file_path" class="carouselImg">
                     </slide>
                 </carousel>
             </div>
@@ -66,20 +51,42 @@
             loader
         },
         data(){
-            return { 
+            return {
+                images: [], 
                 errors: [],
                 loading: false,
             }
         },
+        created(){
+            this.fetchImages();
+        },
         methods:{
             showLoader(){
                this.loading = true;
-            }
+            },
+            fetchImages(){
+                axios.get('home-page-all')
+                .then(response => {
+                    this.images = response.data;
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.errors;
+                })
+            },
         },
         computed:{
+            photoLink1(){
+                return window.location.origin+'/img/photo1.jpg';
+            },
+            photoLink2(){
+                return window.location.origin+'/img/photo2.jpg';
+            },
             logoLink(){
                 return window.location.origin+'/img/lafil-logo.png';
             },
+            imageLink(){
+                 return window.location.origin+'/storage/';
+            }
         }
     }
 </script>

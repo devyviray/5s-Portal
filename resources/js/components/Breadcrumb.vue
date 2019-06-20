@@ -3,9 +3,8 @@
         <ol class="breadcrumb">
             <li><a :href="homeLink">Home</a></li><span style="color: #FFFF">|</span>
             <li><a :href="reportLink">Report & Rating</a></li> <span  style="color: #FFFF">|</span>
-            <li><a href="#">Orientation</a></li><span style="color: #FFFF">|</span>
-            <li><a href="#">Exam</a></li><span style="color: #FFFF">|</span>
-            <li><a :href="faqPageLink">FAQs</a></li>
+            <li><a :href="faqPageLink">FAQs</a></li><span style="color: #FFFF">|</span>
+            <li><a href="#">Contact Us</a></li>
         </ol>
     </div>
 </template>
@@ -21,6 +20,9 @@ export default {
         },
         faqPageLink(){
             return window.location.origin+'/faqs-page' 
+        },
+        contactUsLink(){
+            return window.location.origin+'/contact-us' 
         },
     }
 }

@@ -7,6 +7,8 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use App\{
+    User,
+    Area,
     Report
 };
 
@@ -15,14 +17,18 @@ class NotifiedProcessOwner extends Mailable
 {
     use Queueable, SerializesModels;
 
+    protected $inspector;
+    protected $area;
     protected $report;
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($report)
+    public function __construct($inspector, $area, $report)
     {
+        $this->inspector = User::findOrFail($inspector);
+        $this->area = Area::findOrFail($area);
         $this->report = Report::findOrFail($report);
     }
 
@@ -33,8 +39,10 @@ class NotifiedProcessOwner extends Mailable
      */
     public function build()
     {
+        $inspector = $this->inspector;
+        $area = $this->area;
         $report = $this->report;
         
-        return $this->view('mail.report-notified', compact('report'));
+        return $this->view('mail.report-notified', compact('inspector','area','report'));
     }
 }

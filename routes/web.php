@@ -35,6 +35,12 @@ Route::group(['middleware' => 'auth'], function(){
 // Accessible routes for admin , inspector and IT
 Route::group(['middleware' => ['auth', 'role:it|administrator|inspector|department member']], function () {
 
+    // Home page
+    Route::get('/home-page', 'HomePageController@index');
+    Route::get('/home-page-all', 'HomePageController@indexData');
+    Route::post('/home-page', 'HomePageController@store');
+    Route::delete('/home-page/{homePage}', 'HomePageController@destroy');
+
     // Departments
     Route::get('/departments', 'DepartmentController@index')->name('departments');
     Route::get('/departments-all', 'DepartmentController@indexData');

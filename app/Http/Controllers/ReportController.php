@@ -137,7 +137,7 @@ class ReportController extends Controller
                 }
             }
             // Send email to process owner
-            Mail::to(User::findOrFail($request->process_owner))->send(new ReportCreated(Auth::user()->id, $r->id));
+            Mail::to(User::findOrFail($request->process_owner))->send(new ReportCreated(Auth::user()->id, $request->area, $r->id));
 
             DB::commit();
 
@@ -251,7 +251,7 @@ class ReportController extends Controller
             Report::whereIn('id', $request->ids)->update(['status' => 2]); //Status for checking 
             // Send email to inspector
             $report = Report::findOrFail($request->ids[0]);
-            Mail::to(User::findOrFail($report->inspector_id))->send(new ProcessOwnerForCheckingReport($report->process_owner_id, $report->id));
+            Mail::to(User::findOrFail($report->inspector_id))->send(new ProcessOwnerForCheckingReport($report->process_owner_id, $report->area_id , $report->id));
 
             DB::commit();
             return  $report;

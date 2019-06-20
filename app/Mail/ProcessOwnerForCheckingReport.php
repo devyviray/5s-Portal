@@ -8,6 +8,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use App\{
     User,
+    Area,
     Report
 };
 
@@ -16,6 +17,7 @@ class ProcessOwnerForCheckingReport extends Mailable
     use Queueable, SerializesModels;
 
     protected $processOwner;
+    protected $area;
     protected $report;
 
 
@@ -24,9 +26,10 @@ class ProcessOwnerForCheckingReport extends Mailable
      *
      * @return void
      */
-    public function __construct($processOwner, $report)
+    public function __construct($processOwner, $area, $report)
     {
         $this->processOwner = User::findOrFail($processOwner);
+        $this->area = Area::findOrFail($area);
         $this->report = Report::findOrFail($report);
     }
 
@@ -37,9 +40,10 @@ class ProcessOwnerForCheckingReport extends Mailable
      */
     public function build()
     {
-        $report = $this->report;
         $processOwner = $this->processOwner;
+        $area = $this->area;
+        $report = $this->report;
 
-        return $this->view('mail.report-for-checking', compact('report', 'processOwner'));
+        return $this->view('mail.report-for-checking', compact('report', 'area', 'processOwner'));
     }
 }
