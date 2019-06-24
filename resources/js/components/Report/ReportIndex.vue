@@ -8,7 +8,7 @@
                 <span class="span-username">Hi, {{ this.userName }}</span>
             </div>
             <div class="col-md-1">
-                <navbarRight :user-role="userRole" :user-id="userId"></navbarRight>
+                <navbarRight :user-role-level="userRoleLevel" :user-id="userId"></navbarRight>
             </div>
         </div>
     </nav>
@@ -23,7 +23,7 @@
         </div>
         <div id="page-inner">
             <div class="card">
-                <div class="card-header" v-if="userRole > 2">
+                <div class="card-header" v-if="userRoleLevel > 2">
                     <div class="row ml-2">
                         <div class="col-md-10"></div>
                         <div class="col-md-2">
@@ -148,7 +148,7 @@
     import breadcrumb from '../Breadcrumb';
     import loader from '../Loader';
     export default {
-        props: ['userName', 'userRole', 'userId'],
+        props: ['userName', 'userRoleLevel', 'userId', 'companyId', 'locationId'],
         components:{
             Multiselect,
             navbarRight,
@@ -215,7 +215,7 @@
                 }
             },
             fetchReports(){
-                 axios.get('/reports-all')
+                 axios.get(`/reports-all/${this.companyId }/${this.locationId }`)
                  .then(response => {
                     this.reports = response.data;
                 })

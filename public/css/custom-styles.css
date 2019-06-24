@@ -807,6 +807,15 @@ tbody{
 .modal-backdrop {
     z-index: 0 !important;
 }
+#dropdown:hover>.dropdown-menu {
+    display: block;
+}
+  
+/* .dropdown>.dropdown-toggle:active { */
+    /*Without this, clicking will make it sticky*/
+      /* pointer-events: none;
+  }
+   */
 
 
 /* vue-carousel css */

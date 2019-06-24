@@ -24,8 +24,8 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/faqs-page', 'FaqController@indexPage');
 
     // Reports
-    Route::get('/reports', 'ReportController@index')->name('reports');
-    Route::get('/reports-all', 'ReportController@indexData');
+    Route::get('/reports/{company}/{location}', 'ReportController@index')->name('reports');
+    Route::get('/reports-all/{company}/{location}', 'ReportController@indexData');
     Route::post('/report-approve', 'ReportController@approveReportPerUser');
     Route::post('/report-checking', 'ReportController@checkingReportPerUser');
     Route::get('/view-report/{reportId}', 'ReportController@show');
@@ -33,7 +33,7 @@ Route::group(['middleware' => 'auth'], function(){
 });
 
 // Accessible routes for admin , inspector and IT
-Route::group(['middleware' => ['auth', 'role:it|administrator|inspector|department member']], function () {
+Route::group(['middleware' => ['auth', 'role:it|administrator|inspector|process owner|department member']], function () {
 
     // Home page
     Route::get('/home-page', 'HomePageController@index');

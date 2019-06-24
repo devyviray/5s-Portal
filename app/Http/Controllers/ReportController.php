@@ -31,9 +31,9 @@ class ReportController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($company, $location)
     {
-        return view('report.index');
+        return view('report.index', compact('company', 'location'));
     }
 
     /**
@@ -41,10 +41,14 @@ class ReportController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function indexData()
+    public function indexData($company, $location)
     {
         $user = Auth::user();
         return Report::with('company', 'location', 'operationLine', 'category', 'area', 'inspector', 'processOwner', 'reportDetail')
+            ->when(Auth::user()->level() > 2, function($q) use ($company, $location){
+                $q->where('company_id', $company)
+                ->where('location_id', $location);
+            })
             ->when(Auth::user()->level() == 2, function($q) use ($user){
                 $q->where('process_owner_id', $user->id);
             })->when(Auth::user()->level() == 1, function($query) use ($user){

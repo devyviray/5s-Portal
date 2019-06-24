@@ -8,7 +8,7 @@
                     <span class="span-username">Hi, {{ this.userName }}</span>
                 </div>
                 <div class="col-md-1">
-                    <navbarRight :user-role="userRole" :user-id="userId"></navbarRight>
+                    <navbarRight :user-role-level="userRoleLevel" :user-id="userId"></navbarRight>
                 </div>
             </div>
         </nav>
@@ -58,7 +58,7 @@
                                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         <i class="fa fa-ellipsis-v"></i>
                                     </a>
-                                    <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
+                                    <div class="dropdown-menu dropdown-menu-left dropdown-menu-arrow">
                                         <a class="dropdown-item" data-toggle="modal" data-target="#editModal" style="cursor: pointer" @click="copyObject(user)">Edit</a>
                                         <a class="dropdown-item" data-toggle="modal" data-target="#deleteModal" style="cursor: pointer" @click="copyObject(user)">Delete</a>
                                     </div>
@@ -287,7 +287,7 @@
     import breadcrumb from '../Breadcrumb';
     import loader from '../Loader';
     export default {
-        props: ['userName', 'userRole', 'userId'],
+        props: ['userName', 'userRoleLevel', 'userId'],
         components:{
             Multiselect,
             vSelect,
