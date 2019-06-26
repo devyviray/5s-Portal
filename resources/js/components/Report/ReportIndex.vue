@@ -25,35 +25,38 @@
             <div class="card">
                 <div class="card-header" v-if="userRoleLevel > 2">
                     <div class="row ml-2">
-                        <div class="col-md-10"></div>
-                        <div class="col-md-2">
+                        <div class="col-md-8"></div>
+                        <div class="col-md-4">
                             <button class="btn btn-sm btn-primary" @click="createReport"> Create Report</button>
-                            <button class="btn btn-sm btn-primary" @click="trendAndAnalysis"> Trend and Analysis</button> 
+                            <a target="_blank"  :href="trendAndAnalysis" class="btn btn-sm btn-primary"> Trend and Analysis</a>
+                            <div class="dropdown" id="dropdown">
+                                <a class="dropdown-toggle"  id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                   + Performance Evaluation Rating
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" v-if="performanceEvaluationRating.length">
+                                    <div class="row pl-2">
+                                        <div class="col-md-12 mb-1">1st Quarter: {{ firstQuarterRating() }}</div>
+                                        <div class="col-md-12 mb-1">2nd Quarter: {{ secondQuarterRating() }}</div>
+                                        <div class="col-md-12 mb-1">3rd Quarter: {{ thirdQuarterRating() }}</div>
+                                        <div class="col-md-12 mb-1">4th Quarter: {{ fourthQuarterRating() }}</div>
+                                    </div>
+                                </div>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" v-else>
+                                    <div class="row pl-2">
+                                        <div class="col-md-12 mb-1">1st Quarter: N/A</div>
+                                        <div class="col-md-12 mb-1">2nd Quarter: N/A</div>
+                                        <div class="col-md-12 mb-1">3rd Quarter: N/A</div>
+                                        <div class="col-md-12 mb-1">4th Quarter: N/A</div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="row ml-2">
                         <div class="col-md-2">
                             <div class="form-group">
-                                <label class="form-control-label" for="role">Company</label>
-                                <select class="form-control" v-model="company" @change="changeCompany(company, 'getCompanies')">
-                                    <option v-for="(company,c) in companies" v-bind:key="c" :value="company"> {{ company.name }}</option>
-                                </select>
-                                <span class="text-danger" v-if="errors.company  ">{{ errors.company[0] }}</span>
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <label class="form-control-label" for="role">Location</label>
-                                <select class="form-control" v-model="location" @change="changeCompany('', '')">
-                                    <option v-for="(location,l) in locations" v-bind:key="l" :value="location"> {{ location.name }}</option>
-                                </select>
-                                <span class="text-danger" v-if="errors.location  ">{{ errors.location[0] }}</span>
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="form-group">
                                 <label class="form-control-label" for="role">Category</label>
-                                <select class="form-control" v-model="category"  @change="changeCompany('', '')">
+                                <select class="form-control" v-model="category"  @change="changeCategory()">
                                     <option v-for="(category,c) in categories" v-bind:key="c" :value="category"> {{ category.name }}</option>
                                 </select>
                                 <span class="text-danger" v-if="errors.category  ">{{ errors.category[0] }}</span>
@@ -62,7 +65,7 @@
                         <div class="col-md-2" v-if="show_operation_line">
                             <div class="form-group">
                                 <label class="form-control-label" for="role">Operation Line</label>
-                                <select class="form-control" v-model="operation_line" @change="changeCompany('', '')">
+                                <select class="form-control" v-model="operation_line" @change="changeCategory()">
                                     <option v-for="(operation_line,o) in operation_lines" v-bind:key="o" :value="operation_line"> {{ operation_line.name }}</option>
                                 </select>
                                 <span class="text-danger" v-if="errors.operation_line  ">{{ errors.operation_line[0] }}</span>
@@ -71,7 +74,7 @@
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label class="form-control-label" for="role">AREA</label>
-                                <select class="form-control" v-model="area"  @change="changeCompany('', '')">
+                                <select class="form-control" v-model="area"  @change="changeCategory()">
                                     <option v-for="(area,a) in areas" v-bind:key="a" :value="area"> {{ area.name }}</option>
                                 </select>
                                 <span class="text-danger" v-if="errors.area  ">{{ errors.area[0] }}</span>
@@ -157,6 +160,7 @@
         },
         data(){
             return {
+                performanceEvaluationRating: [],
                 reports: [],
                 companies : [],
                 locations: [],
@@ -182,6 +186,7 @@
             this.fetchOperationLines();
             this.fetchCategories();
             this.fetchReports();
+            this.fetchPerformanceEvaluationRating();
         },
         methods:{
             showLoader(){
@@ -190,28 +195,36 @@
             createReport(){
                 return window.location.href = window.location.origin+'/create-report';
             },
-            trendAndAnalysis(){
-                return window.location.href = window.location.origin+'/trend-and-analysis';
-            },
-            changeCompany(company,action){
-                if(action == 'getCompanies'){
-                    axios.get(`/company-location/${company.id}`)
-                    .then(response => { 
-                        this.locations = response.data.locations;
-                    })
-                    .catch(error => {
-                        this.errors = error.response.data.errors;
-                    })
-                }else {
-                    if(this.category.id == 1){
-                         this.show_operation_line = true
-                    }else{
-                        this.show_operation_line = false;
-                        this.operation_line = '';
-                    }
-                    if(this.company && this.location && this.category){
-                        this.fetchCompayAreas();
-                    }
+            // changeCompany(company,action){
+            //     if(action == 'getCompanies'){
+            //         axios.get(`/company-location/${company.id}`)
+            //         .then(response => { 
+            //             this.locations = response.data.locations;
+            //         })
+            //         .catch(error => {
+            //             this.errors = error.response.data.errors;
+            //         })
+            //     }else {
+            //         if(this.category.id == 1){
+            //              this.show_operation_line = true
+            //         }else{
+            //             this.show_operation_line = false;
+            //             this.operation_line = '';
+            //         }
+            //         if(this.company && this.location && this.category){
+            //             this.fetchCompayAreas();
+            //         }
+            //     }
+            // },
+            changeCategory(){
+                if(this.category.id == 1){
+                        this.show_operation_line = true
+                }else{
+                    this.show_operation_line = false;
+                    this.operation_line = '';
+                }
+                if(this.companyId && this.locationId && this.category){
+                    this.fetchCompayAreas();
                 }
             },
             fetchReports(){
@@ -222,6 +235,15 @@
                 .catch(error => { 
                     this.errors = error.response.data.errors;
                 }); 
+            },
+            fetchPerformanceEvaluationRating(){
+                 axios.get(`/performace-evaluation-rating/${this.companyId}/${this.locationId}`)
+                .then(response =>{
+                    this.performanceEvaluationRating = response.data;
+                })
+                .catch(error => {
+                    this.errors = error.response.data.error;
+                })
             },
             fetchCompanies(){
                 axios.get('/companies-all')
@@ -252,7 +274,7 @@
             },
             fetchCompayAreas(){
                 var operationId = this.operation_line ? this.operation_line.id : 0;
-                axios.get(`/company-areas-per-company/${this.company.id}/${this.location.id}/${this.category.id}/${operationId}`)
+                axios.get(`/company-areas-per-company/${this.companyId}/${this.locationId}/${this.category.id}/${operationId}`)
                  .then(response => {
                     this.areas = response.data[0].areas;
                 })
@@ -262,8 +284,8 @@
             },
             fetchFilteredReport(){
                 axios.post('/report-filtered', {
-                    company: this.company.id,
-                    location: this.location.id,
+                    company: this.companyId,
+                    location: this.locationId,
                     operation_line: this.operation_line.id,
                     category: this.category.id,
                     area: this.area.id
@@ -291,6 +313,57 @@
                         break;
                     default:
                 }
+            },
+            firstQuarterRating(){
+                var rating = 0;
+                var count = 0;
+                this.performanceEvaluationRating.filter(item => {
+                    if(item.reporting_month == 1 || item.reporting_month == 2 || item.reporting_month == 3){
+                        rating = rating + item.ratings;
+                        count = count + 1;
+                    }
+                })
+                var result = rating ?  rating / count + ' %  ' : 'N/A'
+               
+                return result;
+            },
+            secondQuarterRating(){
+                var rating = 0;
+                var count = 0;
+                this.performanceEvaluationRating.filter(item => {
+                    if(item.reporting_month == 4 || item.reporting_month == 5 || item.reporting_month == 6){
+                        rating = rating + item.ratings;
+                        count = count + 1;
+                    }
+                })
+                var result = rating ?  rating / count + ' %  ' : 'N/A'
+
+                return result;
+            },
+            thirdQuarterRating(){
+                var rating = 0;
+                var count = 0;
+                this.performanceEvaluationRating.filter(item => {
+                    if(item.reporting_month ==  7 || item.reporting_month == 8 || item.reporting_month == 9){
+                        rating = rating + item.ratings;
+                    }
+                })
+                var result = rating ?  rating / count + ' %  ': 'N/A'
+               
+                return result;
+            },
+            fourthQuarterRating(){
+                var rating = 0;
+                var count = 0;
+                this.performanceEvaluationRating.filter(item => {
+                    if(item.reporting_month ==  10 || item.reporting_month == 11 || item.reporting_month == 12){
+                        rating = rating + item.ratings;
+                        count = count + 1;
+                    }
+                })
+                var result = rating ?  rating / count + ' %  ' : 'N/A'
+               
+                return result;
             },
             setPage(pageNumber) {
                 this.currentPage = pageNumber;
@@ -329,7 +402,10 @@
             },
             verifiedReportLink(){
                 return window.location.origin+'/validate-report/'; 
-            }
+            },
+            trendAndAnalysis(){
+                return window.location.origin+'/trend-and-analysis';
+            },
         }
     }
 </script>

@@ -104,6 +104,7 @@ Route::group(['middleware' => ['auth', 'role:it|administrator|inspector|process 
     Route::get('/create-report', 'ReportController@create');
     Route::get('/trend-and-analysis', 'ReportController@trendIndex');
     Route::get('/trend-and-analysis-data', 'ReportController@trendAndAnalysisData');
+    Route::get('/performace-evaluation-rating/{company}/{location}', 'ReportController@performaceEvaluationRating');
     Route::get('/generate-pdf', 'ReportController@generatePDF');
 
     // operation line

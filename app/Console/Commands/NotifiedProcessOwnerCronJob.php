@@ -46,7 +46,7 @@ class NotifiedProcessOwnerCronJob extends Command
      */
     public function handle()
     {
-        $reports = Report::where('created_at', '>=',  Carbon::parse('+1 hours'))
+        $reports = Report::where('created_at', '>=',  Carbon::parse('+44 hours'))
         ->whereNull('ratings')->get();
 
         foreach($reports as $report){
