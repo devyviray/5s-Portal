@@ -26,7 +26,7 @@
                         <table class="table align-items-center table-flush">
                             <thead class="thead-light">
                                 <tr> 
-                                    <td rowspan="2">Area Inspected</td>
+                                    <td rowspan="2">Area Inspected {{ year }}</td>
                                     <td colspan="14" style="text-align: center">5s Rating</td>
                                 </tr>
                                 <tr>
@@ -94,6 +94,7 @@
         data(){
             return {
                 trendAndAnalysis: [],
+                year: '',
                 errors: [] 
             }
         },
@@ -107,6 +108,7 @@
                     reports.filter(report => {
                         if(report.reporting_month == item && report.ratings){
                             rating =  report.ratings;
+                            this.year = report.reporting_year;
                         }
                     });
                     return rating; 

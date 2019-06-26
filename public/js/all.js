@@ -13812,6 +13812,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 
 
 
@@ -13826,6 +13829,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
+      performanceEvaluationRating: [],
       reports: [],
       companies: [],
       locations: [],
@@ -13851,6 +13855,7 @@ __webpack_require__.r(__webpack_exports__);
     this.fetchOperationLines();
     this.fetchCategories();
     this.fetchReports();
+    this.fetchPerformanceEvaluationRating();
   },
   methods: {
     showLoader: function showLoader() {
@@ -13859,38 +13864,55 @@ __webpack_require__.r(__webpack_exports__);
     createReport: function createReport() {
       return window.location.href = window.location.origin + '/create-report';
     },
-    trendAndAnalysis: function trendAndAnalysis() {
-      return window.location.href = window.location.origin + '/trend-and-analysis';
-    },
-    changeCompany: function changeCompany(company, action) {
-      var _this = this;
-
-      if (action == 'getCompanies') {
-        axios.get("/company-location/".concat(company.id)).then(function (response) {
-          _this.locations = response.data.locations;
-        })["catch"](function (error) {
-          _this.errors = error.response.data.errors;
-        });
+    // changeCompany(company,action){
+    //     if(action == 'getCompanies'){
+    //         axios.get(`/company-location/${company.id}`)
+    //         .then(response => { 
+    //             this.locations = response.data.locations;
+    //         })
+    //         .catch(error => {
+    //             this.errors = error.response.data.errors;
+    //         })
+    //     }else {
+    //         if(this.category.id == 1){
+    //              this.show_operation_line = true
+    //         }else{
+    //             this.show_operation_line = false;
+    //             this.operation_line = '';
+    //         }
+    //         if(this.company && this.location && this.category){
+    //             this.fetchCompayAreas();
+    //         }
+    //     }
+    // },
+    changeCategory: function changeCategory() {
+      if (this.category.id == 1) {
+        this.show_operation_line = true;
       } else {
-        if (this.category.id == 1) {
-          this.show_operation_line = true;
-        } else {
-          this.show_operation_line = false;
-          this.operation_line = '';
-        }
+        this.show_operation_line = false;
+        this.operation_line = '';
+      }
 
-        if (this.company && this.location && this.category) {
-          this.fetchCompayAreas();
-        }
+      if (this.companyId && this.locationId && this.category) {
+        this.fetchCompayAreas();
       }
     },
     fetchReports: function fetchReports() {
-      var _this2 = this;
+      var _this = this;
 
       axios.get("/reports-all/".concat(this.companyId, "/").concat(this.locationId)).then(function (response) {
-        _this2.reports = response.data;
+        _this.reports = response.data;
       })["catch"](function (error) {
-        _this2.errors = error.response.data.errors;
+        _this.errors = error.response.data.errors;
+      });
+    },
+    fetchPerformanceEvaluationRating: function fetchPerformanceEvaluationRating() {
+      var _this2 = this;
+
+      axios.get("/performace-evaluation-rating/".concat(this.companyId, "/").concat(this.locationId)).then(function (response) {
+        _this2.performanceEvaluationRating = response.data;
+      })["catch"](function (error) {
+        _this2.errors = error.response.data.error;
       });
     },
     fetchCompanies: function fetchCompanies() {
@@ -13924,7 +13946,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this6 = this;
 
       var operationId = this.operation_line ? this.operation_line.id : 0;
-      axios.get("/company-areas-per-company/".concat(this.company.id, "/").concat(this.location.id, "/").concat(this.category.id, "/").concat(operationId)).then(function (response) {
+      axios.get("/company-areas-per-company/".concat(this.companyId, "/").concat(this.locationId, "/").concat(this.category.id, "/").concat(operationId)).then(function (response) {
         _this6.areas = response.data[0].areas;
       })["catch"](function (error) {
         _this6.errors = error.response.data.errors;
@@ -13934,8 +13956,8 @@ __webpack_require__.r(__webpack_exports__);
       var _this7 = this;
 
       axios.post('/report-filtered', {
-        company: this.company.id,
-        location: this.location.id,
+        company: this.companyId,
+        location: this.locationId,
         operation_line: this.operation_line.id,
         category: this.category.id,
         area: this.area.id
@@ -13965,6 +13987,53 @@ __webpack_require__.r(__webpack_exports__);
 
         default:
       }
+    },
+    firstQuarterRating: function firstQuarterRating() {
+      var rating = 0;
+      var count = 0;
+      this.performanceEvaluationRating.filter(function (item) {
+        if (item.reporting_month == 1 || item.reporting_month == 2 || item.reporting_month == 3) {
+          rating = rating + item.ratings;
+          count = count + 1;
+        }
+      });
+      var result = rating ? rating / count + ' %  ' : 'N/A';
+      return result;
+    },
+    secondQuarterRating: function secondQuarterRating() {
+      var rating = 0;
+      var count = 0;
+      this.performanceEvaluationRating.filter(function (item) {
+        if (item.reporting_month == 4 || item.reporting_month == 5 || item.reporting_month == 6) {
+          rating = rating + item.ratings;
+          count = count + 1;
+        }
+      });
+      var result = rating ? rating / count + ' %  ' : 'N/A';
+      return result;
+    },
+    thirdQuarterRating: function thirdQuarterRating() {
+      var rating = 0;
+      var count = 0;
+      this.performanceEvaluationRating.filter(function (item) {
+        if (item.reporting_month == 7 || item.reporting_month == 8 || item.reporting_month == 9) {
+          rating = rating + item.ratings;
+        }
+      });
+      var result = rating ? rating / count + ' %  ' : 'N/A';
+      return result;
+    },
+    fourthQuarterRating: function fourthQuarterRating() {
+      var rating = 0;
+      var count = 0;
+      this.performanceEvaluationRating.filter(function (item) {
+        if (item.reporting_month == 10 || item.reporting_month == 11 || item.reporting_month == 12) {
+          rating = rating + item.ratings;
+          count = count + 1;
+        }
+      });
+      var result = rating ? rating / count + ' %  ' : 'N/A';
+      return result;
     },
     setPage: function setPage(pageNumber) {
       this.currentPage = pageNumber;
@@ -14005,6 +14074,9 @@ __webpack_require__.r(__webpack_exports__);
     },
     verifiedReportLink: function verifiedReportLink() {
       return window.location.origin + '/validate-report/';
+    },
+    trendAndAnalysis: function trendAndAnalysis() {
+      return window.location.origin + '/trend-and-analysis';
     }
   }
 });
@@ -14119,6 +14191,7 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       trendAndAnalysis: [],
+      year: '',
       errors: []
     };
   },
@@ -14127,11 +14200,14 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     getRating: function getRating(reports, item) {
+      var _this = this;
+
       if (reports.length) {
         var rating = '-';
         reports.filter(function (report) {
           if (report.reporting_month == item && report.ratings) {
             rating = report.ratings;
+            _this.year = report.reporting_year;
           }
         });
         return rating;
@@ -14157,12 +14233,12 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     fetchTrendAndAnalysis: function fetchTrendAndAnalysis() {
-      var _this = this;
+      var _this2 = this;
 
       axios.get('/trend-and-analysis-data').then(function (response) {
-        _this.trendAndAnalysis = response.data;
+        _this2.trendAndAnalysis = response.data;
       })["catch"](function (error) {
-        _this.errors = error.response.data.errors;
+        _this2.errors = error.response.data.errors;
       });
     }
   },
@@ -78819,9 +78895,9 @@ var render = function() {
             _vm.userRoleLevel > 2
               ? _c("div", { staticClass: "card-header" }, [
                   _c("div", { staticClass: "row ml-2" }, [
-                    _c("div", { staticClass: "col-md-10" }),
+                    _c("div", { staticClass: "col-md-8" }),
                     _vm._v(" "),
-                    _c("div", { staticClass: "col-md-2" }, [
+                    _c("div", { staticClass: "col-md-4" }, [
                       _c(
                         "button",
                         {
@@ -78832,146 +78908,112 @@ var render = function() {
                       ),
                       _vm._v(" "),
                       _c(
-                        "button",
+                        "a",
                         {
                           staticClass: "btn btn-sm btn-primary",
-                          on: { click: _vm.trendAndAnalysis }
+                          attrs: {
+                            target: "_blank",
+                            href: _vm.trendAndAnalysis
+                          }
                         },
                         [_vm._v(" Trend and Analysis")]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "div",
+                        { staticClass: "dropdown", attrs: { id: "dropdown" } },
+                        [
+                          _c(
+                            "a",
+                            {
+                              staticClass: "dropdown-toggle",
+                              attrs: {
+                                id: "dropdownMenuButton",
+                                "data-toggle": "dropdown",
+                                "aria-haspopup": "true",
+                                "aria-expanded": "false"
+                              }
+                            },
+                            [
+                              _vm._v(
+                                "\n                                   + Performance Evaluation Rating\n                                "
+                              )
+                            ]
+                          ),
+                          _vm._v(" "),
+                          _vm.performanceEvaluationRating.length
+                            ? _c(
+                                "div",
+                                {
+                                  staticClass: "dropdown-menu",
+                                  attrs: {
+                                    "aria-labelledby": "dropdownMenuButton"
+                                  }
+                                },
+                                [
+                                  _c("div", { staticClass: "row pl-2" }, [
+                                    _c(
+                                      "div",
+                                      { staticClass: "col-md-12 mb-1" },
+                                      [
+                                        _vm._v(
+                                          "1st Quarter: " +
+                                            _vm._s(_vm.firstQuarterRating())
+                                        )
+                                      ]
+                                    ),
+                                    _vm._v(" "),
+                                    _c(
+                                      "div",
+                                      { staticClass: "col-md-12 mb-1" },
+                                      [
+                                        _vm._v(
+                                          "2nd Quarter: " +
+                                            _vm._s(_vm.secondQuarterRating())
+                                        )
+                                      ]
+                                    ),
+                                    _vm._v(" "),
+                                    _c(
+                                      "div",
+                                      { staticClass: "col-md-12 mb-1" },
+                                      [
+                                        _vm._v(
+                                          "3rd Quarter: " +
+                                            _vm._s(_vm.thirdQuarterRating())
+                                        )
+                                      ]
+                                    ),
+                                    _vm._v(" "),
+                                    _c(
+                                      "div",
+                                      { staticClass: "col-md-12 mb-1" },
+                                      [
+                                        _vm._v(
+                                          "4th Quarter: " +
+                                            _vm._s(_vm.fourthQuarterRating())
+                                        )
+                                      ]
+                                    )
+                                  ])
+                                ]
+                              )
+                            : _c(
+                                "div",
+                                {
+                                  staticClass: "dropdown-menu",
+                                  attrs: {
+                                    "aria-labelledby": "dropdownMenuButton"
+                                  }
+                                },
+                                [_vm._m(0)]
+                              )
+                        ]
                       )
                     ])
                   ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "row ml-2" }, [
-                    _c("div", { staticClass: "col-md-2" }, [
-                      _c("div", { staticClass: "form-group" }, [
-                        _c(
-                          "label",
-                          {
-                            staticClass: "form-control-label",
-                            attrs: { for: "role" }
-                          },
-                          [_vm._v("Company")]
-                        ),
-                        _vm._v(" "),
-                        _c(
-                          "select",
-                          {
-                            directives: [
-                              {
-                                name: "model",
-                                rawName: "v-model",
-                                value: _vm.company,
-                                expression: "company"
-                              }
-                            ],
-                            staticClass: "form-control",
-                            on: {
-                              change: [
-                                function($event) {
-                                  var $$selectedVal = Array.prototype.filter
-                                    .call($event.target.options, function(o) {
-                                      return o.selected
-                                    })
-                                    .map(function(o) {
-                                      var val =
-                                        "_value" in o ? o._value : o.value
-                                      return val
-                                    })
-                                  _vm.company = $event.target.multiple
-                                    ? $$selectedVal
-                                    : $$selectedVal[0]
-                                },
-                                function($event) {
-                                  return _vm.changeCompany(
-                                    _vm.company,
-                                    "getCompanies"
-                                  )
-                                }
-                              ]
-                            }
-                          },
-                          _vm._l(_vm.companies, function(company, c) {
-                            return _c(
-                              "option",
-                              { key: c, domProps: { value: company } },
-                              [_vm._v(" " + _vm._s(company.name))]
-                            )
-                          }),
-                          0
-                        ),
-                        _vm._v(" "),
-                        _vm.errors.company
-                          ? _c("span", { staticClass: "text-danger" }, [
-                              _vm._v(_vm._s(_vm.errors.company[0]))
-                            ])
-                          : _vm._e()
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "col-md-2" }, [
-                      _c("div", { staticClass: "form-group" }, [
-                        _c(
-                          "label",
-                          {
-                            staticClass: "form-control-label",
-                            attrs: { for: "role" }
-                          },
-                          [_vm._v("Location")]
-                        ),
-                        _vm._v(" "),
-                        _c(
-                          "select",
-                          {
-                            directives: [
-                              {
-                                name: "model",
-                                rawName: "v-model",
-                                value: _vm.location,
-                                expression: "location"
-                              }
-                            ],
-                            staticClass: "form-control",
-                            on: {
-                              change: [
-                                function($event) {
-                                  var $$selectedVal = Array.prototype.filter
-                                    .call($event.target.options, function(o) {
-                                      return o.selected
-                                    })
-                                    .map(function(o) {
-                                      var val =
-                                        "_value" in o ? o._value : o.value
-                                      return val
-                                    })
-                                  _vm.location = $event.target.multiple
-                                    ? $$selectedVal
-                                    : $$selectedVal[0]
-                                },
-                                function($event) {
-                                  return _vm.changeCompany("", "")
-                                }
-                              ]
-                            }
-                          },
-                          _vm._l(_vm.locations, function(location, l) {
-                            return _c(
-                              "option",
-                              { key: l, domProps: { value: location } },
-                              [_vm._v(" " + _vm._s(location.name))]
-                            )
-                          }),
-                          0
-                        ),
-                        _vm._v(" "),
-                        _vm.errors.location
-                          ? _c("span", { staticClass: "text-danger" }, [
-                              _vm._v(_vm._s(_vm.errors.location[0]))
-                            ])
-                          : _vm._e()
-                      ])
-                    ]),
-                    _vm._v(" "),
                     _c("div", { staticClass: "col-md-2" }, [
                       _c("div", { staticClass: "form-group" }, [
                         _c(
@@ -79012,7 +79054,7 @@ var render = function() {
                                     : $$selectedVal[0]
                                 },
                                 function($event) {
-                                  return _vm.changeCompany("", "")
+                                  return _vm.changeCategory()
                                 }
                               ]
                             }
@@ -79079,7 +79121,7 @@ var render = function() {
                                         : $$selectedVal[0]
                                     },
                                     function($event) {
-                                      return _vm.changeCompany("", "")
+                                      return _vm.changeCategory()
                                     }
                                   ]
                                 }
@@ -79149,7 +79191,7 @@ var render = function() {
                                     : $$selectedVal[0]
                                 },
                                 function($event) {
-                                  return _vm.changeCompany("", "")
+                                  return _vm.changeCategory()
                                 }
                               ]
                             }
@@ -79190,7 +79232,7 @@ var render = function() {
               "table",
               { staticClass: "table align-items-center table-flush " },
               [
-                _vm._m(0),
+                _vm._m(1),
                 _vm._v(" "),
                 _c(
                   "tbody",
@@ -79198,7 +79240,7 @@ var render = function() {
                     return _c("tr", { key: r }, [
                       _c("td", { staticClass: "text-right" }, [
                         _c("div", { staticClass: "dropdown" }, [
-                          _vm._m(1, true),
+                          _vm._m(2, true),
                           _vm._v(" "),
                           _c(
                             "div",
@@ -79356,6 +79398,26 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "row pl-2" }, [
+      _c("div", { staticClass: "col-md-12 mb-1" }, [
+        _vm._v("1st Quarter: N/A")
+      ]),
+      _vm._v(" "),
+      _c("div", { staticClass: "col-md-12 mb-1" }, [
+        _vm._v("2nd Quarter: N/A")
+      ]),
+      _vm._v(" "),
+      _c("div", { staticClass: "col-md-12 mb-1" }, [
+        _vm._v("3rd Quarter: N/A")
+      ]),
+      _vm._v(" "),
+      _c("div", { staticClass: "col-md-12 mb-1" }, [_vm._v("4th Quarter: N/A")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
     return _c("thead", { staticClass: "thead-light" }, [
       _c("tr", [
         _c("th"),
@@ -79481,7 +79543,24 @@ var render = function() {
               "table",
               { staticClass: "table align-items-center table-flush" },
               [
-                _vm._m(0),
+                _c("thead", { staticClass: "thead-light" }, [
+                  _c("tr", [
+                    _c("td", { attrs: { rowspan: "2" } }, [
+                      _vm._v("Area Inspected " + _vm._s(_vm.year))
+                    ]),
+                    _vm._v(" "),
+                    _c(
+                      "td",
+                      {
+                        staticStyle: { "text-align": "center" },
+                        attrs: { colspan: "14" }
+                      },
+                      [_vm._v("5s Rating")]
+                    )
+                  ]),
+                  _vm._v(" "),
+                  _vm._m(0)
+                ]),
                 _vm._v(" "),
                 _c(
                   "tbody",
@@ -79588,44 +79667,32 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("thead", { staticClass: "thead-light" }, [
-      _c("tr", [
-        _c("td", { attrs: { rowspan: "2" } }, [_vm._v("Area Inspected")]),
-        _vm._v(" "),
-        _c(
-          "td",
-          { staticStyle: { "text-align": "center" }, attrs: { colspan: "14" } },
-          [_vm._v("5s Rating")]
-        )
-      ]),
+    return _c("tr", [
+      _c("td", { attrs: { scope: "col" } }, [_vm._v("Jan")]),
       _vm._v(" "),
-      _c("tr", [
-        _c("td", { attrs: { scope: "col" } }, [_vm._v("Jan")]),
-        _vm._v(" "),
-        _c("td", { attrs: { scope: "col" } }, [_vm._v("Feb")]),
-        _vm._v(" "),
-        _c("td", { attrs: { scope: "col" } }, [_vm._v("Mar")]),
-        _vm._v(" "),
-        _c("td", { attrs: { scope: "col" } }, [_vm._v("Apr")]),
-        _vm._v(" "),
-        _c("td", { attrs: { scope: "col" } }, [_vm._v("May")]),
-        _vm._v(" "),
-        _c("td", { attrs: { scope: "col" } }, [_vm._v("Jun")]),
-        _vm._v(" "),
-        _c("td", { attrs: { scope: "col" } }, [_vm._v("Jul")]),
-        _vm._v(" "),
-        _c("td", { attrs: { scope: "col" } }, [_vm._v("Aug")]),
-        _vm._v(" "),
-        _c("td", { attrs: { scope: "col" } }, [_vm._v("Sep")]),
-        _vm._v(" "),
-        _c("td", { attrs: { scope: "col" } }, [_vm._v("Oct")]),
-        _vm._v(" "),
-        _c("td", { attrs: { scope: "col" } }, [_vm._v("Nov")]),
-        _vm._v(" "),
-        _c("td", { attrs: { scope: "col" } }, [_vm._v("Dec")]),
-        _vm._v(" "),
-        _c("td", { attrs: { scope: "col" } }, [_vm._v("Ave.(ytd)")])
-      ])
+      _c("td", { attrs: { scope: "col" } }, [_vm._v("Feb")]),
+      _vm._v(" "),
+      _c("td", { attrs: { scope: "col" } }, [_vm._v("Mar")]),
+      _vm._v(" "),
+      _c("td", { attrs: { scope: "col" } }, [_vm._v("Apr")]),
+      _vm._v(" "),
+      _c("td", { attrs: { scope: "col" } }, [_vm._v("May")]),
+      _vm._v(" "),
+      _c("td", { attrs: { scope: "col" } }, [_vm._v("Jun")]),
+      _vm._v(" "),
+      _c("td", { attrs: { scope: "col" } }, [_vm._v("Jul")]),
+      _vm._v(" "),
+      _c("td", { attrs: { scope: "col" } }, [_vm._v("Aug")]),
+      _vm._v(" "),
+      _c("td", { attrs: { scope: "col" } }, [_vm._v("Sep")]),
+      _vm._v(" "),
+      _c("td", { attrs: { scope: "col" } }, [_vm._v("Oct")]),
+      _vm._v(" "),
+      _c("td", { attrs: { scope: "col" } }, [_vm._v("Nov")]),
+      _vm._v(" "),
+      _c("td", { attrs: { scope: "col" } }, [_vm._v("Dec")]),
+      _vm._v(" "),
+      _c("td", { attrs: { scope: "col" } }, [_vm._v("Ave.(ytd)")])
     ])
   },
   function() {

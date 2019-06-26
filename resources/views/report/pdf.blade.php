@@ -9,8 +9,8 @@
     <main role="main">
         <table class="table align-items-center table-flush">
             <thead class="thead-light">
-                <tr> 
-                    <td rowspan="2">Area Inspected</td>
+                <tr>
+                    <td rowspan="2">Area Inspected  {{ getYear($data) }}</td>
                     <td colspan="14" style="text-align: center">5s Rating</td>
                 </tr>
                 <tr>
@@ -57,6 +57,16 @@
 </html>
 
 <?php
+
+function getYear($data){
+    $year = '';
+    foreach($data as $trend){
+        if(!$trend->reports->isEmpty()){
+            $year = $trend->reports[0]->reporting_year;
+        }
+    }
+    return $year;
+}
 
 function getRating($reports, $item){
     if($reports){
