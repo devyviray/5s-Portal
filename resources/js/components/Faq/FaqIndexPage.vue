@@ -19,7 +19,7 @@
                     <img class="lafil-logo" :src="logoLink">
                     <b>5S PORTAL - FAQs</b>
                 </h1>
-                <breadcrumb></breadcrumb>
+                <breadcrumb :user-role-level="userRoleLevel"></breadcrumb>
             </div>
             <div id="page-inner">
                 <div id="accordion">

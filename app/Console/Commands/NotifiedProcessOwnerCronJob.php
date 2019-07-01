@@ -27,7 +27,7 @@ class NotifiedProcessOwnerCronJob extends Command
      *
      * @var string
      */
-    protected $description = 'Email sent to Process owner';
+    protected $description = 'Email has been sent to process owner with reports close to two days older';
 
     /**
      * Create a new command instance.

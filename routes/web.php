@@ -62,6 +62,7 @@ Route::group(['middleware' => ['auth', 'role:it|administrator|inspector|process 
     Route::patch('/company/{company}', 'CompanyController@update');
     Route::delete('/company/{company}', 'CompanyController@destroy');
     Route::get('/company-location/{id}', 'CompanyController@companyLocation');
+    Route::get('/company-user', 'CompanyController@companyOfUser');
 
      // users
      Route::get('/users', 'UserController@index')->name('users');

@@ -25,6 +25,7 @@
 
 <script>
 export default {
+    props: ['userRoleLevel'],
     data(){
         return {
             companiesWithLocations: [],
@@ -38,7 +39,16 @@ export default {
         fetchCompanies(){
             axios.get('/companies-all')
             .then(response => {
-                this.companiesWithLocations = response.data;
+                this.userRoleLevel < 3 ? this.fetchSpecificCompany() : this.companiesWithLocations = response.data;
+            })
+            .catch(error => { 
+                this.errors = error.response.data.errors;
+            })
+        },
+        fetchSpecificCompany(){
+            axios.get('/company-user')
+            .then(response => {
+                 this.companiesWithLocations = response.data;
             })
             .catch(error => { 
                 this.errors = error.response.data.errors;

@@ -8959,6 +8959,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
+  props: ['userRoleLevel'],
   data: function data() {
     return {
       companiesWithLocations: [],
@@ -8973,9 +8974,18 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       axios.get('/companies-all').then(function (response) {
-        _this.companiesWithLocations = response.data;
+        _this.userRoleLevel < 3 ? _this.fetchSpecificCompany() : _this.companiesWithLocations = response.data;
       })["catch"](function (error) {
         _this.errors = error.response.data.errors;
+      });
+    },
+    fetchSpecificCompany: function fetchSpecificCompany() {
+      var _this2 = this;
+
+      axios.get('/company-user').then(function (response) {
+        _this2.companiesWithLocations = response.data;
+      })["catch"](function (error) {
+        _this2.errors = error.response.data.errors;
       });
     }
   },
@@ -10602,7 +10612,7 @@ __webpack_require__.r(__webpack_exports__);
       areas: [],
       errors: [],
       currentPage: 0,
-      itemsPerPage: 50,
+      itemsPerPage: 10,
       keywords: '',
       loading: false,
       show_operation_line: false
@@ -69823,7 +69833,9 @@ var render = function() {
               _c("b", [_vm._v("5S PORTAL - AREA")])
             ]),
             _vm._v(" "),
-            _c("breadcrumb")
+            _c("breadcrumb", {
+              attrs: { "user-role-level": _vm.userRoleLevel }
+            })
           ],
           1
         ),
@@ -70603,7 +70615,9 @@ var render = function() {
               _c("b", [_vm._v("5S PORTAL - CATEGORIES ")])
             ]),
             _vm._v(" "),
-            _c("breadcrumb")
+            _c("breadcrumb", {
+              attrs: { "user-role-level": _vm.userRoleLevel }
+            })
           ],
           1
         ),
@@ -71293,7 +71307,9 @@ var render = function() {
               _c("b", [_vm._v("5S PORTAL - CHECKLIST")])
             ]),
             _vm._v(" "),
-            _c("breadcrumb")
+            _c("breadcrumb", {
+              attrs: { "user-role-level": _vm.userRoleLevel }
+            })
           ],
           1
         ),
@@ -72279,7 +72295,9 @@ var render = function() {
               _c("b", [_vm._v("5S PORTAL - COMPANY")])
             ]),
             _vm._v(" "),
-            _c("breadcrumb")
+            _c("breadcrumb", {
+              attrs: { "user-role-level": _vm.userRoleLevel }
+            })
           ],
           1
         ),
@@ -73056,7 +73074,9 @@ var render = function() {
               _c("b", [_vm._v("5S PORTAL - COMPANY AREA")])
             ]),
             _vm._v(" "),
-            _c("breadcrumb")
+            _c("breadcrumb", {
+              attrs: { "user-role-level": _vm.userRoleLevel }
+            })
           ],
           1
         ),
@@ -74292,7 +74312,9 @@ var render = function() {
               _c("b", [_vm._v("5S PORTAL - HOME PAGE")])
             ]),
             _vm._v(" "),
-            _c("breadcrumb")
+            _c("breadcrumb", {
+              attrs: { "user-role-level": _vm.userRoleLevel }
+            })
           ],
           1
         ),
@@ -74406,7 +74428,9 @@ var render = function() {
               _c("b", [_vm._v("5S PORTAL - DEPARTMENT")])
             ]),
             _vm._v(" "),
-            _c("breadcrumb")
+            _c("breadcrumb", {
+              attrs: { "user-role-level": _vm.userRoleLevel }
+            })
           ],
           1
         ),
@@ -75146,7 +75170,9 @@ var render = function() {
               _c("b", [_vm._v("5S PORTAL - FAQs")])
             ]),
             _vm._v(" "),
-            _c("breadcrumb")
+            _c("breadcrumb", {
+              attrs: { "user-role-level": _vm.userRoleLevel }
+            })
           ],
           1
         ),
@@ -75920,7 +75946,9 @@ var render = function() {
               _c("b", [_vm._v("5S PORTAL - FAQs")])
             ]),
             _vm._v(" "),
-            _c("breadcrumb")
+            _c("breadcrumb", {
+              attrs: { "user-role-level": _vm.userRoleLevel }
+            })
           ],
           1
         ),
@@ -76066,7 +76094,9 @@ var render = function() {
               _c("b", [_vm._v("5S PORTAL - HOME PAGE")])
             ]),
             _vm._v(" "),
-            _c("breadcrumb")
+            _c("breadcrumb", {
+              attrs: { "user-role-level": _vm.userRoleLevel }
+            })
           ],
           1
         ),
@@ -76615,7 +76645,9 @@ var render = function() {
               _c("b", [_vm._v("5S PORTAL - LOCATION")])
             ]),
             _vm._v(" "),
-            _c("breadcrumb")
+            _c("breadcrumb", {
+              attrs: { "user-role-level": _vm.userRoleLevel }
+            })
           ],
           1
         ),
@@ -77682,7 +77714,9 @@ var render = function() {
               _c("b", [_vm._v("5S PORTAL - OPERATION LINE")])
             ]),
             _vm._v(" "),
-            _c("breadcrumb")
+            _c("breadcrumb", {
+              attrs: { "user-role-level": _vm.userRoleLevel }
+            })
           ],
           1
         ),
@@ -78376,7 +78410,9 @@ var render = function() {
               _c("b", [_vm._v("5S PORTAL - REPORT & RATING ")])
             ]),
             _vm._v(" "),
-            _c("breadcrumb")
+            _c("breadcrumb", {
+              attrs: { "user-role-level": _vm.userRoleLevel }
+            })
           ],
           1
         ),
@@ -79057,7 +79093,9 @@ var render = function() {
               _c("b", [_vm._v("5S PORTAL - REPORT & RATING ")])
             ]),
             _vm._v(" "),
-            _c("breadcrumb")
+            _c("breadcrumb", {
+              attrs: { "user-role-level": _vm.userRoleLevel }
+            })
           ],
           1
         ),
@@ -79981,7 +80019,9 @@ var render = function() {
               _c("b", [_vm._v("5S PORTAL - REPORT & RATING ")])
             ]),
             _vm._v(" "),
-            _c("breadcrumb")
+            _c("breadcrumb", {
+              attrs: { "user-role-level": _vm.userRoleLevel }
+            })
           ],
           1
         ),
@@ -80641,7 +80681,7 @@ var render = function() {
             _c("b", [_vm._v("5S PORTAL - REPORT & RATING ")])
           ]),
           _vm._v(" "),
-          _c("breadcrumb")
+          _c("breadcrumb", { attrs: { "user-role-level": _vm.userRoleLevel } })
         ],
         1
       ),
@@ -80885,7 +80925,7 @@ var render = function() {
             _c("b", [_vm._v("5S PORTAL - REPORT & RATING ")])
           ]),
           _vm._v(" "),
-          _c("breadcrumb")
+          _c("breadcrumb", { attrs: { "user-role-level": _vm.userRoleLevel } })
         ],
         1
       ),
@@ -81503,7 +81543,9 @@ var render = function() {
               _c("b", [_vm._v("5S PORTAL - REPORT & RATING ")])
             ]),
             _vm._v(" "),
-            _c("breadcrumb")
+            _c("breadcrumb", {
+              attrs: { "user-role-level": _vm.userRoleLevel }
+            })
           ],
           1
         ),
@@ -82128,7 +82170,9 @@ var render = function() {
               _c("b", [_vm._v("5S PORTAL - ROLE")])
             ]),
             _vm._v(" "),
-            _c("breadcrumb")
+            _c("breadcrumb", {
+              attrs: { "user-role-level": _vm.userRoleLevel }
+            })
           ],
           1
         ),
@@ -82906,7 +82950,9 @@ var render = function() {
               _c("b", [_vm._v("5S PORTAL - USER")])
             ]),
             _vm._v(" "),
-            _c("breadcrumb")
+            _c("breadcrumb", {
+              attrs: { "user-role-level": _vm.userRoleLevel }
+            })
           ],
           1
         ),

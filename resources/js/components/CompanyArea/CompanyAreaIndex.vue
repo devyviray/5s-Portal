@@ -19,7 +19,7 @@
                     <img class="lafil-logo" :src="logoLink">
                     <b>5S PORTAL - COMPANY AREA</b>
                 </h1>
-                <breadcrumb></breadcrumb>
+                <breadcrumb :user-role-level="userRoleLevel"></breadcrumb>
             </div>
             <div id="page-inner">
                 <div class="card-header border-0">
@@ -323,7 +323,7 @@
                 areas:[],
                 errors: [],
                 currentPage: 0,
-                itemsPerPage: 50,
+                itemsPerPage: 10,
                 keywords: '',
                 loading: false,
                 show_operation_line: false

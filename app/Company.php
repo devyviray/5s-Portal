@@ -20,4 +20,8 @@ class Company extends Model
     public function locations() {
         return $this->belongsToMany(Location::class)->withTimestamps();
     }
+
+    public function companySpecificLocation($locationId){
+        return $this->belongsToMany(Location::class)->where('location_id', '=', $locationId);
+    }
 }

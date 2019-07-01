@@ -22,7 +22,7 @@ class FinalRatingCronJob extends Command
      *
      * @var string
      */
-    protected $description = 'Final rating has been set to those reports exceed 48 hours';
+    protected $description = 'Report rating has been set to final to those reports exceed 48 hours';
 
     /**
      * Create a new command instance.
