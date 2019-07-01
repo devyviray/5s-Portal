@@ -110,6 +110,7 @@
                                     </a>
                                     <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
                                         <a class="dropdown-item" target="_blank" :href="viewReportLink+report.id">View</a>
+                                        <a v-if="report.status == 1" class="dropdown-item" target="_blank" :href="editReportLink+report.id">Edit</a>
                                         <a v-if="report.status == 2" class="dropdown-item" target="_blank" :href="verifiedReportLink+report.id">Validate</a>
                                         <a class="dropdown-item" data-toggle="modal" data-target="#deleteModal" style="cursor: pointer" @click="copyObject(report)">Delete</a>
                                     </div>
@@ -399,6 +400,9 @@
             },
             viewReportLink(){
                return window.location.origin+'/view-report/'; 
+            },
+            editReportLink(){
+                return window.location.origin+'/edit-report/'; 
             },
             verifiedReportLink(){
                 return window.location.origin+'/validate-report/'; 

@@ -97,7 +97,9 @@ Route::group(['middleware' => ['auth', 'role:it|administrator|inspector|process 
     Route::get('/create-report', 'ReportController@create');
     Route::post('/report-filtered', 'ReportController@getFilteredReports');
     Route::get('/validate-report/{reportId}', 'ReportController@validateIndex');
+    Route::get('/edit-report/{reportId}', 'ReportController@editIndex');
     Route::post('/report-validate', 'ReportController@validateReportPerUser');
+    Route::post('/report-update', 'ReportController@updateReport');
     Route::post('/report', 'ReportController@store');
     Route::patch('/report/{report}', 'ReportController@update');
     Route::delete('/report/{report}', 'ReportController@destroy');

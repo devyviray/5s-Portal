@@ -809,8 +809,12 @@ tbody{
 }
 #dropdown:hover>.dropdown-menu {
     display: block;
+    max-height: 525px;
+    overflow-y: scroll;
 }
-  
+.cursor-pointer {
+    cursor: pointer;
+}
 /* .dropdown>.dropdown-toggle:active { */
     /*Without this, clicking will make it sticky*/
       /* pointer-events: none;

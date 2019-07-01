@@ -9,7 +9,10 @@ use Mail;
 use Storage;
 use PDF;
 use Carbon\Carbon;
-use App\Rules\ReportingMonthRule;
+use App\Rules\{
+    ReportingMonthRule,
+    UpdateReportRule
+};
 use App\{
     User,
     Report,
@@ -310,8 +313,66 @@ class ReportController extends Controller
 
     }
 
-     /**
+    /**
      * Display validate page
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function editIndex($reportId){
+
+        return view('report.edit', compact('reportId'));
+
+    }
+
+    /**
+     * Update Report
+     *
+     * @return \Illuminate\Http\Response
+     */
+
+    public function updateReport(Request $request){
+        $request->validate([
+            'id' => ['required', new UpdateReportRule],
+        ]);
+
+        DB::beginTransaction();
+        try {
+            if($request->deleted_uploaded_id){
+                $deletedUploadedId =  strpos($request->deleted_uploaded_id, ',') !== true ? explode(',',$request->deleted_uploaded_id) : $request->deleted_uploaded_id;
+                UploadedFile::whereIn('id', $deletedUploadedId)->get()
+                ->map(function($photo) {
+                    $photo->delete();
+                });
+            }
+
+            $report = Report::with('reportDetail')->where('id', $request->id)->first();
+            foreach($report->reportDetail as $key => $value){
+                $value->update(['points' => explode(',',$request->points)[$key]]);
+            }
+            if($request->has('attachments')){
+                $attachments = $request->file('attachments');
+                $attachmentIds = strpos($request->attachment_ids, ',') !== true ? explode(',',$request->attachment_ids) : $request->attachment_ids;
+                $checklistIds = strpos($request->checklist_ids, ',') !== true ? explode(',',$request->checklist_ids) : $request->checklist_ids;
+                foreach($attachments as $key => $attachment){
+                    $filename = $attachment->getClientOriginalName();
+                    $path = Storage::disk('public')->put('report', $attachment);
+
+                    $uploadedFile = $this->uploadFiles($request->process_owner_id,  $attachmentIds[$key],$checklistIds[$key], $filename,$path);
+                }
+            }
+            
+            DB::commit();
+            return $report;
+
+        } catch (Exception $e) {
+            DB::rollBack();
+        }
+        
+    }
+
+
+     /**
+     * Display trend and analysis page
      *
      * @return \Illuminate\Http\Response
      */
