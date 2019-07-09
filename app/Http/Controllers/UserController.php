@@ -5,7 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use DB;
 use App\{
-    User
+    User,
+    Role
+};
+use App\Mail\{
+    UserCreation
 };
 
 class UserController extends Controller
@@ -49,11 +53,15 @@ class UserController extends Controller
 
         DB::beginTransaction();
         try {
-            if($user = User::create(['password' => bcrypt('password')] + $request->all())){
+            $default_password = substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil(5/strlen($x)) )),1,5);
+            if($user = User::create(['password' => bcrypt($default_password)] + $request->all())){
                 // Assigning of company
                 $user->companies()->sync( (array) $request->company);
                 // Assigning of role
                 $user->syncRoles($request->role);
+                // Send email to user
+                Mail::to($user)->send(new UserCreation(Role::findOrFail($request->role)->name, $default_password));
+            
                 DB::commit();
 
                 return User::with('companies','location', 'roles','department')->where('id', $user->id)->first();

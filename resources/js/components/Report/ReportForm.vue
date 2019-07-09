@@ -143,6 +143,7 @@
                                             <td class="col-sm-2">
                                                 <!-- <select class="form-control" v-model="points[c]"> -->
                                                 <select class="form-control select-points" v-model="checklist.rating">
+                                                    <option value="N/A"> N/A </option>
                                                     <option value="0"> 0 </option>
                                                     <option value="1"> 1 </option>
                                                     <option value="2"> 2 </option>

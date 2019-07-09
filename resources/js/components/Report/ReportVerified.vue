@@ -203,11 +203,15 @@
                 })
             },
             countRating(reportsPerUser){
-                var denominator = reportsPerUser.length * 2;
+                var denominator = 0;
                 var total_points = 0;
-                reportsPerUser.filter(item => total_points = parseInt(total_points) +  parseInt(item.points));
-
-                return this.final_rating = total_points / denominator * 100;
+                reportsPerUser.filter(item => {
+                    if(item.points !== 'N/A'){
+                        total_points = parseInt(total_points) + parseInt(item.points);
+                        denominator = denominator + 1;
+                    }
+                });
+                return this.final_rating = total_points / (denominator * 2) * 100;
             },
             validateReport(){
                 this.enabledBtn();

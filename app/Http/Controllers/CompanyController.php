@@ -29,7 +29,7 @@ class CompanyController extends Controller
      */
 
     public function indexData(){
-        return Company::with('locations')->orderBy('id','desc')->get();
+        return Company::with('locations')->orderBy('name','asc')->get();
     }
 
 

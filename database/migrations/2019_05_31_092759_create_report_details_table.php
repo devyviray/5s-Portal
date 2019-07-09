@@ -19,7 +19,7 @@ class CreateReportDetailsTable extends Migration
             $table->integer('checklist_batch');
             $table->integer('report_id');
             $table->string('name', 1000);
-            $table->integer('points');
+            $table->string('points');
             $table->timestamps();
             $table->softDeletes();
         });

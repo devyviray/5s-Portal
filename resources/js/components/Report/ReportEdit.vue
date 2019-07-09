@@ -102,7 +102,8 @@
                                             <div class="card-body">
                                                 <span>{{ c + 1 +'. '+checklist.name }}</span><br>
                                                 <div class="row">
-                                                    <select class="form-control select-points" v-model="checklist.points" style="width: 60px" :disabled="reportsPerUser[0].status !=1">
+                                                    <select class="form-control select-points" v-model="checklist.points" style="width: 75px" :disabled="reportsPerUser[0].status !=1">
+                                                        <option value="N/A"> N/A </option>
                                                         <option value="0"> 0 </option>
                                                         <option value="1"> 1 </option>
                                                         <option value="2"> 2 </option>
@@ -294,11 +295,15 @@
                 })
             },
             countRating(reportsPerUser){
-                var denominator = reportsPerUser.length * 2;
+                var denominator = 0;
                 var total_points = 0;
-                reportsPerUser.filter(item => total_points = parseInt(total_points) +  parseInt(item.points));
-
-                return this.final_rating = total_points / denominator * 100;
+                reportsPerUser.filter(item => {
+                    if(item.points !== 'N/A'){
+                        total_points = parseInt(total_points) + parseInt(item.points);
+                        denominator = denominator + 1;
+                    }
+                });
+                return this.final_rating = total_points / (denominator * 2) * 100;
             },
             updateReport(){
                 this.loading = true;

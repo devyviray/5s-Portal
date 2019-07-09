@@ -95,7 +95,7 @@
                                             <strong>Success!</strong> Report succesfully approved
                                         </div>
                                         <div class="alert alert-info col-md-12" v-if="show_forChecking">
-                                             <strong>Success!</strong> Report succesfully resent for checking
+                                             <strong>Success!</strong> Report successfully sent to inspector for validation .
                                         </div>
                                     </div>
                                 </div>
@@ -268,11 +268,15 @@
                 })
             },
             countRating(reportsPerUser){
-                var denominator = reportsPerUser.length * 2;
+                var denominator = 0;
                 var total_points = 0;
-                reportsPerUser.filter(item => total_points = total_points + item.points);
-
-                return this.final_rating = total_points / denominator * 100;
+                reportsPerUser.filter(item => {
+                    if(item.points !== 'N/A'){
+                        total_points = parseInt(total_points) + parseInt(item.points);
+                        denominator = denominator + 1;
+                    }
+                });
+                return this.final_rating = total_points / (denominator * 2) * 100;
             },
             disabledBtn(){
                 document.getElementById('btn-checking').disabled = true;

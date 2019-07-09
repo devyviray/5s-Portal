@@ -23,10 +23,10 @@
         </div>
         <div id="page-inner">
             <div class="card">
-                <div class="card-header" v-if="userRoleLevel > 2">
+                <div class="card-header">
                     <div class="row ml-2">
                         <div class="col-md-8"></div>
-                        <div class="col-md-4">
+                        <div class="col-md-4" v-if="userRoleLevel > 2">
                             <button class="btn btn-sm btn-primary" @click="createReport"> Create Report</button>
                             <a target="_blank"  :href="trendAndAnalysis" class="btn btn-sm btn-primary"> Trend and Analysis</a>
                             <div class="dropdown" id="dropdown">
@@ -50,6 +50,9 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>  
+                        <div class="col-md-4" v-else>
+                            <a target="_blank" :href="trendAndAnalysis" class="btn btn-sm btn-primary float-right"> Trend and Analysis</a>
                         </div>
                     </div>
                     <div class="row ml-2">
@@ -110,9 +113,9 @@
                                     </a>
                                     <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
                                         <a class="dropdown-item" target="_blank" :href="viewReportLink+report.id">View</a>
-                                        <a v-if="report.status == 1" class="dropdown-item" target="_blank" :href="editReportLink+report.id">Edit</a>
+                                        <a v-if="report.status == 1 && userRoleLevel > 2" class="dropdown-item" target="_blank" :href="editReportLink+report.id">Edit</a>
                                         <a v-if="report.status == 2" class="dropdown-item" target="_blank" :href="verifiedReportLink+report.id">Validate</a>
-                                        <a class="dropdown-item" data-toggle="modal" data-target="#deleteModal" style="cursor: pointer" @click="copyObject(report)">Delete</a>
+                                        <!-- <a class="dropdown-item" data-toggle="modal" data-target="#deleteModal" style="cursor: pointer" @click="copyObject(report)">Delete</a> -->
                                     </div>
                                 </div> 
                             </td>
