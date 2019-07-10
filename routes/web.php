@@ -12,8 +12,8 @@
 */
 
 Route::get('/', function () {
-    return redirect('/login')->name('login');
-});
+    return redirect('/login');
+})->name('main');
 
 Auth::routes();
 
@@ -23,6 +23,10 @@ Route::group(['middleware' => 'auth'], function(){
     // faq
     Route::get('/faqs-page', 'FaqController@indexPage');
 
+    // Contact Us
+    Route::get('/contact-us', 'ContactUsController@index');
+    Route::post('/contact-us', 'ContactUsController@store');
+
     // Reports
     Route::get('/reports/{company}/{location}', 'ReportController@index')->name('reports');
     Route::get('/reports-all/{company}/{location}', 'ReportController@indexData');
@@ -30,6 +34,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/report-checking', 'ReportController@checkingReportPerUser');
     Route::get('/view-report/{reportId}', 'ReportController@show');
     Route::get('/reports-per-user/{reportId}', 'ReportController@getReportsPerUser');
+    Route::get('/reports-notification', 'ReportController@getReportsNotification');
 });
 
 // Accessible routes for admin , inspector and IT

@@ -452,4 +452,16 @@ class ReportController extends Controller
 
         return $pdf->stream('report.pdf');
     }
+
+    /**
+     * Get notification or report for process owner
+     *
+     * @return \Illuminate\Http\Response
+     */
+
+    public function getReportsNotification(){
+        $reports = Report::where('status', 1)->where('process_owner_id', Auth::user()->id)->get();
+
+        return count($reports);
+    }
 }

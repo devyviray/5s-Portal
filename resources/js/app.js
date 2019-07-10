@@ -52,6 +52,9 @@ Vue.component('faq-index', require('./components/Faq/FaqIndex.vue').default);
 // Faq front page
 Vue.component('faq-index-page', require('./components/Faq/FaqIndexPage.vue').default);
 
+// Contact us
+Vue.component('contact-us-index', require('./components/ContactUs/ContactUsIndex.vue').default);
+
 // Report page
 Vue.component('report-index', require('./components/Report/ReportIndex.vue').default);
 Vue.component('report-form', require('./components/Report/ReportForm.vue').default);
