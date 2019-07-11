@@ -4,7 +4,7 @@
         <ul class="nav navbar-top-links navbar-right">
             <li class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
-                    <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
+                    <i class="fa-user fa-fw"></i> <i class="fa-caret-down"></i>
                 </a>
                 <ul class="dropdown-menu dropdown-user">
                     <li> <a href="#changePasswordModal" data-toggle="modal"><i class="fa fa-user fa-fw"></i> Change Password</a> </li>
