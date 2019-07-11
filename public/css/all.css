@@ -9,7 +9,7 @@ http://creativecommons.org/licenses/by/3.0/
     COMMON  STYLES    
 ------------------------------------------------*/
 body {
-    font-family: 'Open Sans', sans-serif;
+    /* font-family: 'Open Sans', sans-serif; */
     /* background: #3E3E3E; */
 }
 
@@ -883,7 +883,7 @@ tbody{
 } */
 .fa {
   display: inline-block;
-  font-family: FontAwesome;
+  font-family: FontAwesome !important; 
   font-style: normal;
   font-weight: normal;
   line-height: 1;
