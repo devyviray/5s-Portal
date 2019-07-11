@@ -78043,9 +78043,9 @@ var staticRenderFns = [
         }
       },
       [
-        _c("i", { staticClass: "fa-user fa-fw" }),
+        _c("i", { staticClass: "fa fa-user fa-fw" }),
         _vm._v(" "),
-        _c("i", { staticClass: "fa-caret-down" })
+        _c("i", { staticClass: "fa fa-caret-down" })
       ]
     )
   },

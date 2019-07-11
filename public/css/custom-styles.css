@@ -13,6 +13,10 @@ body {
     /* background: #3E3E3E; */
 }
 
+body i {
+    font-family:'FontAwesome'!important;
+}
+
  #wrapper {
     width: 100%;
 }
