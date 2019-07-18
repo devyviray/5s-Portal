@@ -460,8 +460,15 @@ class ReportController extends Controller
      */
 
     public function getReportsNotification(){
-        $reports = Report::where('status', 1)->where('process_owner_id', Auth::user()->id)->get();
-
-        return count($reports);
+        // $reports = Report::where('status', 1)->where('process_owner_id', Auth::user()->id)->get();
+        if(Auth::user()->level() !== 1){
+            $reports = Report::when(Auth::user()->level() == 2, function ($q){
+                $q->where('status' ,1)->where('process_owner_id', Auth::user()->id);
+            })->when(Auth::user()->level() == 3, function ($q){
+                $q->where('status',2)->where('inspector_id', Auth::user()->id);
+            })->get();
+    
+            return count($reports);
+        }
     }
 }

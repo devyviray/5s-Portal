@@ -59,13 +59,13 @@
                                             <div class="form-group row">
                                                 <span class="col-sm-4">Date of Inspection:</span>
                                                 <div class="col-sm-8">
-                                                    <span>{{ this.reportsPerUser[0].date_of_inspection }}</span>
+                                                    <span>{{ moment(this.reportsPerUser[0].date_of_inspection).format('LL') }}</span>
                                                 </div>
                                             </div>
                                             <div class="form-group row">
                                                 <span class="col-sm-4">Time</span>
                                                 <div class="col-sm-8">
-                                                    <span>{{ this.reportsPerUser[0].start_time_of_inspection + ' - ' + this.reportsPerUser[0].end_time_of_inspection  }} </span>
+                                                    <span>{{ moment( this.reportsPerUser[0].start_time_of_inspection, "hh").format('LT') + ' - ' + moment( this.reportsPerUser[0].end_time_of_inspection, "hh").format('LT') }}</span>
                                                 </div>
                                             </div>
                                             <div class="row">
@@ -74,7 +74,7 @@
                                             <div class="row mb-4">
                                                 <div class="col-sm-1"></div>
                                                 <div class="col-sm-10 div-rating">
-                                                    <span>{{ countRating(this.reportsPerUser[0].report_detail) }} %</span>
+                                                    <span>{{ countRating(this.reportsPerUser[0].report_detail) }}%</span>
                                                 </div>
                                                 <div class="col-sm-1"></div>
                                             </div> 
@@ -108,7 +108,7 @@
                                                         <option value="1"> 1 </option>
                                                         <option value="2"> 2 </option>
                                                     </select>
-                                                    <input type="file" multiple="multiple" id="attachments"  class="attachments ml-2 mt-2" accept="image/*" placeholder="Attach file" @change="uploadFileChange($event,c,checklist.id,checklist.checklist_id)">
+                                                    <input type="file" multiple="multiple" :id="'attachments'+c"  class="attachments ml-2 mt-2" accept="image/*" placeholder="Attach file" @change="uploadFileChange($event,c,checklist.id,checklist.checklist_id)">
                                                 </div>
                                                 <div v-for="(points_error, p) in points_errors" :key="p">
                                                     <span class="text-danger" v-if="points_error == c"> This field is required </span>
@@ -164,7 +164,7 @@
                         </div>
                         <div class="modal-footer">
                             <button class="btn btn-secondary" data-dismiss='modal'>Close</button>
-                            <button class="btn btn-primary" @click="updateReport">Update</button>
+                            <button class="btn btn-primary" @click="updateReport" id="updateReport">Update</button>
                         </div>
                         </div>
                     </div>
@@ -181,6 +181,7 @@
     import navbarRight from '../NavbarRight';
     import breadcrumb from '../Breadcrumb';
     import loader from '../Loader';
+    import moment from 'moment';
     export default {
         props: ['userName', 'userRoleLevel' ,'reportId', 'userId'],
         components:{
@@ -216,6 +217,7 @@
             this.fetchReportsPerUser();
         },
         methods:{
+            moment,
             showLoader(){
                this.loading = true;
             },
@@ -266,24 +268,34 @@
                 }
                 //END
 
+                // Check size of each image
+                var fileSizeErrors = 0;
                 for (var i = files.length - 1; i >= 0; i--){
-                    this.attachments.push(files[i]);
-                    this.attachment_index.push(index);
-                    this.attachment_ids.push(id);
-                    this.checklist_ids.push(checklist_id)
-                    this.file_index.push({
-                        id: id,
-                        index: index,
-                        file_index: this.index_count = this.index_count + 1,
-                    });
-                    this.fileSize = this.fileSize+files[i].size / 1024 / 1024;
+                    // this.fileSize = this.fileSize+files[i].size / 1024 / 1024;
+                    var imageSize = files[i].size / 1024 / 1024;
+
+                    if(imageSize > 5){
+                        fileSizeErrors = fileSizeErrors + 1;
+                    }
                 }
-                // if(this.fileSize > 5){
-                //     alert('File size exceeds 5 MB');
-                //     document.getElementById('attachments').value = "";
-                //     this.attachments = [];
-                //     this.fileSize = 0;
-                // }
+                
+                // If no errors attach file to an array
+                if(fileSizeErrors == 0){
+                    for (var i = files.length - 1; i >= 0; i--){
+                        this.attachments.push(files[i]);
+                        this.attachment_index.push(index);
+                        this.attachment_ids.push(id);
+                        this.checklist_ids.push(checklist_id)
+                        this.file_index.push({
+                            id: id,
+                            index: index,
+                            file_index: this.index_count = this.index_count + 1,
+                        });
+                    }
+                }else{//Remove attachment
+                    alert('File size exceeds 5 MB');
+                    document.getElementById('attachments'+index).value = "";
+                }
             },
             fetchReportsPerUser(){
                 axios.get(`/reports-per-user/${this.reportId}`)
@@ -303,13 +315,15 @@
                         denominator = denominator + 1;
                     }
                 });
-                return this.final_rating = total_points / (denominator * 2) * 100;
+                this.final_rating = total_points / (denominator * 2) * 100;
+                return this.final_rating.toFixed(2);
             },
             updateReport(){
+
+                document.getElementById("updateReport").disabled = true;
                 this.loading = true;
                 this.enabledBtn();
                 this.errors = [];
-
                 let t = this;
                 this.points_errors = [];
                 this.reportsPerUser[0].report_detail.filter(function(item) {
@@ -334,12 +348,14 @@
                     $('#updateModal').modal('hide');
                     this.loading = false;
                     window.location.reload();
+                    document.getElementById("updateReport").disabled = false;
                 })
                 .catch(error => {
                     this.errors = error.response.data.errors
                     this.enabledBtn();
                     $('#updateModal').modal('hide');
                     this.loading = false;
+                    document.getElementById("updateReport").disabled = false;
                 })
             },
             disabledBtn(){

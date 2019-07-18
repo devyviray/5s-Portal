@@ -8976,13 +8976,9 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       axios.get('/companies-all').then(function (response) {
-        if (_this.userRoleLevel < 3) {
-          _this.fetchSpecificCompany();
+        _this.userRoleLevel < 3 ? _this.fetchSpecificCompany() : _this.companiesWithLocations = response.data;
 
-          _this.fetchNotification();
-        } else {
-          _this.companiesWithLocations = response.data;
-        }
+        _this.fetchNotification();
       })["catch"](function (error) {
         _this.errors = error.response.data.errors;
       });
@@ -13251,6 +13247,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _NavbarRight__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../NavbarRight */ "./resources/js/components/NavbarRight.vue");
 /* harmony import */ var _Breadcrumb__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../Breadcrumb */ "./resources/js/components/Breadcrumb.vue");
 /* harmony import */ var _Loader__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../Loader */ "./resources/js/components/Loader.vue");
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_4__);
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
@@ -13441,6 +13439,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
 
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['userName', 'userRoleLevel', 'reportId', 'userId'],
   components: {
@@ -13476,6 +13475,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
     this.fetchReportsPerUser();
   },
   methods: {
+    moment: moment__WEBPACK_IMPORTED_MODULE_4___default.a,
     showLoader: function showLoader() {
       this.loading = true;
     },
@@ -13542,26 +13542,38 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
           }), 1);
         });
       } //END
+      // Check size of each image
 
+
+      var fileSizeErrors = 0;
 
       for (var i = files.length - 1; i >= 0; i--) {
-        this.attachments.push(files[i]);
-        this.attachment_index.push(index);
-        this.attachment_ids.push(id);
-        this.checklist_ids.push(checklist_id);
-        this.file_index.push({
-          id: id,
-          index: index,
-          file_index: this.index_count = this.index_count + 1
-        });
-        this.fileSize = this.fileSize + files[i].size / 1024 / 1024;
-      } // if(this.fileSize > 5){
-      //     alert('File size exceeds 5 MB');
-      //     document.getElementById('attachments').value = "";
-      //     this.attachments = [];
-      //     this.fileSize = 0;
-      // }
+        // this.fileSize = this.fileSize+files[i].size / 1024 / 1024;
+        var imageSize = files[i].size / 1024 / 1024;
 
+        if (imageSize > 5) {
+          fileSizeErrors = fileSizeErrors + 1;
+        }
+      } // If no errors attach file to an array
+
+
+      if (fileSizeErrors == 0) {
+        for (var i = files.length - 1; i >= 0; i--) {
+          this.attachments.push(files[i]);
+          this.attachment_index.push(index);
+          this.attachment_ids.push(id);
+          this.checklist_ids.push(checklist_id);
+          this.file_index.push({
+            id: id,
+            index: index,
+            file_index: this.index_count = this.index_count + 1
+          });
+        }
+      } else {
+        //Remove attachment
+        alert('File size exceeds 5 MB');
+        document.getElementById('attachments' + index).value = "";
+      }
     },
     fetchReportsPerUser: function fetchReportsPerUser() {
       var _this2 = this;
@@ -13581,11 +13593,13 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
           denominator = denominator + 1;
         }
       });
-      return this.final_rating = total_points / (denominator * 2) * 100;
+      this.final_rating = total_points / (denominator * 2) * 100;
+      return this.final_rating.toFixed(2);
     },
     updateReport: function updateReport() {
       var _this3 = this;
 
+      document.getElementById("updateReport").disabled = true;
       this.loading = true;
       this.enabledBtn();
       this.errors = [];
@@ -13612,6 +13626,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
         $('#updateModal').modal('hide');
         _this3.loading = false;
         window.location.reload();
+        document.getElementById("updateReport").disabled = false;
       })["catch"](function (error) {
         _this3.errors = error.response.data.errors;
 
@@ -13619,6 +13634,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
         $('#updateModal').modal('hide');
         _this3.loading = false;
+        document.getElementById("updateReport").disabled = false;
       });
     },
     disabledBtn: function disabledBtn() {
@@ -13983,25 +13999,37 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
           }), 1);
         });
       } //END
+      // Check size of each image
 
+
+      var fileSizeErrors = 0;
 
       for (var i = files.length - 1; i >= 0; i--) {
-        this.attachments.push(files[i]);
-        this.attachment_index.push(index);
-        this.attachment_ids.push(id);
-        this.file_index.push({
-          id: id,
-          index: index,
-          file_index: this.index_count = this.index_count + 1
-        });
-        this.fileSize = this.fileSize + files[i].size / 1024 / 1024;
-      } // if(this.fileSize > 5){
-      //     alert('File size exceeds 5 MB');
-      //     document.getElementById('attachments').value = "";
-      //     this.attachments = [];
-      //     this.fileSize = 0;
-      // }
+        // this.fileSize = this.fileSize+files[i].size / 1024 / 1024;
+        var imageSize = files[i].size / 1024 / 1024;
 
+        if (imageSize > 5) {
+          fileSizeErrors = fileSizeErrors + 1;
+        }
+      } // If no errors attach file to an array
+
+
+      if (fileSizeErrors == 0) {
+        for (var i = files.length - 1; i >= 0; i--) {
+          this.attachments.push(files[i]);
+          this.attachment_index.push(index);
+          this.attachment_ids.push(id);
+          this.file_index.push({
+            id: id,
+            index: index,
+            file_index: this.index_count = this.index_count + 1
+          });
+        }
+      } else {
+        //Remove attachment
+        alert('File size exceeds 5 MB');
+        document.getElementById('attachments' + index).value = "";
+      }
     },
     changeCompany: function changeCompany(company, action) {
       var _this2 = this;
@@ -14102,6 +14130,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
     addReport: function addReport(selected_checklist, points) {
       var _this9 = this;
 
+      document.getElementById("addReport").disabled = true;
       this.loading = true;
       this.formData = new FormData();
       var t = this;
@@ -14137,10 +14166,12 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
         _this9.show_added = true;
         _this9.loading = false;
+        document.getElementById("addReport").disabled = false;
       })["catch"](function (error) {
         _this9.errors = error.response.data.errors;
         _this9.show_added = false;
         _this9.loading = false;
+        document.getElementById("addReport").disabled = false;
       });
     },
     resetForm: function resetForm() {
@@ -14856,6 +14887,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue_multiselect__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue_multiselect__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _NavbarRight__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../NavbarRight */ "./resources/js/components/NavbarRight.vue");
 /* harmony import */ var _Breadcrumb__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../Breadcrumb */ "./resources/js/components/Breadcrumb.vue");
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_3__);
 //
 //
 //
@@ -15023,6 +15056,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+
 
 
 
@@ -15050,6 +15084,7 @@ __webpack_require__.r(__webpack_exports__);
     this.fetchReportsPerUser();
   },
   methods: {
+    moment: moment__WEBPACK_IMPORTED_MODULE_3___default.a,
     fetchReportsPerUser: function fetchReportsPerUser() {
       var _this = this;
 
@@ -15068,7 +15103,8 @@ __webpack_require__.r(__webpack_exports__);
           denominator = denominator + 1;
         }
       });
-      return this.final_rating = total_points / (denominator * 2) * 100;
+      this.final_rating = total_points / (denominator * 2) * 100;
+      return this.final_rating.toFixed(2);
     },
     validateReport: function validateReport() {
       var _this2 = this;
@@ -15433,7 +15469,8 @@ __webpack_require__.r(__webpack_exports__);
           denominator = denominator + 1;
         }
       });
-      return this.final_rating = total_points / (denominator * 2) * 100;
+      this.final_rating = total_points / (denominator * 2) * 100;
+      return this.final_rating.toFixed(2);
     },
     disabledBtn: function disabledBtn() {
       document.getElementById('btn-checking').disabled = true;
@@ -70658,7 +70695,7 @@ var render = function() {
             [_vm._v("\n                    Report & Rating\n                ")]
           ),
           _vm._v(" "),
-          _vm.userRoleLevel < 3
+          _vm.notifications !== 0
             ? _c(
                 "span",
                 {
@@ -78981,8 +79018,12 @@ var render = function() {
                                       _c("span", [
                                         _vm._v(
                                           _vm._s(
-                                            this.reportsPerUser[0]
-                                              .date_of_inspection
+                                            _vm
+                                              .moment(
+                                                this.reportsPerUser[0]
+                                                  .date_of_inspection
+                                              )
+                                              .format("LL")
                                           )
                                         )
                                       ])
@@ -78998,12 +79039,22 @@ var render = function() {
                                       _c("span", [
                                         _vm._v(
                                           _vm._s(
-                                            this.reportsPerUser[0]
-                                              .start_time_of_inspection +
+                                            _vm
+                                              .moment(
+                                                this.reportsPerUser[0]
+                                                  .start_time_of_inspection,
+                                                "hh"
+                                              )
+                                              .format("LT") +
                                               " - " +
-                                              this.reportsPerUser[0]
-                                                .end_time_of_inspection
-                                          ) + " "
+                                              _vm
+                                                .moment(
+                                                  this.reportsPerUser[0]
+                                                    .end_time_of_inspection,
+                                                  "hh"
+                                                )
+                                                .format("LT")
+                                          )
                                         )
                                       ])
                                     ])
@@ -79025,7 +79076,7 @@ var render = function() {
                                                 this.reportsPerUser[0]
                                                   .report_detail
                                               )
-                                            ) + " %"
+                                            ) + "%"
                                           )
                                         ])
                                       ]
@@ -79195,7 +79246,7 @@ var render = function() {
                                             attrs: {
                                               type: "file",
                                               multiple: "multiple",
-                                              id: "attachments",
+                                              id: "attachments" + c,
                                               accept: "image/*",
                                               placeholder: "Attach file"
                                             },
@@ -79384,6 +79435,7 @@ var render = function() {
                         "button",
                         {
                           staticClass: "btn btn-primary",
+                          attrs: { id: "updateReport" },
                           on: { click: _vm.updateReport }
                         },
                         [_vm._v("Update")]
@@ -80132,6 +80184,7 @@ var render = function() {
                           "button",
                           {
                             staticClass: "btn btn-block btn-primary",
+                            attrs: { id: "addReport" },
                             on: {
                               click: function($event) {
                                 return _vm.addReport(
@@ -80321,7 +80374,7 @@ var render = function() {
                                           attrs: {
                                             type: "file",
                                             multiple: "multiple",
-                                            id: "attachments",
+                                            id: "attachments" + c,
                                             accept: "image/*",
                                             placeholder: "Attach file"
                                           },
@@ -80859,18 +80912,6 @@ var render = function() {
                                 "dropdown-menu dropdown-menu-right dropdown-menu-arrow"
                             },
                             [
-                              _c(
-                                "a",
-                                {
-                                  staticClass: "dropdown-item",
-                                  attrs: {
-                                    target: "_blank",
-                                    href: _vm.viewReportLink + report.id
-                                  }
-                                },
-                                [_vm._v("View")]
-                              ),
-                              _vm._v(" "),
                               report.status == 1 && _vm.userRoleLevel > 2
                                 ? _c(
                                     "a",
@@ -80885,7 +80926,21 @@ var render = function() {
                                   )
                                 : _vm._e(),
                               _vm._v(" "),
-                              report.status == 2
+                              _c(
+                                "a",
+                                {
+                                  staticClass: "dropdown-item",
+                                  attrs: {
+                                    target: "_blank",
+                                    href: _vm.viewReportLink + report.id
+                                  }
+                                },
+                                [_vm._v("View")]
+                              ),
+                              _vm._v(" "),
+                              report.status == 2 &&
+                              _vm.userRoleLevel > 2 &&
+                              _vm.userId == report.inspector_id
                                 ? _c(
                                     "a",
                                     {
@@ -81492,8 +81547,12 @@ var render = function() {
                                     _c("span", [
                                       _vm._v(
                                         _vm._s(
-                                          this.reportsPerUser[0]
-                                            .date_of_inspection
+                                          _vm
+                                            .moment(
+                                              this.reportsPerUser[0]
+                                                .date_of_inspection
+                                            )
+                                            .format("LL")
                                         )
                                       )
                                     ])
@@ -81509,12 +81568,22 @@ var render = function() {
                                     _c("span", [
                                       _vm._v(
                                         _vm._s(
-                                          this.reportsPerUser[0]
-                                            .start_time_of_inspection +
+                                          _vm
+                                            .moment(
+                                              this.reportsPerUser[0]
+                                                .start_time_of_inspection,
+                                              "hh"
+                                            )
+                                            .format("LT") +
                                             " - " +
-                                            this.reportsPerUser[0]
-                                              .end_time_of_inspection
-                                        ) + " "
+                                            _vm
+                                              .moment(
+                                                this.reportsPerUser[0]
+                                                  .end_time_of_inspection,
+                                                "hh"
+                                              )
+                                              .format("LT")
+                                        )
                                       )
                                     ])
                                   ])
@@ -81536,7 +81605,7 @@ var render = function() {
                                               this.reportsPerUser[0]
                                                 .report_detail
                                             )
-                                          ) + " %"
+                                          ) + "%"
                                         )
                                       ])
                                     ]
@@ -82112,8 +82181,12 @@ var render = function() {
                                       _c("span", [
                                         _vm._v(
                                           _vm._s(
-                                            this.reportsPerUser[0]
-                                              .date_of_inspection
+                                            _vm
+                                              .moment(
+                                                this.reportsPerUser[0]
+                                                  .date_of_inspection
+                                              )
+                                              .format("LL")
                                           )
                                         )
                                       ])
@@ -82129,11 +82202,21 @@ var render = function() {
                                       _c("span", [
                                         _vm._v(
                                           _vm._s(
-                                            this.reportsPerUser[0]
-                                              .start_time_of_inspection +
+                                            _vm
+                                              .moment(
+                                                this.reportsPerUser[0]
+                                                  .start_time_of_inspection,
+                                                "hh"
+                                              )
+                                              .format("LT") +
                                               " - " +
-                                              this.reportsPerUser[0]
-                                                .end_time_of_inspection
+                                              _vm
+                                                .moment(
+                                                  this.reportsPerUser[0]
+                                                    .end_time_of_inspection,
+                                                  "hh"
+                                                )
+                                                .format("LT")
                                           ) + " "
                                         )
                                       ])
@@ -82156,7 +82239,7 @@ var render = function() {
                                                 this.reportsPerUser[0]
                                                   .report_detail
                                               )
-                                            ) + " %"
+                                            ) + "%"
                                           )
                                         ])
                                       ]
@@ -82165,7 +82248,7 @@ var render = function() {
                                     _c("div", { staticClass: "col-sm-1" })
                                   ]),
                                   _vm._v(" "),
-                                  _vm._m(1)
+                                  _c("div", { staticClass: "row mb-2" })
                                 ])
                               : _vm._e(),
                             _vm._v(" "),
@@ -82185,7 +82268,7 @@ var render = function() {
                                     )
                                   ]),
                                   _vm._v(" "),
-                                  _vm._m(2)
+                                  _vm._m(1)
                                 ])
                               : _vm._e(),
                             _vm._v(" "),
@@ -82434,9 +82517,9 @@ var render = function() {
                 },
                 [
                   _c("div", { staticClass: "modal-content" }, [
-                    _vm._m(3),
+                    _vm._m(2),
                     _vm._v(" "),
-                    _vm._m(4),
+                    _vm._m(3),
                     _vm._v(" "),
                     _c("div", { staticClass: "modal-footer" }, [
                       _c(
@@ -82475,18 +82558,6 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "row" }, [
       _c("h1", { staticClass: "col-sm-12" }, [_vm._v("Rating:")])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "row mb-2" }, [
-      _c(
-        "a",
-        { staticClass: "summary-btn", attrs: { href: "javascript:void(0)" } },
-        [_vm._v("View Summary Report")]
-      )
     ])
   },
   function() {

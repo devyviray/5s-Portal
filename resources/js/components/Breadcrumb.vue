@@ -7,7 +7,7 @@
                     <a style=" color: #ffff;" class="dropdown-toggle"  id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Report & Rating
                     </a>
-                    <span v-if="userRoleLevel < 3" class="badge text-white" style="background-color: #f80031;">{{ notifications }}</span>
+                    <span v-if="notifications !== 0" class="badge text-white" style="background-color: #f80031;">{{ notifications }}</span>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                         <div v-for="(company, c) in companiesWithLocations" :key="c">
                             <div v-for="(location, l) in company.locations" :key="l">
@@ -41,12 +41,8 @@ export default {
         fetchCompanies(){
             axios.get('/companies-all')
             .then(response => {
-                if(this.userRoleLevel < 3){
-                    this.fetchSpecificCompany();
-                    this.fetchNotification();
-                }else{
-                    this.companiesWithLocations = response.data;
-                }
+                this.userRoleLevel < 3 ?  this.fetchSpecificCompany() : this.companiesWithLocations = response.data;
+                this.fetchNotification();
             })
             .catch(error => { 
                 this.errors = error.response.data.errors;

@@ -114,7 +114,7 @@
                                 <div class="form-group row">
                                     <div class="col-sm-4"></div>
                                     <div class="col-sm-4">
-                                    <button class="btn btn-block btn-primary" @click="addReport(selected_checklist,points)"> POST</button>
+                                    <button class="btn btn-block btn-primary" @click="addReport(selected_checklist,points)" id="addReport"> POST</button>
                                     </div>
                                     <div class="col-sm-4"></div>
                                 </div>
@@ -153,7 +153,7 @@
                                                 </div>
                                             </td>
                                             <td class="col-sm-3">
-                                                <input type="file" multiple="multiple" id="attachments"  class="attachments" accept="image/*" placeholder="Attach file" @change="uploadFileChange($event,c,checklist.id)"><br>
+                                                <input type="file" multiple="multiple" :id="'attachments'+c"  class="attachments" accept="image/*" placeholder="Attach file" @change="uploadFileChange($event,c,checklist.id)"><br>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -286,23 +286,33 @@
                 }
                 //END
 
+                // Check size of each image
+                var fileSizeErrors = 0;
                 for (var i = files.length - 1; i >= 0; i--){
-                    this.attachments.push(files[i]);
-                    this.attachment_index.push(index);
-                    this.attachment_ids.push(id);
-                    this.file_index.push({
-                        id: id,
-                        index: index,
-                        file_index: this.index_count = this.index_count + 1,
-                    });
-                    this.fileSize = this.fileSize+files[i].size / 1024 / 1024;
+                    // this.fileSize = this.fileSize+files[i].size / 1024 / 1024;
+                    var imageSize = files[i].size / 1024 / 1024;
+
+                    if(imageSize > 5){
+                        fileSizeErrors = fileSizeErrors + 1;
+                    }
                 }
-                // if(this.fileSize > 5){
-                //     alert('File size exceeds 5 MB');
-                //     document.getElementById('attachments').value = "";
-                //     this.attachments = [];
-                //     this.fileSize = 0;
-                // }
+                
+                // If no errors attach file to an array
+                if(fileSizeErrors == 0){
+                    for (var i = files.length - 1; i >= 0; i--){
+                        this.attachments.push(files[i]);
+                        this.attachment_index.push(index);
+                        this.attachment_ids.push(id);
+                        this.file_index.push({
+                            id: id,
+                            index: index,
+                            file_index: this.index_count = this.index_count + 1,
+                        });
+                    }
+                }else{//Remove attachment
+                    alert('File size exceeds 5 MB');
+                    document.getElementById('attachments'+index).value = "";
+                }
             },
             changeCompany(company,action){
                 if(action == 'getCompanies'){
@@ -393,7 +403,8 @@
                 removeElements( document.querySelectorAll(".attachments"));
             },
             addReport(selected_checklist,points){
-
+                
+                document.getElementById("addReport").disabled = true;
                 this.loading = true;
                 this.formData = new FormData();
                 let t = this;
@@ -428,11 +439,13 @@
                     this.resetForm();
                     this.show_added = true;
                     this.loading = false;
+                    document.getElementById("addReport").disabled = false;
                 })
                 .catch(error => {
                     this.errors = error.response.data.errors;
                     this.show_added = false;
                     this.loading = false;
+                    document.getElementById("addReport").disabled = false;
                 });
             },
             resetForm(){

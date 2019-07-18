@@ -112,9 +112,9 @@
                                         <i class="fa fa-ellipsis-v"></i>
                                     </a>
                                     <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
-                                        <a class="dropdown-item" target="_blank" :href="viewReportLink+report.id">View</a>
                                         <a v-if="report.status == 1 && userRoleLevel > 2" class="dropdown-item" target="_blank" :href="editReportLink+report.id">Edit</a>
-                                        <a v-if="report.status == 2" class="dropdown-item" target="_blank" :href="verifiedReportLink+report.id">Validate</a>
+                                        <a class="dropdown-item" target="_blank" :href="viewReportLink+report.id">View</a>
+                                        <a v-if="report.status == 2 && userRoleLevel > 2 && userId == report.inspector_id" class="dropdown-item" target="_blank" :href="verifiedReportLink+report.id">Validate</a>
                                         <!-- <a class="dropdown-item" data-toggle="modal" data-target="#deleteModal" style="cursor: pointer" @click="copyObject(report)">Delete</a> -->
                                     </div>
                                 </div> 

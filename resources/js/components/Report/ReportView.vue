@@ -59,13 +59,13 @@
                                         <div class="form-group row">
                                             <span class="col-sm-4">Date of Inspection:</span>
                                             <div class="col-sm-8">
-                                                <span>{{ this.reportsPerUser[0].date_of_inspection }}</span>
+                                                <span>{{ moment(this.reportsPerUser[0].date_of_inspection).format('LL') }}</span>
                                             </div>
                                         </div>
                                         <div class="form-group row">
                                             <span class="col-sm-4">Time</span>
                                             <div class="col-sm-8">
-                                                <span>{{ this.reportsPerUser[0].start_time_of_inspection + ' - ' + this.reportsPerUser[0].end_time_of_inspection  }} </span>
+                                                <span>{{ moment( this.reportsPerUser[0].start_time_of_inspection, "hh").format('LT') + ' - ' + moment( this.reportsPerUser[0].end_time_of_inspection, "hh").format('LT') }} </span>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -74,12 +74,12 @@
                                         <div class="row mb-2">
                                             <div class="col-sm-1"></div>
                                             <div class="col-sm-10 div-rating">
-                                                <span>{{ countRating(this.reportsPerUser[0].report_detail) }} %</span>
+                                                <span>{{ countRating(this.reportsPerUser[0].report_detail) }}%</span>
                                             </div>
                                             <div class="col-sm-1"></div>
                                         </div>
                                         <div class="row mb-2">
-                                            <a class="summary-btn" href="javascript:void(0)">View Summary Report</a>
+                                            <!-- <a class="summary-btn" href="javascript:void(0)">View Summary Report</a> -->
                                         </div>   
                                     </div>
                                     <div class="form-group row" v-if="this.reportsPerUser[0].status == 1 && this.userId == this.reportsPerUser[0].process_owner_id">
@@ -276,7 +276,8 @@
                         denominator = denominator + 1;
                     }
                 });
-                return this.final_rating = total_points / (denominator * 2) * 100;
+                this.final_rating = total_points / (denominator * 2) * 100;
+                return  this.final_rating.toFixed(2);
             },
             disabledBtn(){
                 document.getElementById('btn-checking').disabled = true;
