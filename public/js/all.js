@@ -15056,6 +15056,18 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -15072,6 +15084,8 @@ __webpack_require__.r(__webpack_exports__);
       reportsPerUser: [],
       comments: [],
       points_errors: [],
+      accepted_ids: [],
+      rejected_ids: [],
       final_rating: '',
       show_forChecking: false,
       errors: [],
@@ -15109,6 +15123,11 @@ __webpack_require__.r(__webpack_exports__);
     validateReport: function validateReport() {
       var _this2 = this;
 
+      if (!this.accepted_ids.length && !this.rejected_ids.length) {
+        alert('Please validate comments');
+        return false;
+      }
+
       this.enabledBtn();
       var report_ids = [];
       this.reportsPerUser.filter(function (item) {
@@ -15123,7 +15142,9 @@ __webpack_require__.r(__webpack_exports__);
       axios.post('/report-validate', {
         ids: report_ids,
         final_rating: this.final_rating,
-        points: this.points
+        points: this.points,
+        accepted_ids: this.accepted_ids,
+        rejected_ids: this.rejected_ids
       }).then(function (response) {
         _this2.show_approved = true;
 
@@ -15136,6 +15157,22 @@ __webpack_require__.r(__webpack_exports__);
 
         _this2.enabledBtn();
       });
+    },
+    acceptComment: function acceptComment(id, checklistId) {
+      this.accepted_ids.push(id);
+      var element = document.getElementById('accepted-' + id);
+      element.classList.remove("d-none");
+      var element2 = document.getElementById('action-' + id);
+      element2.classList.add('d-none');
+      document.getElementById('point-' + checklistId).style.borderColor = "red";
+    },
+    rejectComment: function rejectComment(id, checklistId) {
+      this.rejected_ids.push(id);
+      var element = document.getElementById('rejected-' + id);
+      element.classList.remove("d-none");
+      var element2 = document.getElementById('action-' + id);
+      element2.classList.add('d-none');
+      document.getElementById('point-' + checklistId).style.borderColor = "red";
     },
     disabledBtn: function disabledBtn() {
       document.getElementById('btn-approved').disabled = true;
@@ -81683,8 +81720,9 @@ var render = function() {
                                         ],
                                         staticClass:
                                           "form-control select-points",
-                                        staticStyle: { width: "60px" },
+                                        staticStyle: { width: "75px" },
                                         attrs: {
+                                          id: "point-" + checklist.id,
                                           disabled:
                                             _vm.reportsPerUser[0].status != 2
                                         },
@@ -81715,6 +81753,12 @@ var render = function() {
                                         }
                                       },
                                       [
+                                        _c(
+                                          "option",
+                                          { attrs: { value: "N/A" } },
+                                          [_vm._v(" N/A ")]
+                                        ),
+                                        _vm._v(" "),
                                         _c(
                                           "option",
                                           { attrs: { value: "0" } },
@@ -81783,40 +81827,124 @@ var render = function() {
                                               _vm._v(" " + _vm._s(u + 1) + " ")
                                             ]),
                                             _vm._v(" "),
-                                            _c("input", {
-                                              directives: [
-                                                {
-                                                  name: "model",
-                                                  rawName: "v-model",
-                                                  value: uploadFile.comment,
-                                                  expression:
-                                                    "uploadFile.comment"
-                                                }
-                                              ],
-                                              staticClass:
-                                                "form-control comment-input",
-                                              attrs: {
-                                                type: "text",
-                                                id: uploadFile.id,
-                                                placeholder: "Comment...",
-                                                disabled: ""
-                                              },
-                                              domProps: {
-                                                value: uploadFile.comment
-                                              },
-                                              on: {
-                                                input: function($event) {
-                                                  if ($event.target.composing) {
-                                                    return
+                                            _c("div", { staticClass: "row" }, [
+                                              _c("div", [
+                                                _c(
+                                                  "span",
+                                                  {
+                                                    staticClass:
+                                                      "text-success d-none",
+                                                    attrs: {
+                                                      id:
+                                                        "accepted-" +
+                                                        uploadFile.id
+                                                    }
+                                                  },
+                                                  [_vm._v("Comment Accepted")]
+                                                ),
+                                                _vm._v(" "),
+                                                _c(
+                                                  "span",
+                                                  {
+                                                    staticClass:
+                                                      "text-danger d-none",
+                                                    attrs: {
+                                                      id:
+                                                        "rejected-" +
+                                                        uploadFile.id
+                                                    }
+                                                  },
+                                                  [_vm._v("Comment Rejected")]
+                                                ),
+                                                _vm._v(" "),
+                                                _c(
+                                                  "div",
+                                                  {
+                                                    attrs: {
+                                                      id:
+                                                        "action-" +
+                                                        uploadFile.id
+                                                    }
+                                                  },
+                                                  [
+                                                    _c(
+                                                      "span",
+                                                      {
+                                                        staticClass:
+                                                          "comment-status",
+                                                        on: {
+                                                          click: function(
+                                                            $event
+                                                          ) {
+                                                            return _vm.acceptComment(
+                                                              uploadFile.id,
+                                                              checklist.id
+                                                            )
+                                                          }
+                                                        }
+                                                      },
+                                                      [_vm._v(" ✔")]
+                                                    ),
+                                                    _vm._v(" "),
+                                                    _c(
+                                                      "span",
+                                                      {
+                                                        staticClass:
+                                                          "comment-status",
+                                                        on: {
+                                                          click: function(
+                                                            $event
+                                                          ) {
+                                                            return _vm.rejectComment(
+                                                              uploadFile.id,
+                                                              checklist.id
+                                                            )
+                                                          }
+                                                        }
+                                                      },
+                                                      [_vm._v(" ✖")]
+                                                    )
+                                                  ]
+                                                )
+                                              ]),
+                                              _vm._v(" "),
+                                              _c("input", {
+                                                directives: [
+                                                  {
+                                                    name: "model",
+                                                    rawName: "v-model",
+                                                    value: uploadFile.comment,
+                                                    expression:
+                                                      "uploadFile.comment"
                                                   }
-                                                  _vm.$set(
-                                                    uploadFile,
-                                                    "comment",
-                                                    $event.target.value
-                                                  )
+                                                ],
+                                                staticClass:
+                                                  "form-control comment-input",
+                                                attrs: {
+                                                  type: "text",
+                                                  id: uploadFile.id,
+                                                  placeholder: "Comment...",
+                                                  disabled: ""
+                                                },
+                                                domProps: {
+                                                  value: uploadFile.comment
+                                                },
+                                                on: {
+                                                  input: function($event) {
+                                                    if (
+                                                      $event.target.composing
+                                                    ) {
+                                                      return
+                                                    }
+                                                    _vm.$set(
+                                                      uploadFile,
+                                                      "comment",
+                                                      $event.target.value
+                                                    )
+                                                  }
                                                 }
-                                              }
-                                            })
+                                              })
+                                            ])
                                           ]
                                         )
                                       }),

@@ -23,6 +23,7 @@ class CreateUploadedFilesTable extends Migration
             $table->string('file_path');
             $table->string('model');
             $table->string('comment', 1000)->nullable();
+            $table->integer('status');
             $table->timestamps();
             $table->softDeletes();
         });

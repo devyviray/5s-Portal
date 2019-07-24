@@ -299,6 +299,14 @@ class ReportController extends Controller
             }
 
             Report::where('id', $request->ids[0])->update(['status' => 3]); //Report validated 
+
+            if($request->accepted_ids){ //Accept comment
+                UploadedFile::whereIn('id', $request->accepted_ids)->update(['status' => '1']);
+            }
+            if($request->rejected_ids){ //Reject comment
+                UploadedFile::whereIn('id', $request->rejected_ids)->update(['status' => '2']);
+            }
+
             // Send email to inspector
             $report = Report::findOrFail($request->ids[0]);
             Mail::to(User::findOrFail($report->process_owner_id))->send(new InspectorValidateReport($report->process_owner_id, $report->id));
@@ -310,7 +318,6 @@ class ReportController extends Controller
         } catch (Exception $e) {
             DB::rollBack();
         }
-
     }
 
     /**
@@ -461,7 +468,7 @@ class ReportController extends Controller
 
     public function getReportsNotification(){
         // $reports = Report::where('status', 1)->where('process_owner_id', Auth::user()->id)->get();
-        if(Auth::user()->level() !== 1){
+        if(Auth::user()->level() !== 1 && Auth::user()->level() !== 4 && Auth::user()->level() !== 5){
             $reports = Report::when(Auth::user()->level() == 2, function ($q){
                 $q->where('status' ,1)->where('process_owner_id', Auth::user()->id);
             })->when(Auth::user()->level() == 3, function ($q){

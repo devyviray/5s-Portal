@@ -90,14 +90,15 @@
                                                 <strong>Success!</strong> Report succesfully validated
                                             </div>
                                         </div>
-                                    </div>
+                                    </div>  
                                 </div>
                                 <div class="col-md-9" style="height: 770px">
                                     <div class="table-responsive" style="height: 770px">
                                         <div class="col-md-12 card mb-3" v-for="(checklist, c) in reportsPerUser[0].report_detail" v-bind:key="c" style="background-color: #e6e6e6 !important; min-height: 300px;">
                                             <div class="card-body">
                                                 <span>{{ c + 1 +'. '+checklist.name }}</span><br>
-                                                    <select class="form-control select-points" v-model="checklist.points" style="width: 60px" :disabled="reportsPerUser[0].status !=2">
+                                                    <select class="form-control select-points" :id="'point-'+checklist.id" v-model="checklist.points" style="width: 75px" :disabled="reportsPerUser[0].status !=2">
+                                                        <option value="N/A"> N/A </option>
                                                         <option value="0"> 0 </option>
                                                         <option value="1"> 1 </option>
                                                         <option value="2"> 2 </option>
@@ -109,7 +110,18 @@
                                                     <div class="col-md-3" v-for="(uploadFile, u) in checklist.uploaded_files" :key="u">
                                                         <img class="report-img mb-2"  :src="attachmentLink + uploadFile.file_path"><br>
                                                         <span>{{ c + 1 +'.' }} </span> <span> {{  u + 1  }} </span>
-                                                        <input type="text" :id="uploadFile.id" class="form-control comment-input"  placeholder="Comment..." v-model="uploadFile.comment" disabled>
+                                                        <div class="row">
+                                                            <div>
+                                                            <!-- <div v-if="uploadFile.comment"> -->
+                                                                <span :id="'accepted-'+uploadFile.id" class="text-success d-none">Comment Accepted</span>
+                                                                <span :id="'rejected-'+uploadFile.id" class="text-danger d-none">Comment Rejected</span>
+                                                                <div :id="'action-'+uploadFile.id">
+                                                                    <span @click="acceptComment(uploadFile.id,checklist.id)" class="comment-status"> &#10004;</span>
+                                                                    <span @click="rejectComment(uploadFile.id,checklist.id)" class="comment-status"> &#10006;</span>
+                                                                </div>
+                                                            </div>
+                                                            <input type="text" :id="uploadFile.id" class="form-control comment-input"  placeholder="Comment..." v-model="uploadFile.comment" disabled>
+                                                        </div>
                                                     </div> 
                                                 </div>
                                             </div>
@@ -182,6 +194,8 @@
                 reportsPerUser: [],
                 comments: [],
                 points_errors: [],
+                accepted_ids: [],
+                rejected_ids: [],
                 final_rating: '',
                 show_forChecking: false,
                 errors: [],
@@ -217,6 +231,10 @@
                 return this.final_rating.toFixed(2);
             },
             validateReport(){
+                if(!this.accepted_ids.length && !this.rejected_ids.length){
+                    alert('Please validate comments');
+                    return false;
+                }
                 this.enabledBtn();
                 var report_ids = [];
                 this.reportsPerUser.filter(item => report_ids.push(item.id));
@@ -230,7 +248,9 @@
                 axios.post('/report-validate', {
                     ids: report_ids,
                     final_rating: this.final_rating,
-                    points: this.points
+                    points: this.points,
+                    accepted_ids: this.accepted_ids,
+                    rejected_ids: this.rejected_ids
                 })
                 .then(response => {
                     this.show_approved = true;
@@ -242,6 +262,22 @@
                     this.errors = error.response.data.errors
                     this.enabledBtn();
                 })
+            },
+            acceptComment(id,checklistId){
+                this.accepted_ids.push(id);
+                var element = document.getElementById('accepted-'+id);
+                element.classList.remove("d-none");
+                var element2 = document.getElementById('action-'+id);
+                element2.classList.add('d-none');
+                document.getElementById('point-'+checklistId).style.borderColor ="red";
+            },
+            rejectComment(id,checklistId){
+                this.rejected_ids.push(id);
+                var element = document.getElementById('rejected-'+id);
+                element.classList.remove("d-none");
+                var element2 = document.getElementById('action-'+id);
+                element2.classList.add('d-none');
+                document.getElementById('point-'+checklistId).style.borderColor ="red";
             },
             disabledBtn(){
                 document.getElementById('btn-approved').disabled = true;

@@ -819,6 +819,10 @@ tbody{
 .cursor-pointer {
     cursor: pointer;
 }
+.comment-status{
+    cursor: pointer;
+    padding-right: 20px;
+}
 /* .dropdown>.dropdown-toggle:active { */
     /*Without this, clicking will make it sticky*/
       /* pointer-events: none;
