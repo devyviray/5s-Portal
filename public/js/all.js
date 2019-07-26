@@ -14142,6 +14142,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
       if (this.points_errors.length) {
         this.loading = false;
+        document.getElementById("addReport").disabled = false;
         return false;
       }
 

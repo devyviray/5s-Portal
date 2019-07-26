@@ -404,6 +404,7 @@ class ReportController extends Controller
         $uploadedFile->file_name = $filename;
         $uploadedFile->file_path = $path;
         $uploadedFile->model = 'App\Report';
+        $uploadedFile->status = '0';
         $uploadedFile->save();
     }
 
