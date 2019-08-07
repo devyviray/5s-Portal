@@ -168,7 +168,10 @@
                              </div>
                             <div class="row mb-3 mt-3 ml-1" v-if="selected_checklist.length ">
                                 <div class="col-6">
-
+                                    <span>Rating Criteria:</span><br>
+                                    <span>0: More than 2 Non-Conformance</span><br> 
+                                    <span>1: 1-2 Non-Conformances</span><br> 
+                                    <span>2: Full Compliance</span><br> 
                                 </div>
                                 <div class="col-6 text-right">
                                     <span>{{ selected_checklist.length }} Checklist(s)</span>

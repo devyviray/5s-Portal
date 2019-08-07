@@ -39,7 +39,7 @@
                                         <h1 class="text-dark">Capiz – 5002</h1><br><br>
                                         <h1 class="text-dark">E-mail address:</h1>
                                     </div>
-                                    <h1 class="text-dark">tqmmnl-ilogroup@lafiladmin.com</h1><br><br><br>
+                                    <h1 class="qm-email text-dark">tqmmnl-ilogroup@lafiladmin.com</h1><br><br><br>
                                 </div>
                                 <div class="col-sm-12 col-md-12 col-lg-9">
                                     <div class="row">

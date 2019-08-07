@@ -14441,6 +14441,9 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 //
 //
 //
+//
+//
+//
 
 
 
@@ -76309,7 +76312,7 @@ var staticRenderFns = [
           _c("h1", { staticClass: "text-dark" }, [_vm._v("E-mail address:")])
         ]),
         _vm._v(" "),
-        _c("h1", { staticClass: "text-dark" }, [
+        _c("h1", { staticClass: "qm-email text-dark" }, [
           _vm._v("tqmmnl-ilogroup@lafiladmin.com")
         ]),
         _c("br"),
@@ -82081,7 +82084,7 @@ var render = function() {
                   _vm._v(" "),
                   _vm.selected_checklist.length
                     ? _c("div", { staticClass: "row mb-3 mt-3 ml-1" }, [
-                        _c("div", { staticClass: "col-6" }),
+                        _vm._m(1),
                         _vm._v(" "),
                         _c("div", { staticClass: "col-6 text-right" }, [
                           _c("span", [
@@ -82126,6 +82129,24 @@ var staticRenderFns = [
           _vm._v("File")
         ])
       ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "col-6" }, [
+      _c("span", [_vm._v("Rating Criteria:")]),
+      _c("br"),
+      _vm._v(" "),
+      _c("span", [_vm._v("0: More than 2 Non-Conformance")]),
+      _c("br"),
+      _vm._v(" "),
+      _c("span", [_vm._v("1: 1-2 Non-Conformances")]),
+      _c("br"),
+      _vm._v(" "),
+      _c("span", [_vm._v("2: Full Compliance")]),
+      _c("br")
     ])
   }
 ]

@@ -876,3 +876,12 @@ tbody{
 .css-3jpbd7 {
     font-size: 25px !important;
 }
+
+
+/* Reponsive css */
+
+@media screen and (max-width: 992px) {
+    .qm-email {
+     text-align: center;
+    }
+  }
