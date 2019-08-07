@@ -123,4 +123,21 @@ class ChecklistController extends Controller
             DB::rollBack();
         }
     }
+
+    /**
+     *  Get checklist base on category
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function getChecklistPerCategory($categoryName){
+        
+        return Checklist::when($categoryName == 'Support', function($q){
+            $q->whereIn('name', ['Support', 'Perimeter']);
+        })->when($categoryName == 'Operations', function ($q){
+            $q->where('name', 'Operations');
+        })->when($categoryName == 'Offices', function ($q){
+            $q->where('name', 'Offices');
+        })->orderBy('id','asc')->get()->groupBy('batch');
+    }
 }

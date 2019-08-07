@@ -3,12 +3,16 @@
         <loader v-if="loading"></loader>
         <nav class="navbar navbar-default top-navbar" role="navigation">
             <div class="row">
-                <div class="col-md-9"></div>
-                <div class="col-md-2">
-                    <span class="span-username">Hi, {{ this.userName }}</span>
-                </div>
-                <div class="col-md-1">
-                    <navbarRight :user-role-level="userRoleLevel" :user-id="userId"></navbarRight>
+                <div class="col-md-8"></div>
+                <div class="col-md-4">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <span class="span-username">Hi, {{ this.userName }}</span>
+                        </div>
+                        <div class="col-md-4">
+                            <navbarRight :user-role-level="userRoleLevel" :user-id="userId"></navbarRight>
+                        </div>
+                    </div>
                 </div>
             </div>
         </nav>
@@ -26,7 +30,7 @@
                     <div class="card-body"> 
                         <div>
                             <div class="row">
-                                <div class="col-md-3 card" style="background-color: #A8C897;">
+                                <div class="col-sm-12 col-md-12 col-lg-3 card" style="background-color: #A8C897;">
                                     <div class="card-body text-center"><br><br><br>
                                         <h1 class="text-dark">CISCO Local Nos.:</h1><br><br>
                                         <h1 class="text-dark">Manila – 2414 – 2415</h1>
@@ -37,25 +41,25 @@
                                     </div>
                                     <h1 class="text-dark">tqmmnl-ilogroup@lafiladmin.com</h1><br><br><br>
                                 </div>
-                                <div class="col-md-9">
+                                <div class="col-sm-12 col-md-12 col-lg-9">
                                     <div class="row">
-                                        <div class="col-md-2"></div>
-                                        <div class="col-md-8 text-center">
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-9 text-center">
                                             <h1> <b>CONTACT US</b> </h1> <br><br>
                                             <div class="form-group row">
-                                                <label for="subject" class="col-sm-2 col-form-label">
+                                                <label for="subject" class="col-sm-12 col-md-12 col-lg-4 col-form-label">
                                                     <h1> Subject </h1>
                                                 </label>
-                                                <div class="col-sm-10">
+                                                <div class="col-sm-12 col-md-12 col-lg-8">
                                                     <input type="text" class="form-control" id="subject" v-model="data.subject">
                                                     <span class="text-danger" v-if="errors.subject">{{ errors.subject[0] }}</span>
                                                 </div>
                                             </div>
                                             <div class="form-group row">
-                                                <label for="message" class="col-sm-2 col-form-label">
+                                                <label for="message" class="col-sm-12 col-md-12 col-lg-4 col-form-label">
                                                     <h1> Message </h1>
                                                 </label>
-                                                <div class="col-sm-10">
+                                                <div class="col-sm-12 col-md-12 col-lg-8">
                                                     <textarea class="form-control" id="message" rows="7" v-model="data.message"></textarea>
                                                     <span class="text-danger" v-if="errors.message">{{ errors.message[0] }}</span>
                                                 </div>

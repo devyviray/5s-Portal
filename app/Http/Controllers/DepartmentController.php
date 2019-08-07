@@ -26,7 +26,7 @@ class DepartmentController extends Controller
      */
 
     public function indexData(){
-        return Department::orderBy('id','desc')->get();
+        return Department::orderBy('name','asc')->get();
     }
 
     /**

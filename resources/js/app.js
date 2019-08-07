@@ -66,6 +66,9 @@ Vue.component('report-trend', require('./components/Report/ReportTrend.vue').def
 // operation line page
 Vue.component('operation-line-index', require('./components/Operation/OperationLineIndex.vue').default);
 
+// company operation line page
+Vue.component('company-operation-line-index', require('./components/CompanyOperationLine/CompanyOperationLineIndex.vue').default);
+
 // category page
 Vue.component('category-index', require('./components/Category/CategoryIndex.vue').default);
 

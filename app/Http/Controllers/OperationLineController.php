@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use DB;
 use App\{
-    OperationLine
+    OperationLine,
+    CompanyLocation,
+    CompanyLocationOperationLine
 };
 
 class OperationLineController extends Controller
@@ -98,5 +100,19 @@ class OperationLineController extends Controller
         } catch (Exception $e) {
             DB::rollBack();
         }
+    }
+
+    /**
+     * Fetch operation line per company
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+
+    public function getOperationLinePerCompany($companyId, $locationId){
+        $company = CompanyLocation::where('company_id', $companyId)->where('location_id', $locationId)->first();
+        $companyLocationOperationLine = CompanyLocationOperationLine::with('operationLine')->where('company_location_id', $company->id)->get();
+        
+        return $companyLocationOperationLine;
     }
 }

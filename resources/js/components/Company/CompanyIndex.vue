@@ -3,12 +3,16 @@
         <loader v-if="loading"></loader>
         <nav class="navbar navbar-default top-navbar" role="navigation">
             <div class="row">
-                <div class="col-md-9"></div>
-                <div class="col-md-2">
-                    <span class="span-username">Hi, {{ this.userName }}</span>
-                </div>
-                <div class="col-md-1">
-                    <navbarRight :user-role-level="userRoleLevel" :user-id="userId"></navbarRight>
+                <div class="col-md-8"></div>
+                <div class="col-md-4">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <span class="span-username">Hi, {{ this.userName }}</span>
+                        </div>
+                        <div class="col-md-4">
+                            <navbarRight :user-role-level="userRoleLevel" :user-id="userId"></navbarRight>
+                        </div>
+                    </div>
                 </div>
             </div>
         </nav>
@@ -45,6 +49,7 @@
                             <th scope="col">ID</th>
                             <th scope="col">Name</th>
                             <th scope="col">Location</th>
+                            <th scope="col">Operation Line</th>
                             <th scope="col">Created date</th>
                         </tr>
                     </thead>
@@ -69,6 +74,7 @@
                                     {{ location.name }} <br/>
                                 </span>
                             </td>
+                            <td></td>
                             <td>{{ company.created_at }}</td>
                         </tr>
                     </tbody>
@@ -236,6 +242,7 @@
                 companies : [],
                 company: [],
                 company_copied: [],
+                operation_lines: [],
                 company_id: '',
                 company_added: false,
                 company_updated: false,
@@ -251,6 +258,7 @@
         created(){
             this.fetchCompanies();
             this.fetchLocations();
+            this.fetchOperationLines();
         },
         methods:{       
             showLoader(){
@@ -278,6 +286,15 @@
                 axios.get('/locations-all')
                 .then(response => { 
                     this.locations = response.data;
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.errors;
+                })
+            },
+            fetchOperationLines(){
+                axios.get('operation-lines-all')
+                .then(response => {
+                    this.operation_lines = response.data;
                 })
                 .catch(error => { 
                     this.errors = error.response.data.errors;

@@ -21,7 +21,7 @@
             <div class="header">
                 <h1 class="page-header">
                     <img class="lafil-logo" :src="logoLink">
-                    <b>5S PORTAL - COMPANY AREA</b>
+                    <b>5S PORTAL - COMPANY OPERATION LINE</b>
                 </h1>
                 <breadcrumb :user-role-level="userRoleLevel"></breadcrumb>
             </div>
@@ -29,7 +29,7 @@
                 <div class="card-header border-0">
                     <div class="row align-items-center">
                         <div class="col">
-                            <h3 class="mb-0">Company Area List</h3>
+                            <h3 class="mb-0">Company Operation Line List</h3>
                         </div> 
                         <div class="col text-right">
                             <a href="javascript.void(0)" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#addModal">Add new</a>
@@ -49,13 +49,12 @@
                             <th scope="col">ID</th>
                             <th scope="col">Name</th>
                             <th scope="col">Location</th>
-                            <th scope="col">Category</th>
                             <th scope="col">Operation Line</th>
-                            <th scope="col">Area</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(companyArea, c) in filteredQueues" v-bind:key="c">
+                        <tr v-for="(companyOperationLine, c) in company_operation_lines" v-bind:key="c">
+                            <td>{{ c }}</td>
                             <td class="text-right">
                                 <div class="dropdown">
                                     <a class="btn btn-sm btn-icon-only text-light" href="#" role="button"
@@ -63,27 +62,23 @@
                                         <i class="fa fa-ellipsis-v"></i>
                                     </a>
                                     <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
-                                        <a class="dropdown-item" data-toggle="modal" data-target="#editModal" style="cursor: pointer" @click="copyObject(companyArea)">Edit</a>
-                                        <a class="dropdown-item" data-toggle="modal" data-target="#deleteModal" style="cursor: pointer" @click="copyObject(companyArea)">Delete</a>
+                                        <a class="dropdown-item" data-toggle="modal" data-target="#editModal" style="cursor: pointer" @click="copyObject(companyOperationLine,c)">Edit</a>
+                                        <a class="dropdown-item" data-toggle="modal" data-target="#deleteModal" style="cursor: pointer" @click="copyObject(companyOperationLine,c)">Delete</a>
                                     </div>
                                 </div>
                             </td>
-                            <td scope="row">{{ companyArea.id }}</td>
-                            <td>{{ companyArea.company.name }}</td>
-                            <td>{{ companyArea.location.name }}</td>
-                            <td>{{ companyArea.category.name }}</td>
-                            <td v-if="companyArea.operation_line">{{ companyArea.operation_line.name }}</td>
-                            <td v-else></td>  
+                            <td scope="row">{{ companyOperationLine[0].company_location.company.name }}</td>
+                            <td>{{ companyOperationLine[0].company_location.location.name }}</td>
                             <td>
-                                <span v-for="(area, a) in companyArea.areas" :key="a">
-                                    {{ area.name }} <br>
+                                <span v-for="(operationLine, o) in companyOperationLine" :key="o">
+                                    {{ operationLine.operation_line.name }} <br>
                                 </span>
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-            <div class="row mb-3 mt-3 ml-3" v-if="filteredQueues.length ">
+            <!-- <div class="row mb-3 mt-3 ml-3" v-if="filteredQueues.length ">
                 <div class="col-6">
                     <button :disabled="!showPreviousLink()" class="btn btn-default btn-sm btn-fill" v-on:click="setPage(currentPage - 1)"> Previous </button>
                         <span class="text-dark">Page {{ currentPage + 1 }} of {{ totalPages }}</span>
@@ -93,7 +88,7 @@
                     <span>{{ filteredQueues.length }} Filtered Company Area(s)</span><br>
                     <span>{{ company_areas.length }} Total Company Area(s)</span>
                 </div>
-            </div>
+            </div> -->
         </div>
         <!-- Add Company Area Modal -->
         <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
@@ -106,17 +101,17 @@
                         </button>
                     </div>
                     <div class="modal-header">
-                        <h2 class="col-12 modal-title" id="addCompanyLabel">Add Company Area</h2>
+                        <h2 class="col-12 modal-title" id="addCompanyLabel">Add Company Operation Line</h2>
                     </div>
                     <div class="modal-body">
-                        <div class="alert alert-success" v-if="company_area_added">
-                            <strong>Success!</strong> Company Area succesfully added
+                        <div class="alert alert-success" v-if="company_operation_line_added">
+                            <strong>Success!</strong> Company Operation Line succesfully added
                         </div>
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="role">Company*</label> 
-                                    <select class="form-control" v-model="company_area.company" @change="changeCompany(company_area.company)">
+                                    <select class="form-control" v-model="company_operation_line.company" @change="changeCompany(company_operation_line.company)">
                                         <option v-for="(company,c) in companies" v-bind:key="c" :value="company.id"> {{ company.name }}</option>
                                     </select>
                                     <span class="text-danger" v-if="errors.company">{{ errors.company[0] }}</span>
@@ -127,7 +122,7 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="role">Company Location*</label> 
-                                    <select class="form-control" v-model="company_area.company_location">
+                                    <select class="form-control" v-model="company_operation_line.company_location">
                                         <option v-for="(company_location,c) in company_locations" v-bind:key="c" :value="company_location.id"> {{ company_location.name }}</option>
                                     </select>
                                     <span class="text-danger" v-if="errors.location">{{ errors.location[0] }}</span>
@@ -137,51 +132,29 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label for="role">Category*</label>
-                                    <select class="form-control" v-model="company_area.category" @change="changeCategory(company_area.category)">
-                                        <option v-for="(category,c) in categories" v-bind:key="c" :value="category.id"> {{ category.name }}</option>
-                                    </select>
-                                    <span class="text-danger" v-if="errors.category">{{ errors.category[0] }}</span>
-                                </div>
-                            </div>  
-                        </div>
-                        <div class="row" v-if="show_operation_line">
-                            <div class="col-md-12">
-                                <div class="form-group">
                                     <label for="role">Operation Line*</label> 
-                                    <select class="form-control" v-model="company_area.operation_line">
-                                        <option v-for="(operation_line,o) in operation_lines" v-bind:key="o" :value="operation_line.id"> {{ operation_line.name }}</option>
-                                    </select>
-                                    <span class="text-danger" v-if="errors.operation_line">The Operation Line field is required.</span>
-                                </div>
-                            </div>  
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label for="role">Areas*</label> 
                                     <multiselect
-                                        v-model="company_area.areas"
-                                        :options="areas"
+                                        v-model="company_operation_line.operation_line"
+                                        :options="operation_lines"
                                         :multiple="true"
                                         track-by="id"
                                         :custom-label="customLabel"
-                                        placeholder="Select Area"
+                                        placeholder="Select Operation Line"
                                     >
                                     </multiselect>
-                                    <span class="text-danger" v-if="errors.areas">{{ errors.areas[0] }}</span>
+                                    <span class="text-danger" v-if="errors.operation_line">{{ errors.operation_line[0] }}</span>
                                 </div>
                             </div>  
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button id="add_btn" type="button" class="btn btn-primary btn-round btn-fill" @click="addCompanyArea(company_area)">Save</button>
+                        <button id="add_btn" type="button" class="btn btn-primary btn-round btn-fill" @click="addCompanyOperationLine(company_operation_line)">Save</button>
                     </div>
                 </div>
             </div>
         </div>
     
-        <!-- Edit Company Area Modal -->
+        <!-- Edit Modal -->
         <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
             <span class="closed" data-dismiss="modal">&times;</span>
             <div class="modal-dialog modal-dialog-centered" role="document">
@@ -192,17 +165,17 @@
                         </button>
                     </div>
                     <div class="modal-header">
-                        <h2 class="col-12 modal-title" id="addCompanyLabel">Edit Company Area</h2>
+                        <h2 class="col-12 modal-title" id="addCompanyLabel">Edit Company Operation Line</h2>
                     </div>
                     <div class="modal-body">
-                        <div class="alert alert-success" v-if="company_area_updated">
-                            <strong>Success!</strong> Company Area succesfully updated
+                        <div class="alert alert-success" v-if="company_operation_line_updated">
+                            <strong>Success!</strong> Company Operation Line succesfully updated
                         </div>
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="role">Company*</label> 
-                                    <select class="form-control" v-model="company_area_copied.company_id" @change="changeCompany(company_area_copied.company)">
+                                    <select class="form-control" v-model="company_operation_line_copied.company" @change="changeCompany(company_operation_line_copied.company)" disabled>
                                         <option v-for="(company,c) in companies" v-bind:key="c" :value="company.id"> {{ company.name }}</option>
                                     </select>
                                     <span class="text-danger" v-if="errors.company">{{ errors.company[0] }}</span>
@@ -213,67 +186,45 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="role">Company Location*</label> 
-                                    <select class="form-control" v-model="company_area_copied.location_id">
+                                    <select class="form-control" v-model="company_operation_line_copied.location" disabled>
                                         <option v-for="(company_location,c) in company_locations" v-bind:key="c" :value="company_location.id"> {{ company_location.name }}</option>
                                     </select>
-                                    <span class="text-danger" v-if="errors.company_location">{{ errors.company_location[0] }}</span>
+                                    <span class="text-danger" v-if="errors.location">{{ errors.location[0] }}</span>
                                 </div>
                             </div>  
                         </div>
                         <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label for="role">Category*</label>
-                                    <select class="form-control" v-model="company_area_copied.category_id" @change="changeCategory(company_area_copied.category_id)">
-                                        <option v-for="(category,c) in categories" v-bind:key="c" :value="category.id"> {{ category.name }}</option>
-                                    </select>
-                                    <span class="text-danger" v-if="errors.category">{{ errors.category[0] }}</span>
-                                </div>
-                            </div>  
-                        </div>
-                        <div class="row" v-if="show_operation_line">
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="role">Operation Line*</label> 
-                                    <select class="form-control" v-model="company_area_copied.operation_line_id">
-                                        <option v-for="(operation_line,o) in operation_lines" v-bind:key="o" :value="operation_line.id"> {{ operation_line.name }}</option>
-                                    </select>
-                                    <span class="text-danger" v-if="errors.operation_line">{{ errors.operation_line[0] }}</span>
-                                </div>
-                            </div>  
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label for="role">Areas*</label> 
                                     <multiselect
-                                        v-model="company_area_copied.areas"
-                                        :options="areas"
+                                        v-model="operationLinesEdit"
+                                        :options="operation_lines"
                                         :multiple="true"
                                         track-by="id"
                                         :custom-label="customLabel"
-                                        placeholder="Select Area"
+                                        placeholder="Select Operation Line"
                                     >
                                     </multiselect>
-                                    <span class="text-danger" v-if="errors.area_id">{{ errors.area_id[0] }}</span>
+                                    <span class="text-danger" v-if="errors.operation_line">{{ errors.operation_line[0] }}</span>
                                 </div>
                             </div>  
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button id="edit_btn" type="button" class="btn btn-primary btn-round btn-fill" @click="updateCompanyArea(company_area_copied)">Save</button>
+                        <button id="edit_btn" type="button" class="btn btn-primary btn-round btn-fill" @click="updateCompanyOperationLine(company_operation_line_copied,operationLinesEdit)">Save</button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Delete Company Area Modal -->
+        <!-- Delete Modal -->
         <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
             <span class="closed" data-dismiss="modal">&times;</span>
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addCompanyLabel">Delete Company Area</h5>
+                    <h5 class="modal-title" id="addCompanyLabel">Delete Company Operation Line</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -282,14 +233,14 @@
                    <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
-                                Are you sure you want to delete this Company Area?
+                                Are you sure you want to delete this Company Operation Line?
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" data-dismiss='modal'>Close</button>
-                    <button class="btn btn-warning" @click="deleteCompanyArea">Delete</button>
+                    <button class="btn btn-warning" @click="deleteCompanyOperationLine">Delete</button>
                 </div>
                 </div>
             </div>
@@ -314,17 +265,18 @@
         },
         data(){
             return {
-                company_areas : [],
-                company_area: [],
-                company_area_copied: [],
-                company_area_id: '',
-                company_area_added: false,
-                company_area_updated: false, 
+                company_operation_lines: [],
+                company_operation_line: [],
+                company_operation_line_copied: [],
+                company_operation_line_id: '',
+                company_operation_line_added: false,
+                company_operation_line_updated: false, 
                 companies:[],
                 company_locations: [],
-                operation_lines:[],
-                categories:[],
-                areas:[],
+                operation_lines: [],
+                operationLinesEdit:[],
+                companyLocationId: '',
+                index: '',
                 errors: [],
                 currentPage: 0,
                 itemsPerPage: 10,
@@ -334,11 +286,9 @@
             }
         },
         created(){
-            this.fetchCompanyAreas();
             this.fetchCompanies();
             this.fetchOperationLines();
-            this.fetchCategories();
-            this.fetchAreas();
+            this.fetchCompanyOperationLines();
         },
         methods:{
             showLoader(){
@@ -347,19 +297,20 @@
             changeCategory(category){
                 category == 1 ?  this.show_operation_line = true :  this.show_operation_line = false;
             },
-            copyObject(company_area){
+            copyObject(company_operation_line,index){
+                this.company_operation_line_copied = [];
+                this.operationLinesEdit = [];
+                company_operation_line.filter(operationLine => {
+                    this.operationLinesEdit.push(operationLine.operation_line)
+                });
+            
                 this.errors = [];
-                this.company_area_updated = false;
-                this.company_area_id = company_area.id;
-                this.company_area_copied = Object.assign({}, company_area);
-                this.company_area_copied.company_id = company_area.company.id;
-                this.company_area_copied.location_id = company_area.location.id;
-                this.company_area_copied.category_id = company_area.category.id;
-                this.company_area_copied.operation_line_id = company_area.operation_line ? company_area.operation_line.id : '';
-                // this.company_area_copied.area = company_area.areas;
-                this.changeCompany(this.company_area_copied.company_id);
-                company_area.category.id == 1 ? this.show_operation_line = true : this.show_operation_line = false;
-
+                this.company_operation_line_updated = false;
+                this.company_operation_line_copied.company = company_operation_line[0].company_location.company.id;
+                this.company_operation_line_copied.location = company_operation_line[0].company_location.location.id;
+                this.companyLocationId = company_operation_line[0].company_location_id;
+                this.changeCompany(this.company_operation_line_copied.company);
+                this.index = index;
             },
             changeCompany(id){
                 axios.get(`/company-location/${id}`)
@@ -367,15 +318,6 @@
                     this.company_locations = response.data.locations;
                 })
                 .catch(error => {
-                    this.errors = error.response.data.errors;
-                })
-            },
-            fetchCompanyAreas(){
-                axios.get('company-areas-all')
-                .then(response => {
-                    this.company_areas = response.data;
-                })
-                .catch(error => { 
                     this.errors = error.response.data.errors;
                 })
             },
@@ -389,7 +331,7 @@
                 })
             },
             fetchOperationLines(){
-                 axios.get('operation-lines-all')
+                axios.get('operation-lines-all')
                 .then(response => {
                     this.operation_lines = response.data;
                 })
@@ -397,102 +339,88 @@
                     this.errors = error.response.data.errors;
                 })
             },
-            fetchAreas(){
-                axios.get('areas-all')
+            customLabel (operation_line) {
+                return `${ operation_line.name  }`
+            },
+            fetchCompanyOperationLines(){
+                axios.get('company-operation-lines-all')
                 .then(response => {
-                    this.areas = response.data;
+                    this.company_operation_lines = response.data;
                 })
                 .catch(error => { 
                     this.errors = error.response.data.errors;
                 })
             },
-            customLabel (area) {
-                return `${ area.name  }`
-            },
-            fetchCategories(){
-                axios.get('categories-all')
-                .then(response => {
-                    this.categories = response.data;
-                })
-                .catch(error => { 
-                    this.errors = error.response.data.errors;
-                })
-            },
-            addCompanyArea(company_area){
+            addCompanyOperationLine(company_operation_line){
                 this.showLoader();
-                var areas_ids = [];
-                if(company_area.areas){
-                    company_area.areas.forEach((area) => {
-                        areas_ids.push(area.id)
+                var operationLine_ids = [];
+                if(company_operation_line.operation_line){
+                    company_operation_line.operation_line.forEach((operation_line) => {
+                        operationLine_ids.push(operation_line.id)
                     });
                 }
-
                 document.getElementById('add_btn').disabled = true;
                 this.errors = [];
-                axios.post('/company-area', {
-                    company: company_area.company,
-                    location: company_area.company_location,
-                    category: company_area.category,
-                    operation_line: company_area.category == 1 ? company_area.operation_line : '',
-                    areas: areas_ids
+                axios.post('/company-operation-line', {
+                    company: company_operation_line.company,
+                    location: company_operation_line.company_location,
+                    operation_line: operationLine_ids,
                 })
                 .then(response => {
-                    this.company_area_added = true;
+                    this.company_operation_line_added = true;
                     document.getElementById('add_btn').disabled = false;
-                    this.fetchCompanyAreas();
-                    this.company_area = [];
+                    this.company_operation_line = [];
                     this.loading = false;
+                    location.reload();
                 })
                 .catch(error => {
                     this.errors = error.response.data.errors;
-                    this.company_area_added = false;
+                    this.company_operation_line_added = false;
                     document.getElementById('add_btn').disabled = false;
                     this.loading = false;
                 })
             },
-            updateCompanyArea(company_area_copied){
+            updateCompanyOperationLine(company_operation_line_copied, operationLines){
                 this.showLoader();
                 document.getElementById('edit_btn').disabled = true;
-                this.company_area_updated = false;
+                this.company_operation_line_updated = false;
                 this.errors = [];
-                var index = this.company_areas.findIndex(item => item.id == company_area_copied.id);
-
-                var areas_ids = [];
-                if(company_area_copied.areas){
-                    company_area_copied.areas.forEach((area) => {
-                        areas_ids.push(area.id)
+                // var index = this.company_areas.findIndex(item => item.id == company_operation_line_copied.id);
+                var operationLine_ids = [];
+                if(operationLines){
+                    operationLines.forEach((operation_line) => {
+                        operationLine_ids.push(operation_line.id)
                     });
                 }
-                axios.post(`/company-area/${company_area_copied.id}`, {
-                    company: company_area_copied.company_id,
-                    location_id: company_area_copied.location_id,
-                    operation_line: company_area_copied.operation_line_id,
-                    category_id: company_area_copied.category_id,
-                    areas: areas_ids,
-                    _method: 'PATCH'
+                axios.post(`/company-operation-line-edit/${this.companyLocationId}`, {
+                    company: company_operation_line_copied.company,
+                    location: company_operation_line_copied.location,
+                    operation_line: operationLine_ids,
+                    // _method: 'PATCH'
                 })
                 .then(response => {
-                    this.company_area_updated = true;
-                    this.company_areas.splice(index,1,response.data);
+                    this.company_operation_line_updated = true;
+                    // this.company_areas.splice(index,1,response.data);
                     document.getElementById('edit_btn').disabled = false;
                     this.loading = false;
+                    location.reload();
                 })
                 .catch(error => {
-                    this.company_area_updated = false;
+                    this.company_operation_line_updated = false;
                     this.errors = error.response.data.errors;
                     document.getElementById('edit_btn').disabled = false;
                     this.loading = false;
                 })
             },
-            deleteCompanyArea(){
+            deleteCompanyOperationLine(){
                 this.showLoader();
-                var index = this.company_areas.findIndex(item => item.id == this.company_area_id);
-                axios.delete(`/company-area/${this.company_area_id}`)
+                axios.delete(`/company-operation-line/${this.companyLocationId}`)
                 .then(response => {
                     $('#deleteModal').modal('hide');
                     alert('Company Area successfully deleted');
-                    this.company_areas.splice(index,1);
+                    // this.company_operation_lines.splice(this.index,1);
                     this.loading = false;
+                    location.reload();
                 })
                 .catch(error => {
                     this.errors = error.response.data.errors;
@@ -513,29 +441,29 @@
             }   
         },  
         computed:{
-            filteredCompanyAreas(){
-                let self = this;
-                return self.company_areas.filter(company_area => {
-                    return company_area.company.name.toLowerCase().includes(this.keywords.toLowerCase())
-                });
-            },
-            totalPages() {
-                return Math.ceil(this.company_areas.length / this.itemsPerPage);
-            },
-            filteredQueues() {
-                var index = this.currentPage * this.itemsPerPage;
-                var queues_array = this.filteredCompanyAreas.slice(index, index + this.itemsPerPage);
+            // filteredCompanyOperationLines(){
+            //     let self = this;
+            //     return self.company_operation_lines.filter(company_operation_line => {
+            //         return company_operation_line.company_id.toLowerCase().includes(this.keywords.toLowerCase())
+            //     });
+            // },
+            // totalPages() {
+            //     return Math.ceil(this.company_operation_lines.length / this.itemsPerPage);
+            // },
+            // filteredQueues() {
+            //     var index = this.currentPage * this.itemsPerPage;
+            //     var queues_array = this.filteredCompanyOperationLines.slice(index, index + this.itemsPerPage);
 
-                if(this.currentPage >= this.totalPages) {
-                    this.currentPage = this.totalPages - 1
-                }
+            //     if(this.currentPage >= this.totalPages) {
+            //         this.currentPage = this.totalPages - 1
+            //     }
 
-                if(this.currentPage == -1) {
-                    this.currentPage = 0;
-                }
+            //     if(this.currentPage == -1) {
+            //         this.currentPage = 0;
+            //     }
 
-                return queues_array;
-            },
+            //     return queues_array;
+            // },
             logoLink(){
                 return window.location.origin+'/img/lafil-logo.png';
             },

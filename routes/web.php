@@ -91,6 +91,7 @@ Route::group(['middleware' => ['auth', 'role:it|administrator|inspector|process 
     Route::post('/checklist', 'ChecklistController@store');
     Route::patch('/checklist/{checklist}', 'ChecklistController@update');
     Route::delete('/checklist/{batchId}', 'ChecklistController@destroy');
+    Route::get('/checklists-per-category/{categoryName}', 'ChecklistController@getChecklistPerCategory');
 
     // faq
     Route::get('/faqs', 'FaqController@index')->name('faqs');
@@ -121,6 +122,14 @@ Route::group(['middleware' => ['auth', 'role:it|administrator|inspector|process 
     Route::post('/operation-line', 'OperationLineController@store');
     Route::patch('/operation-line/{operationLine}', 'OperationLineController@update');
     Route::delete('/operation-line/{operationLine}', 'OperationLineController@destroy');
+    Route::get('/operation-lines/{companyId}/{locationId}', 'OperationLineController@getOperationLinePerCompany');
+    
+    // company operation line
+    Route::get('/company-operation-lines', 'CompanyLocationOperationLineController@index')->name('company-operation-lines');
+    Route::get('/company-operation-lines-all', 'CompanyLocationOperationLineController@indexData');
+    Route::post('/company-operation-line', 'CompanyLocationOperationLineController@store');
+    Route::post('company-operation-line-edit/{id}', 'CompanyLocationOperationLineController@update');
+    Route::delete('/company-operation-line/{id}', 'CompanyLocationOperationLineController@destroy');
 
     // categories
     Route::get('/categories', 'CategoryController@index')->name('categories');

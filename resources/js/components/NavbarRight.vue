@@ -14,11 +14,12 @@
                     <li v-if="userRoleLevel > 2"> <a :href="companyLink"><i class="fa fa-building-o fa-fw"></i> Companies</a> </li>
                     <li v-if="userRoleLevel > 2"> <a :href="locationLink"><i class="fa fa-globe fa-fw"></i> Locations</a> </li>
                     <li v-if="userRoleLevel > 2"> <a :href="departmentLink"><i class="fa fa-trello fa-fw"></i> Departments</a> </li>
-                    <li v-if="userRoleLevel > 2"> <a :href="operationLink"><i class="fa fa-road"></i> Operation Line</a> </li>
+                    <li v-if="userRoleLevel > 2"> <a :href="operationLink"><i class="fa fa-road"></i> Operation lines</a> </li>
+                    <li v-if="userRoleLevel > 2"> <a :href="companyOperationLink"><i class="fa fa-eject"></i> Company Operation lines</a> </li>
                     <li v-if="userRoleLevel > 2"> <a :href="categoryLink"><i class="fa fa-files-o"></i> Categories</a> </li>
                     <li v-if="userRoleLevel > 2"> <a :href="areaLink"><i class="fa fa-sitemap"></i> Areas</a> </li>
                     <li v-if="userRoleLevel > 2"> <a :href="companyAreaLink"><i class="fa fa-building-o"></i> Company Areas</a> </li>
-                    <li v-if="userRoleLevel > 2"> <a :href="checklistLink"><i class="fa fa-list-ol"></i> Checklist</a> </li>
+                    <li v-if="userRoleLevel > 2"> <a :href="checklistLink"><i class="fa fa-list-ol"></i> Checklist</a> </li> 
                     <li v-if="userRoleLevel > 2"> <a :href="faqLink"><i class="fa fa-info-circle"></i> FAQs</a> </li>
                     <li class="divider"></li>
                     <li> <a href="#" @click="logoutForm"><i class="fa fa-sign-out fa-fw"></i> Logout</a> </li>
@@ -150,6 +151,9 @@ export default {
         },
         operationLink(){
             return window.location.origin+'/operation-lines' 
+        },
+        companyOperationLink(){
+            return window.location.origin+'/company-operation-lines'
         },
         categoryLink(){
             return window.location.origin+'/categories'

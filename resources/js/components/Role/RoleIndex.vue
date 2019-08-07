@@ -3,12 +3,16 @@
          <loader v-if="loading"></loader>
          <nav class="navbar navbar-default top-navbar" role="navigation">
             <div class="row">
-                <div class="col-md-9"></div>
-                <div class="col-md-2">
-                    <span class="span-username">Hi, {{ this.userName }}</span>
-                </div>
-                <div class="col-md-1">
-                    <navbarRight :user-role-level="userRoleLevel" :user-id="userId"></navbarRight>
+                <div class="col-md-8"></div>
+                <div class="col-md-4">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <span class="span-username">Hi, {{ this.userName }}</span>
+                        </div>
+                        <div class="col-md-4">
+                            <navbarRight :user-role-level="userRoleLevel" :user-id="userId"></navbarRight>
+                        </div>
+                    </div>
                 </div>
             </div>
         </nav>

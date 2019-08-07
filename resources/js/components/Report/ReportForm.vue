@@ -2,13 +2,17 @@
     <div id="wrapper">
     <loader v-if="loading"></loader>
     <nav class="navbar navbar-default top-navbar" role="navigation">
-        <div class="row">
-            <div class="col-md-9"></div>
-            <div class="col-md-2">
-                <span class="span-username">Hi, {{ this.userName }}</span>
-            </div>
-            <div class="col-md-1">
-                <navbarRight :user-role-level="userRoleLevel" :user-id="userId"></navbarRight>
+     <div class="row">
+        <div class="col-md-8"></div>
+            <div class="col-md-4">
+                <div class="row">
+                    <div class="col-md-8">
+                        <span class="span-username">Hi, {{ this.userName }}</span>
+                    </div>
+                    <div class="col-md-4">
+                        <navbarRight :user-role-level="userRoleLevel" :user-id="userId"></navbarRight>
+                    </div>
+                </div>
             </div>
         </div>
     </nav>
@@ -58,7 +62,7 @@
                                     <span class="col-sm-5">Operation Line:</span>
                                     <div class="col-sm-7">
                                         <select class="form-control" v-model="operation_line" @change="changeCompany('', '')">
-                                            <option v-for="(operation_line,o) in operation_lines" v-bind:key="o" :value="operation_line"> {{ operation_line.name }}</option>
+                                            <option v-for="(operation_line,o) in operation_lines" v-bind:key="o" :value="operation_line.operation_line.id"> {{ operation_line.operation_line.name }}</option>
                                         </select>
                                         <span class="text-danger" v-if="errors.operation_line  ">{{ errors.operation_line[0] }}</span>
                                     </div>
@@ -70,6 +74,15 @@
                                             <option v-for="(area,a) in areas" v-bind:key="a" :value="area"> {{ area.name }}</option>
                                         </select>
                                         <span class="text-danger" v-if="errors.area  ">{{ errors.area[0] }}</span>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="colFormLabel" class="col-sm-5 col-form-label">Cheklist</label>
+                                    <div class="col-sm-7">
+                                        <select class="form-control" v-model="checklist" @change="getSelectedChecklist(checklist)">
+                                            <option v-for="(checklist,c) in checklists" v-bind:key="c" :value="checklist"> {{  checklist[0].name }}</option>
+                                        </select>
+                                        <span class="text-danger" v-if="errors.checklist  ">{{ errors.checklist[0] }}</span>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -100,15 +113,6 @@
                                     <div class="col-sm-7">
                                         <input type="time" class="form-control" id="colFormLabel" v-model="end_time_of_inspection">
                                         <span class="text-danger" v-if="errors.end_time_of_inspection  ">{{ errors.end_time_of_inspection[0] }}</span>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label for="colFormLabel" class="col-sm-5 col-form-label">Cheklist</label>
-                                    <div class="col-sm-7">
-                                        <select class="form-control" v-model="checklist" @change="getSelectedChecklist(checklist)">
-                                            <option v-for="(checklist,c) in checklists" v-bind:key="c" :value="checklist"> {{  checklist[0].name }}</option>
-                                        </select>
-                                        <span class="text-danger" v-if="errors.checklist  ">{{ errors.checklist[0] }}</span>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -236,9 +240,8 @@
         },
         created(){
             this.fetchCompanies();
-            this.fetchOperationLines();
+            // this.fetchOperationLines();
             this.fetchCategories();
-            this.fetchChecklist();
         },
         methods:{
             showLoader(){
@@ -332,10 +335,19 @@
                     }
                     if(this.company && this.location ){
                         this.fetchProccessOwner();
+                        this.fetchOperationLines();
                     }
                     if(this.company && this.location && this.category){
                         this.fetchCompayAreas();
                     }
+                    if(this.category){
+                        this.fetchChecklist();
+                    }
+                    // Clear array
+                    this.checklists = [];
+                    this.checklist = [];
+                    this.selected_checklist = [];
+                    this.points_errors = [];
                 }
             },
             fetchCompanies(){
@@ -348,7 +360,8 @@
                 }); 
             },
             fetchOperationLines(){
-                axios.get('/operation-lines-all')
+                // axios.get('/operation-lines-all')
+                axios.get(`/operation-lines/${this.company.id}/${this.location.id}`)
                  .then(response => {
                     this.operation_lines = response.data;
                 })
@@ -376,9 +389,19 @@
                 });
             },
             fetchChecklist(){
-                axios.get('checklists-all')
-                .then(response => { 
-                    this.checklists = response.data
+                axios.get(`/checklists-per-category/${this.category.name}`)
+                .then(response => {
+                    if(this.category.name  == 'Support'){
+                        this.checklists = response.data;
+                    }else if(this.category.name  == 'Operations'){
+                        this.checklists = response.data;
+                        this.checklist = response.data[1];
+                        this.selected_checklist = response.data[1];
+                    }else{
+                        this.checklists = response.data;
+                        this.checklist = response.data[2];
+                        this.selected_checklist = response.data[2];
+                    }
                 })
                 .catch(error => { 
                     this.errors = error.response.data.errors;
