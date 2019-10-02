@@ -14519,6 +14519,15 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
       var files = e.target.files || e.dataTransfer.files;
       if (!files.length) return;
+      var numberOfFiles = files.length + this.attachments.length;
+
+      if (numberOfFiles > 30) {
+        //Restrict user to attach only 30 files per report
+        alert('Attachment exceed 30 files');
+        document.getElementById('attachments' + index).value = "";
+        return false;
+      }
+
       this.attachment_index = this.attachment_index ? this.attachment_index.filter(function (item) {
         return item !== index;
       }) : '';
@@ -14571,13 +14580,14 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
         // this.fileSize = this.fileSize+files[i].size / 1024 / 1024;
         var imageSize = files[i].size / 1024 / 1024;
 
-        if (imageSize > 5) {
+        if (imageSize > 1) {
+          // Restrict 1 mb per attachment
           fileSizeErrors = fileSizeErrors + 1;
         }
-      } // If no errors attach file to an array
-
+      }
 
       if (fileSizeErrors == 0) {
+        // If no errors attach file to an array
         for (var i = files.length - 1; i >= 0; i--) {
           this.attachments.push(files[i]);
           this.attachment_index.push(index);
@@ -14590,7 +14600,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
         }
       } else {
         //Remove attachment
-        alert('File size exceeds 5 MB');
+        alert('File size exceeds 1MB Please resize image');
         document.getElementById('attachments' + index).value = "";
       }
     },
