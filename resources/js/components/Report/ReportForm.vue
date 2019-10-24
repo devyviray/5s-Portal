@@ -77,7 +77,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label for="colFormLabel" class="col-sm-5 col-form-label">Cheklist</label>
+                                    <label for="colFormLabel" class="col-sm-5 col-form-label">Checklist</label>
                                     <div class="col-sm-7">
                                         <select class="form-control" v-model="checklist" @change="getSelectedChecklist(checklist)">
                                             <option v-for="(checklist,c) in checklists" v-bind:key="c" :value="checklist"> {{  checklist[0].name }}</option>

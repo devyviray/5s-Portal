@@ -81609,7 +81609,7 @@ var render = function() {
                           staticClass: "col-sm-5 col-form-label",
                           attrs: { for: "colFormLabel" }
                         },
-                        [_vm._v("Cheklist")]
+                        [_vm._v("Checklist")]
                       ),
                       _vm._v(" "),
                       _c("div", { staticClass: "col-sm-7" }, [
