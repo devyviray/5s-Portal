@@ -62,7 +62,7 @@
                                     <span class="col-sm-5">Operation Line:</span>
                                     <div class="col-sm-7">
                                         <select class="form-control" v-model="operation_line" @change="changeCompany('', '')">
-                                            <option v-for="(operation_line,o) in operation_lines" v-bind:key="o" :value="operation_line.operation_line.id"> {{ operation_line.operation_line.name }}</option>
+                                            <option v-for="(operation_line,o) in operation_lines" v-bind:key="o" :value="operation_line.operation_line"> {{ operation_line.operation_line.name }}</option>
                                         </select>
                                         <span class="text-danger" v-if="errors.operation_line  ">{{ errors.operation_line[0] }}</span>
                                     </div>

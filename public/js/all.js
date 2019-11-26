@@ -81519,7 +81519,7 @@ var render = function() {
                                   {
                                     key: o,
                                     domProps: {
-                                      value: operation_line.operation_line.id
+                                      value: operation_line.operation_line
                                     }
                                   },
                                   [
