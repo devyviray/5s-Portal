@@ -41,20 +41,17 @@ class ReportingMonthRule implements Rule
     public function passes($attribute, $value)
     {
         $date = Carbon::parse($this->reportingMonth);
-        $processOwner = Report::where('company_id',   $this->company)
+        $areaOfReport = Report::where('company_id',   $this->company)
         ->where('location_id', $this->location)
         ->when($this->operationLine, function ($q) { 
             $q->where('operation_line_id', $this->operationLine);
         })
-        ->where('process_owner_id', $value)
+        ->where('category_id', $this->category)
+        ->where('area_id', $value)
         ->where('reporting_month',  $date->isoFormat('M'))
         ->where('reporting_year',  $date->isoFormat('Y'))->first();
         
-        if($processOwner){
-            return false;
-        }else{
-            return true; 
-        }
+        return $areaOfReport ? false : true;
     }
 
     /**
@@ -64,6 +61,6 @@ class ReportingMonthRule implements Rule
      */
     public function message()
     {
-        return 'Report for this month already exist';
+        return 'Report for this area and month already exist';
     }
 }
