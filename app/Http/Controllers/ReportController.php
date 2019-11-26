@@ -86,8 +86,8 @@ class ReportController extends Controller
         $request->validate([
             'company' => 'required',
             'location' => 'required',
-            // 'operation_line' => 'required',
             'category' => 'required',
+            'operation_line' => 'required_if:category,==,1',
             'area' => ['required', new ReportingMonthRule($request->company,$request->location,$request->operation_line,$request->category,$request->area,$request->date_of_inspection)],
             'process_owner' => 'required',
             'date_of_inspection' => 'required',
