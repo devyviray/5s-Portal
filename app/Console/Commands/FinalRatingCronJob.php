@@ -49,7 +49,9 @@ class FinalRatingCronJob extends Command
                $denominator = $report->reportDetail->count() * 2;
                $total_points = 0;
                foreach($report->reportDetail as $r){
-                   $total_points = $total_points + $r->points;
+                   if($r->points != 'N/A'){
+                        $total_points = $total_points + $r->points;
+                   }
                }
                $data = [
                    'ratings' => $total_points / $denominator * 100,

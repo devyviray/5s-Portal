@@ -28,7 +28,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('rating:check')
                 ->hourly();
         $schedule->command('notified:processowner')
-                ->everyThirtyMinutes();
+                ->cron('0 */5 * * *');
     }
 
     /**
