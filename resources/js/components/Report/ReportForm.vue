@@ -95,6 +95,23 @@
                                     </div>
                                 </div>
                                 <div class="form-group row">
+                                    <label for="colFormLabel" class="col-sm-5 col-form-label">Top Management</label>
+                                    <div class="col-sm-7">
+                                        <multiselect
+                                                v-model="selectedTopManagement"
+                                                :options="topManagements"
+                                                :multiple="true"
+                                                :select-label="'select'"
+                                                track-by="id"
+                                                :custom-label="customLabelLocation"
+                                                placeholder="Multi-select"
+                                                id="selected-top-management"
+                                            >
+                                        </multiselect> 
+                                        <span class="text-danger" v-if="errors.topManagement">{{ errors.topManagement[0] }}</span>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
                                     <label for="colFormLabel" class="col-sm-5 col-form-label">Date of Inspection</label>
                                     <div class="col-sm-7">
                                         <input type="date" class="form-control" id="colFormLabel" v-model="date_of_inspection">
@@ -238,17 +255,22 @@
                 formData: new FormData(),
                 show_added: false,
                 loading: false,
-                show_operation_line: false
+                show_operation_line: false,
+                topManagements: [],
+                selectedTopManagement: []
             }
         },
         created(){
             this.fetchCompanies();
-            // this.fetchOperationLines();
             this.fetchCategories();
+            this.fetchTopManagement();
         },
         methods:{
             showLoader(){
                this.loading = true;
+            },
+            customLabelLocation (selectedTopManagement) {
+                return `${selectedTopManagement.name  }`
             },
             prepareFields(){
                 if(this.attachments.length > 0){
@@ -425,6 +447,15 @@
                     this.errors = error.response.data.errors;
                 })
             },
+            fetchTopManagement(){
+                axios.get('/user-top-management')
+                .then(response => {
+                    this.topManagements = response.data;
+                })
+                .catch(error =>{
+                    this.errors = error.response.data.errors;
+                })
+            },
             getSelectedChecklist(checklist){
                 this.errors = [];
                 this.points = [];
@@ -435,7 +466,9 @@
                 removeElements( document.querySelectorAll(".attachments"));
             },
             addReport(selected_checklist,points){
-                
+                let topManagementIds = [];
+                this.selectedTopManagement.filter(item => topManagementIds.push(item.id));
+
                 document.getElementById("addReport").disabled = true;
                 this.loading = true;
                 this.formData = new FormData();
@@ -465,7 +498,8 @@
                 this.formData.append('checklist', selected_checklist ? JSON.stringify(selected_checklist) : '');
                 this.formData.append('points', this.points.length == 0 ? '' : this.points);
                 this.formData.append('attachment_ids',this.attachment_ids.length > 0 ? this.attachment_ids : '');  
-                this.formData.append('attachment_index',this.attachment_index.length > 0 ? this.attachment_index : ''); 
+                this.formData.append('attachment_index',this.attachment_index.length > 0 ? this.attachment_index : '');
+                this.formData.append('topManagement', topManagementIds.length > 0 ? topManagementIds : '');
 
                 axios.post('/report', this.formData)
                 .then(response => { 
@@ -493,6 +527,7 @@
                 this.end_time_of_inspection = '';
                 this.points = [];
                 this.attachments = [];
+                this.selectedTopManagement = [];
                 var removeElements = (elms) => [...elms].forEach(el => el.value = "");
                 removeElements( document.querySelectorAll(".attachments"));
                 this.selected_checklist.filter(checklist => {

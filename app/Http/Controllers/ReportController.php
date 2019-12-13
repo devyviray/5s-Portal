@@ -96,7 +96,7 @@ class ReportController extends Controller
             'checklist' => 'required',
             'points' => 'required',
             'points.*' => 'required',
-            // 'attachments' => 'required',
+            'topManagement' => 'required',
         ]);
 
         DB::beginTransaction();
@@ -132,6 +132,8 @@ class ReportController extends Controller
                     );
                     $ids[] = $report->id;
                 }
+                $topManagementId = strpos($request->topManagement, ',') !== true ? explode(',',$request->topManagement) : $request->topManagement;
+                $r->topManagements()->sync($topManagementId);
             }
 
             if($request->has('attachments')){
@@ -221,11 +223,11 @@ class ReportController extends Controller
 
         DB::beginTransaction();
         try {
-            Report::whereIn('id', $request->ids)->update(['status' => 4, 'ratings' => $request->final_rating]);
+            Report::whereIn('id', $request->ids)->update(['status' => 4, 'ratings' => number_format((float)$request->final_rating, 2, '.', '')]);
 
-            // Send email to inspector
-            $report = Report::findOrFail($request->ids[0]);
-            Mail::to(User::findOrFail($report->inspector_id))->send(new ProcessOwnerApprovedReport($report->process_owner_id, $report->id));
+            // Send email to inspector and top management
+            $report = Report::with('inspector','topManagements')->where('id',$request->ids[0])->first();
+            Mail::to($report->topManagements->push($report->inspector))->send(new ProcessOwnerApprovedReport($report->process_owner_id, $report->id));
 
             DB::commit();
 
@@ -468,8 +470,7 @@ class ReportController extends Controller
      */
 
     public function getReportsNotification(){
-        // $reports = Report::where('status', 1)->where('process_owner_id', Auth::user()->id)->get();
-        if(Auth::user()->level() !== 1 && Auth::user()->level() !== 4 && Auth::user()->level() !== 5){
+        if(Auth::user()->level() !== 1 && Auth::user()->level() !== 4 && Auth::user()->level() !== 5 && Auth::user()->level() !== 6){
             $reports = Report::when(Auth::user()->level() == 2, function ($q){
                 $q->where('status' ,1)->where('process_owner_id', Auth::user()->id);
             })->when(Auth::user()->level() == 3, function ($q){

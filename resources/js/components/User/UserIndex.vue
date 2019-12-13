@@ -383,6 +383,7 @@
             },
             addUser(user){
                 this.showLoader();
+                this.user_added = false;
                 document.getElementById('add_btn').disabled = true;
                 this.errors = [];
                 axios.post('/user', {

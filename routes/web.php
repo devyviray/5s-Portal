@@ -38,7 +38,7 @@ Route::group(['middleware' => 'auth'], function(){
 });
 
 // Accessible routes for admin , inspector and IT
-Route::group(['middleware' => ['auth', 'role:it|administrator|inspector|process owner|department member']], function () {
+Route::group(['middleware' => ['auth', 'role:it|administrator|top management|inspector|process owner|department member']], function () {
 
     // Home page
     Route::get('/home-page', 'HomePageController@index');
@@ -76,6 +76,7 @@ Route::group(['middleware' => ['auth', 'role:it|administrator|inspector|process 
      Route::patch('/user/{user}', 'UserController@update');
      Route::delete('/user/{user}', 'UserController@destroy');
      Route::get('/user-process-owner/{companyId}/{locationId}', 'UserController@getProcessOwnerPerCompany');
+     Route::get('/user-top-management', 'UserController@topManagementUser');
      Route::post('/change-password', 'UserController@changePassword');
 
     // roles

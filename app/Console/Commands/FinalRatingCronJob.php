@@ -41,8 +41,7 @@ class FinalRatingCronJob extends Command
      */
     public function handle()
     {
-        // $current =  \Carbon\Carbon::createFromFormat('Y-m-d H:s:i', Carbon::now());
-        $reports = Report::with('reportDetail')->where('created_at', '<=', Carbon::now()->subDays(2)->toDateTimeString())
+        $reports = Report::with('reportDetail')->where('created_at', '<=', Carbon::now()->subDays(3)->toDateTimeString())
            ->whereNull('ratings')->get();
    
            foreach($reports as $report){

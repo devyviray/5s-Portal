@@ -14444,6 +14444,23 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -14494,17 +14511,22 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
       formData: new FormData(),
       show_added: false,
       loading: false,
-      show_operation_line: false
+      show_operation_line: false,
+      topManagements: [],
+      selectedTopManagement: []
     };
   },
   created: function created() {
-    this.fetchCompanies(); // this.fetchOperationLines();
-
+    this.fetchCompanies();
     this.fetchCategories();
+    this.fetchTopManagement();
   },
   methods: {
     showLoader: function showLoader() {
       this.loading = true;
+    },
+    customLabelLocation: function customLabelLocation(selectedTopManagement) {
+      return "".concat(selectedTopManagement.name);
     },
     prepareFields: function prepareFields() {
       if (this.attachments.length > 0) {
@@ -14707,6 +14729,15 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
         _this8.errors = error.response.data.errors;
       });
     },
+    fetchTopManagement: function fetchTopManagement() {
+      var _this9 = this;
+
+      axios.get('/user-top-management').then(function (response) {
+        _this9.topManagements = response.data;
+      })["catch"](function (error) {
+        _this9.errors = error.response.data.errors;
+      });
+    },
     getSelectedChecklist: function getSelectedChecklist(checklist) {
       this.errors = [];
       this.points = [];
@@ -14723,8 +14754,12 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
       removeElements(document.querySelectorAll(".attachments"));
     },
     addReport: function addReport(selected_checklist, points) {
-      var _this9 = this;
+      var _this10 = this;
 
+      var topManagementIds = [];
+      this.selectedTopManagement.filter(function (item) {
+        return topManagementIds.push(item.id);
+      });
       document.getElementById("addReport").disabled = true;
       this.loading = true;
       this.formData = new FormData();
@@ -14757,16 +14792,17 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
       this.formData.append('points', this.points.length == 0 ? '' : this.points);
       this.formData.append('attachment_ids', this.attachment_ids.length > 0 ? this.attachment_ids : '');
       this.formData.append('attachment_index', this.attachment_index.length > 0 ? this.attachment_index : '');
+      this.formData.append('topManagement', topManagementIds.length > 0 ? topManagementIds : '');
       axios.post('/report', this.formData).then(function (response) {
-        _this9.resetForm();
+        _this10.resetForm();
 
-        _this9.show_added = true;
-        _this9.loading = false;
+        _this10.show_added = true;
+        _this10.loading = false;
         document.getElementById("addReport").disabled = false;
       })["catch"](function (error) {
-        _this9.errors = error.response.data.errors;
-        _this9.show_added = false;
-        _this9.loading = false;
+        _this10.errors = error.response.data.errors;
+        _this10.show_added = false;
+        _this10.loading = false;
         document.getElementById("addReport").disabled = false;
       });
     },
@@ -14782,6 +14818,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
       this.end_time_of_inspection = '';
       this.points = [];
       this.attachments = [];
+      this.selectedTopManagement = [];
 
       var removeElements = function removeElements(elms) {
         return _toConsumableArray(elms).forEach(function (el) {
@@ -16957,6 +16994,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this5 = this;
 
       this.showLoader();
+      this.user_added = false;
       document.getElementById('add_btn').disabled = true;
       this.errors = [];
       axios.post('/user', {
@@ -81723,6 +81761,49 @@ var render = function() {
                             ])
                           : _vm._e()
                       ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "form-group row" }, [
+                      _c(
+                        "label",
+                        {
+                          staticClass: "col-sm-5 col-form-label",
+                          attrs: { for: "colFormLabel" }
+                        },
+                        [_vm._v("Top Management")]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "div",
+                        { staticClass: "col-sm-7" },
+                        [
+                          _c("multiselect", {
+                            attrs: {
+                              options: _vm.topManagements,
+                              multiple: true,
+                              "select-label": "select",
+                              "track-by": "id",
+                              "custom-label": _vm.customLabelLocation,
+                              placeholder: "Multi-select",
+                              id: "selected-top-management"
+                            },
+                            model: {
+                              value: _vm.selectedTopManagement,
+                              callback: function($$v) {
+                                _vm.selectedTopManagement = $$v
+                              },
+                              expression: "selectedTopManagement"
+                            }
+                          }),
+                          _vm._v(" "),
+                          _vm.errors.topManagement
+                            ? _c("span", { staticClass: "text-danger" }, [
+                                _vm._v(_vm._s(_vm.errors.topManagement[0]))
+                              ])
+                            : _vm._e()
+                        ],
+                        1
+                      )
                     ]),
                     _vm._v(" "),
                     _c("div", { staticClass: "form-group row" }, [

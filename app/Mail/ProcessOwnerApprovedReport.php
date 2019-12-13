@@ -27,7 +27,7 @@ class ProcessOwnerApprovedReport extends Mailable
     public function __construct($processOwner, $report)
     {
         $this->processOwner = User::findOrFail($processOwner);
-        $this->report = Report::findOrFail($report);
+        $this->report = Report::with('company', 'location','area','inspector')->where('id',$report)->first();
     }
 
     /**

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Mail;
 use DB;
+use Config;
 use App\{
     User,
     Role
@@ -136,6 +137,18 @@ class UserController extends Controller
             })->where('company_location', $locationId)->get();
     }
 
+    /**
+     *  Fetch Top Management user
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+
+    public function topManagementUser(){
+        return User::whereHas('roles', function ($q){
+            $q->where('role_id', Config::get('constants.roles.top_management.id'));
+        })->get();
+    }
 
      /*
      * Change password 

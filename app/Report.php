@@ -50,4 +50,8 @@ class Report extends Model
     public function reportDetail(){
         return $this->hasMany(ReportDetail::class);
     }
+
+    public function topManagements() {
+        return $this->belongsToMany(User::class)->withTimestamps();
+    }
 }
