@@ -9,5 +9,6 @@
     Inspection Date: {{ \Carbon\Carbon::parse($report->date_of_inspection)->isoFormat('Do MMM YYYY') }}<br>
     Inspector: {{ $report->inspector->name }} <br>
     </p><br>
-    <a href="{{ url('view-report', ['reportId' => $report->id]) }}">View report</a>
+    <a href="{{ url('view-report', ['reportId' => $report->id]) }}">View report</a><br><br>
+    <img src="{{ $message->embed($pathToImage) }}"  alt="QR" title="QR" style="width="200" height=200" data-auto-embed="attachment">
 </div>

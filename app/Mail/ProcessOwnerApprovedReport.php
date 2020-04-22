@@ -39,7 +39,8 @@ class ProcessOwnerApprovedReport extends Mailable
     {
         $report = $this->report;
         $processOwner = $this->processOwner;
+        $pathToImage = public_path()."\img\better_5sPortal.png";
 
-        return $this->view('mail.report-approved', compact('report', 'processOwner'));
+        return $this->view('mail.report-approved', compact('report', 'processOwner', 'pathToImage'));
     }
 }

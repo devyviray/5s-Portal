@@ -35,7 +35,8 @@ class InspectorValidateReport extends Mailable
     {
         $report = $this->report;
         $inspector = $this->inspector;
+        $pathToImage = public_path()."\img\better_5sPortal.png";
 
-        return $this->view('mail.report-validate', compact('report', 'inspector'));
+        return $this->view('mail.report-validate', compact('report', 'inspector','pathToImage'));
     }
 }

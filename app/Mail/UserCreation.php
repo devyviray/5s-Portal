@@ -33,6 +33,7 @@ class UserCreation extends Mailable
     {
         $role = $this->role;
         $default_password = $this->default_password;
-        return $this->view('mail.user-creation', compact('role','default_password'));
+        $pathToImage = public_path()."\img\better_5sPortal.png";
+        return $this->view('mail.user-creation', compact('role','default_password','pathToImage'));
     }
 }

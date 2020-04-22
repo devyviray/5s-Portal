@@ -43,7 +43,8 @@ class ProcessOwnerForCheckingReport extends Mailable
         $processOwner = $this->processOwner;
         $area = $this->area;
         $report = $this->report;
+        $pathToImage = public_path()."\img\better_5sPortal.png";
 
-        return $this->view('mail.report-for-checking', compact('report', 'area', 'processOwner'));
+        return $this->view('mail.report-for-checking', compact('report', 'area', 'processOwner', 'pathToImage'));
     }
 }

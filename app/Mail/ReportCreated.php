@@ -42,7 +42,8 @@ class ReportCreated extends Mailable
         $inspector = $this->inspector;
         $area = $this->area;
         $report = $this->report;
+        $pathToImage = public_path()."\img\better_5sPortal.png";
 
-        return $this->view('mail.report-created', compact('inspector', 'area' , 'report'));
+        return $this->view('mail.report-created', compact('inspector', 'area' , 'report', 'pathToImage'));
     }
 }

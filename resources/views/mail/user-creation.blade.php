@@ -6,6 +6,7 @@
         Default Password:<strong> {{ $default_password }}</strong><br><br>
 
         Reminder: change your password upon log in.<br>
-        Thank you very much!<br>
+        Thank you very much!<br><br>
+        <img src="{{ $message->embed($pathToImage) }}"  alt="QR" title="QR" style="width="200" height=200" data-auto-embed="attachment">
     </p>
 </div>

@@ -42,7 +42,8 @@ class NotifiedProcessOwner extends Mailable
         $inspector = $this->inspector;
         $area = $this->area;
         $report = $this->report;
-        
-        return $this->view('mail.report-notified', compact('inspector','area','report'));
+        $pathToImage = public_path()."\img\better_5sPortal.png";
+
+        return $this->view('mail.report-notified', compact('inspector','area','report','pathToImage'));
     }
 }
