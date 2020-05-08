@@ -557,7 +557,7 @@ color: #F36A5A;
 	background: #3E3E3E;
 }
 .top-navbar {
-    background-color: #616161;
+    background-color: #003300;
 	border-bottom:none;
 }
 .top-navbar .nav > li > a > i {
@@ -680,9 +680,13 @@ html, .main-content {
     height: 100%;
     width: 100%;
 }
-body, #app, .py-4, .wrap-div {
+body, #app, .py-4, .wrap-div{
     height: 100%;
     width: 100%;
+}
+.wrap-div {
+    /* height: 100%;
+    width: 100%; */
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -706,65 +710,6 @@ body, #app, .py-4, .wrap-div {
 }
 .div-logo > img {
     height: 460px;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* html {
-    height: 100%;
-    width: 100%;
-}
-body, #app, .py-4, .wrap-div {
-    height: 100%;
-    width: 100%;
-}
-.left-div{
-    height: 100%;
-    background-color: #418d43;
-    text-align: center;
-    display: table;
-}
-.web-title{
-    font-size: 70px;
-    color:#f5f5f5;
-    font-weight: 800;
-    display: table-cell;
-    vertical-align: middle;
-}
-.right-div, .right-div-inner, .right-div-inner .col-md-8{
-    height: 100%;
-}
-.right-div-inner .panel-default{
-    width: 60%;
-    border-radius: 5px;
-    float: right;
-}
-.title {
-    font-size: 20px;
-    text-align: center;
 }
 .btn-submit{
     width: 100%;
@@ -812,21 +757,6 @@ body, #app, .py-4, .wrap-div {
 }
 .carousel-inner>.item>img {
     height: 650px;
-}
-.div-logo{
-    position: absolute;
-    left: -12%;
-    top: 50%;
-    margin-top: -50px
-}
-.div-logo > img {
-    height: 200px;
-}
-.right-div { 
-    position: relative;
-}
-.row{
-    width: 100%
 }
 .navbar{
     padding: 0rem 0rem !important;
@@ -879,13 +809,8 @@ tbody{
     cursor: pointer;
     padding-right: 20px;
 }
-/* .dropdown>.dropdown-toggle:active { */
-    /*Without this, clicking will make it sticky*/
-      /* pointer-events: none;
-  }
-   */
 
-
+  
 /* vue-carousel css */
 .VueCarousel-slide{
     text-align: center;
@@ -898,7 +823,6 @@ tbody{
     margin-top: 0px !important;
 }
 .VueCarousel-dot--active{
-    /* background-color: rgb(145, 57, 56) !important; */
     background-color: #418d43 !important;
 }
 .VueCarousel{
@@ -916,7 +840,6 @@ tbody{
     height: 100vh;
     width: 100%;
     position: absolute;
-    /* background-color: rgba(255,255,255,0.7); */
     z-index: 1100;
     text-align: center;
 }
@@ -935,12 +858,11 @@ tbody{
 
 
 /* Reponsive css */
-
 @media screen and (max-width: 992px) {
     .qm-email {
      text-align: center;
     }
-  } */
+  }
 /*!
 
 =========================================================

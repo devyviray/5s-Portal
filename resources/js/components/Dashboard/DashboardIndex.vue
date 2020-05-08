@@ -3,7 +3,9 @@
         <loader v-if="loading"></loader>
         <nav class="navbar navbar-default top-navbar" role="navigation">
             <div class="row">
-                <div class="col-md-8"></div>
+                <div class="col-md-8">
+                    <img class="mt-2 ml-2 mb-2" :src="publicPath +'/img/new_design/5sPortal.png'">
+                </div>
                 <div class="col-md-4">
                     <div class="row">
                         <div class="col-md-8">
@@ -15,12 +17,12 @@
                     </div>
                 </div>
             </div>
-        </nav>   
+        </nav>
         <div id="page-wrapper">
             <div class="div-spacing"></div>     
             <div class="header">
                 <h1 class="page-header">
-                    <img class="lafil-logo" :src="logoLink">
+                    <img class="lafil-logo" :src="publicPath + '/img/lafil-logo.png'">
                     <b>5S PORTAL - HOME PAGE</b>
                 </h1>
                 <breadcrumb :user-role-level="userRoleLevel"></breadcrumb>
@@ -78,14 +80,8 @@
             },
         },
         computed:{
-            photoLink1(){
-                return window.location.origin+'/img/photo1.jpg';
-            },
-            photoLink2(){
-                return window.location.origin+'/img/photo2.jpg';
-            },
-            logoLink(){
-                return window.location.origin+'/img/lafil-logo.png';
+            publicPath(){
+                return window.location.origin;
             },
             imageLink(){
                  return window.location.origin+'/storage/';
