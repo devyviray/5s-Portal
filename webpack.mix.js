@@ -18,14 +18,16 @@ mix.styles([
     'public/css/style.css',
     // 'public/css/bootstrap.css',
     'public/css/custom-styles.css',
-    'public/css/font-awesome.css',
+    // 'public/css/font-awesome.css',
     'public/css/argon.min.css',
+    'public/fontawesome/css/all.css',
 
 ], 'public/css/all.css')
 .js([
     'public/js/script.js',
     // 'public/js/jquery-1.10.2.js',
-    'public/js/bootstrap.min.js',
+    // 'public/js/bootstrap.min.js',
+    'public/fontawesome/js/all.js',
     'resources/js/app.js',
 
 ], 'public/js/all.js')

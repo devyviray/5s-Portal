@@ -435,22 +435,6 @@ class ReportController extends Controller
 
     }
 
-     /**
-     *  Get Performace Evaluation Rating data
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-
-    public function performaceEvaluationRating($company, $location){
-        return Report::where('company_id',$company)
-            ->where('location_id', $location)
-            ->where('reporting_year', Carbon::now()->year)
-            ->where('status', 4) //Final rating
-            ->whereNotNull('operation_line_id')
-            ->orderBy('reporting_month', 'asc')->get();
-    }
-
     /**
      * Generate trend and analysis to PDF
      *

@@ -676,8 +676,64 @@ font-size: 19px;
 
 
 /* Add by Devy viray */
+html, .main-content {
+    height: 100%;
+    width: 100%;
+}
+body, #app, .py-4, .wrap-div {
+    height: 100%;
+    width: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-image: url('../img/new_design/login3.png');
+}
+.row{
+    width: 100%;
+}
+.img-login1{
+    height: 100%;
+    width: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-image: url('../img/new_design/login1.png');
+}
+.div-logo{
+    position: absolute;
+    left: 67%;
+    bottom: 46%;
+}
+.div-logo > img {
+    height: 460px;
+}
 
-html {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* html {
     height: 100%;
     width: 100%;
 }
@@ -884,4 +940,4 @@ tbody{
     .qm-email {
      text-align: center;
     }
-  }
+  } */

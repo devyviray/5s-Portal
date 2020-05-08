@@ -33,27 +33,6 @@
                         <div class="col-md-4" v-if="userRoleLevel > 2">
                             <button class="btn btn-sm btn-primary" @click="createReport"> Create Report</button>
                             <a target="_blank"  :href="trendAndAnalysis" class="btn btn-sm btn-primary"> Trend and Analysis</a>
-                            <div class="dropdown" id="dropdown">
-                                <a class="dropdown-toggle"  id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                   + Performance Evaluation Rating
-                                </a>
-                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" v-if="performanceEvaluationRating.length">
-                                    <div class="row pl-2">
-                                        <div class="col-md-12 mb-1">1st Quarter: {{ firstQuarterRating() }}</div>
-                                        <div class="col-md-12 mb-1">2nd Quarter: {{ secondQuarterRating() }}</div>
-                                        <div class="col-md-12 mb-1">3rd Quarter: {{ thirdQuarterRating() }}</div>
-                                        <div class="col-md-12 mb-1">4th Quarter: {{ fourthQuarterRating() }}</div>
-                                    </div>
-                                </div>
-                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" v-else>
-                                    <div class="row pl-2">
-                                        <div class="col-md-12 mb-1">1st Quarter: N/A</div>
-                                        <div class="col-md-12 mb-1">2nd Quarter: N/A</div>
-                                        <div class="col-md-12 mb-1">3rd Quarter: N/A</div>
-                                        <div class="col-md-12 mb-1">4th Quarter: N/A</div>
-                                    </div>
-                                </div>
-                            </div>
                         </div>  
                         <div class="col-md-4" v-else>
                             <a target="_blank" :href="trendAndAnalysis" class="btn btn-sm btn-primary float-right"> Trend and Analysis</a>
@@ -168,7 +147,6 @@
         },
         data(){
             return {
-                performanceEvaluationRating: [],
                 reports: [],
                 companies : [],
                 locations: [],
@@ -244,15 +222,6 @@
                     this.errors = error.response.data.errors;
                 }); 
             },
-            fetchPerformanceEvaluationRating(){
-                 axios.get(`/performace-evaluation-rating/${this.companyId}/${this.locationId}`)
-                .then(response =>{
-                    this.performanceEvaluationRating = response.data;
-                })
-                .catch(error => {
-                    this.errors = error.response.data.error;
-                })
-            },
             fetchCompanies(){
                 axios.get('/companies-all')
                  .then(response => {
@@ -321,57 +290,6 @@
                         break;
                     default:
                 }
-            },
-            firstQuarterRating(){
-                var rating = 0;
-                var count = 0;
-                this.performanceEvaluationRating.filter(item => {
-                    if(item.reporting_month == 1 || item.reporting_month == 2 || item.reporting_month == 3){
-                        rating = rating + item.ratings;
-                        count = count + 1;
-                    }
-                })
-                var result = rating ?  rating / count + ' %  ' : 'N/A'
-               
-                return result;
-            },
-            secondQuarterRating(){
-                var rating = 0;
-                var count = 0;
-                this.performanceEvaluationRating.filter(item => {
-                    if(item.reporting_month == 4 || item.reporting_month == 5 || item.reporting_month == 6){
-                        rating = rating + item.ratings;
-                        count = count + 1;
-                    }
-                })
-                var result = rating ?  rating / count + ' %  ' : 'N/A'
-
-                return result;
-            },
-            thirdQuarterRating(){
-                var rating = 0;
-                var count = 0;
-                this.performanceEvaluationRating.filter(item => {
-                    if(item.reporting_month ==  7 || item.reporting_month == 8 || item.reporting_month == 9){
-                        rating = rating + item.ratings;
-                    }
-                })
-                var result = rating ?  rating / count + ' %  ': 'N/A'
-               
-                return result;
-            },
-            fourthQuarterRating(){
-                var rating = 0;
-                var count = 0;
-                this.performanceEvaluationRating.filter(item => {
-                    if(item.reporting_month ==  10 || item.reporting_month == 11 || item.reporting_month == 12){
-                        rating = rating + item.ratings;
-                        count = count + 1;
-                    }
-                })
-                var result = rating ?  rating / count + ' %  ' : 'N/A'
-               
-                return result;
             },
             setPage(pageNumber) {
                 this.currentPage = pageNumber;

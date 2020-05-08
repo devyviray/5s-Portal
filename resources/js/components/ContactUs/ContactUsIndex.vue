@@ -34,12 +34,10 @@
                                     <div class="card-body text-center"><br><br><br>
                                         <h1 class="text-dark">CISCO Local Nos.:</h1><br><br>
                                         <h1 class="text-dark">Manila – 2414 – 2415</h1>
-                                        <h1 class="text-dark">Iloilo – 3931 – 3932</h1>
-                                        <h1 class="text-dark">Bataan – 7012</h1>
-                                        <h1 class="text-dark">Capiz – 5002</h1><br><br>
+                                        <h1 class="text-dark">Iloilo – 3931 – 3932</h1><br><br>
                                         <h1 class="text-dark">E-mail address:</h1>
+                                        <h1 class="qm-email text-dark">5sPortal@mail.lafilgroup.com</h1><br><br><br>
                                     </div>
-                                    <h1 class="qm-email text-dark">tqmmnl-ilogroup@lafiladmin.com</h1><br><br><br>
                                 </div>
                                 <div class="col-sm-12 col-md-12 col-lg-9">
                                     <div class="row">
