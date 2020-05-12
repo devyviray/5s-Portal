@@ -80,6 +80,7 @@ Vue.component('company-area-index', require('./components/CompanyArea/CompanyAre
 
 
 // components
+Vue.component('pageHeader', require('./components/PageHeader.vue').default);
 Vue.component('navbarRight', require('./components/NavbarRight.vue').default);
 Vue.component('breadcrumb', require('./components/Breadcrumb.vue').default);
 /**

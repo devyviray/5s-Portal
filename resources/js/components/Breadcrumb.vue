@@ -1,11 +1,11 @@
 <template>
     <div>
         <ol class="breadcrumb">
-            <li><a :href="homeLink">Home</a></li><span style="color: #FFFF">|</span>
-            <li>
+            <li class="breadcrumb-item active"><a :href="homeLink"><i class="fas fa-home text-dark"></i> HOME</a></li><span>|</span>
+            <li class="breadcrumb-item">
                 <div class="dropdown" id="dropdown">
-                    <a style=" color: #ffff;" class="dropdown-toggle"  id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Report & Rating
+                    <a style=" color: #003300;  font-weight: bolder;" class="dropdown-toggle"  id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        REPORT & RATING
                     </a>
                     <span v-if="notifications !== 0" class="badge text-white" style="background-color: #f80031;">{{ notifications }}</span>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -17,16 +17,23 @@
                     </div>
                 </div>
             </li> 
-            <span  style="color: #FFFF">|</span>
-            <li><a :href="faqPageLink">FAQs</a></li><span style="color: #FFFF">|</span>
-            <li><a :href="contactUsLink">Contact Us</a></li>
+            <span>|</span>
+            <li class="breadcrumb-item"><a :href="faqPageLink">FAQs</a></li><span>|</span>
+            <li class="breadcrumb-item"><a :href="contactUsLink">CONTACT US</a></li><span>|</span>
+            <li class="breadcrumb-item">
+                    <!-- <i class="fas fa-cogs text-dark"></i> -->
+                    <navbarRight :user-role-level="userRoleLevel" :user-id="userId"></navbarRight>
+            </li>
+            <div style="width: 38%; text-align: right; font-weight:bolder"><a href="#" @click="logoutForm">LOG-OUT</a></div>
         </ol>
     </div>
 </template>
 
 <script>
+import navbarRight from './NavbarRight';
 export default {
     props: ['userRoleLevel'],
+    components: { navbarRight },
     data(){
         return {
             companiesWithLocations: [],
@@ -38,6 +45,18 @@ export default {
         this.fetchCompanies();
     },
     methods:{
+        logoutForm(){
+            this.$parent.showLoader();
+            axios.post('/logout')
+            .then(response =>{
+                if(response.status == 200){
+                    window.location.href = window.location.origin+'/login';
+                }
+            })
+            .catch(error => { 
+                this.errors = error.response.data.errors;
+            })
+        },
         fetchCompanies(){
             axios.get('/companies-all')
             .then(response => {
