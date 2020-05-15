@@ -1,7 +1,8 @@
 <template>
     <div>
         <ol class="breadcrumb">
-            <li class="breadcrumb-item active"><a :href="homeLink"><i class="fas fa-home text-dark"></i> HOME</a></li><span>|</span>
+            <li class="breadcrumb-item active"><a :href="publicPath+'/home'"><i class="fas fa-home text-dark"></i> HOME</a></li><span>|</span>
+            <li class="breadcrumb-item"><a :href="publicPath+'/create-report'"><i class="fas fa-file-signature"></i>CREATE REPORT</a></li><span>|</span>
             <li class="breadcrumb-item">
                 <div class="dropdown" id="dropdown">
                     <a style=" color: #003300;  font-weight: bolder;" class="dropdown-toggle"  id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -18,11 +19,10 @@
                 </div>
             </li> 
             <span>|</span>
-            <li class="breadcrumb-item"><a :href="faqPageLink">FAQs</a></li><span>|</span>
+            <!-- <li class="breadcrumb-item"><a :href="faqPageLink">FAQs</a></li><span>|</span> -->
             <li class="breadcrumb-item"><a :href="contactUsLink">CONTACT US</a></li><span>|</span>
-            <li class="breadcrumb-item">
-                    <!-- <i class="fas fa-cogs text-dark"></i> -->
-                    <navbarRight :user-role-level="userRoleLevel" :user-id="userId"></navbarRight>
+            <li class="breadcrumb-item"><!-- <i class="fas fa-cogs text-dark"></i> -->
+                <navbarRight :user-role-level="userRoleLevel" :user-id="userId"></navbarRight>
             </li>
             <div style="width: 38%; text-align: right; font-weight:bolder"><a href="#" @click="logoutForm">LOG-OUT</a></div>
         </ol>
@@ -32,7 +32,7 @@
 <script>
 import navbarRight from './NavbarRight';
 export default {
-    props: ['userRoleLevel'],
+    props: ['userRoleLevel','userId'],
     components: { navbarRight },
     data(){
         return {
@@ -87,8 +87,8 @@ export default {
         }
     },
     computed:{
-        homeLink(){
-            return window.location.origin+'/home'
+        publicPath(){
+            return window.location.origin;
         },
         reportLink(){
             return window.location.origin+'/reports/' 

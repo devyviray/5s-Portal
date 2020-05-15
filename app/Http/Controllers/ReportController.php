@@ -96,7 +96,10 @@ class ReportController extends Controller
             'checklist' => 'required',
             'points' => 'required',
             'points.*' => 'required',
-            'topManagement' => 'required',
+            'accompanied_by' => 'required',
+            'department_head' => 'required',
+            'bu_head' => 'required',
+            'group_president' => 'required',
         ]);
 
         DB::beginTransaction();
@@ -116,7 +119,11 @@ class ReportController extends Controller
                 'end_time_of_inspection' => $request->end_time_of_inspection,
                 'status' => 1,
                 'reporting_month' => $date->isoFormat('M'),
-                'reporting_year' => $date->isoFormat('Y')
+                'reporting_year' => $date->isoFormat('Y'),
+                'accompanied_by' => $request->accompanied_by,
+                'department_head_id' => $request->department_head,
+                'cluster_head_id' => $request->bu_head,
+                'group_president_id' => $request->group_president
             ];
             if($r = Report::create($data)){
                 $ids = [];
@@ -128,12 +135,13 @@ class ReportController extends Controller
                             'report_id' => $r->id,
                             'name' => $checklist->requirement. ' - '.$checklist->description,
                             'points' => explode(',',$request->points)[$key],
+                            'previous_rating' => 0,
+                            'recurrence_number' => $checklist->recurrence_number,
+                            'criticality' => $checklist->criticality
                         ]
                     );
                     $ids[] = $report->id;
                 }
-                $topManagementId = strpos($request->topManagement, ',') !== true ? explode(',',$request->topManagement) : $request->topManagement;
-                $r->topManagements()->sync($topManagementId);
             }
 
             if($request->has('attachments')){

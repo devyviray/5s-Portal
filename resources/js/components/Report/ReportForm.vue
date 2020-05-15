@@ -1,169 +1,139 @@
 <template>
     <div id="wrapper">
     <loader v-if="loading"></loader>
-    <nav class="navbar navbar-default top-navbar" role="navigation">
-     <div class="row">
-        <div class="col-md-8"></div>
-            <div class="col-md-4">
-                <div class="row">
-                    <div class="col-md-8">
-                        <span class="span-username">Hi, {{ this.userName }}</span>
-                    </div>
-                    <div class="col-md-4">
-                        <navbarRight :user-role-level="userRoleLevel" :user-id="userId"></navbarRight>
-                    </div>
-                </div>
-            </div>
+    <page-header></page-header>
+    <div id="page-wrapper">   
+        <div>
+            <breadcrumb :user-role-level="userRoleLevel" :user-id="userId"></breadcrumb>
         </div>
-    </nav>
-    <div id="page-wrapper">
-        <div class="div-spacing"></div>     
-        <div class="header">
-            <h1 class="page-header">
-                <img class="lafil-logo" :src="logoLink">
-                <b>5S PORTAL - REPORT & RATING </b>
-            </h1>
-            <breadcrumb :user-role-level="userRoleLevel"></breadcrumb>
-        </div>
-        <div id="page-inner">
-            <div class="card">
-                <div class="card-body"> 
-                    <div class="row">
-                        <div class="col-md-3 card card-report">
-                            <div class="card-body">
-                                <div class="form-group row">
-                                    <span class="col-sm-5">Company:</span>
-                                    <div class="col-sm-7">
-                                        <select class="form-control" v-model="company" @change="changeCompany(company, 'getCompanies')">
-                                            <option v-for="(company,c) in companies" v-bind:key="c" :value="company"> {{ company.name }}</option>
-                                        </select>
-                                        <span class="text-danger" v-if="errors.company  ">{{ errors.company[0] }}</span>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <span class="col-sm-5">Location:</span>
-                                    <div class="col-sm-7">
-                                        <select class="form-control" v-model="location" @change="changeCompany('', '')">
-                                            <option v-for="(location,l) in locations" v-bind:key="l" :value="location"> {{ location.name }}</option>
-                                        </select>
-                                        <span class="text-danger" v-if="errors.location  ">{{ errors.location[0] }}</span>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <span class="col-sm-5">Category:</span>
-                                    <div class="col-sm-7">
-                                        <select class="form-control" v-model="category"  @change="changeCompany('', '')">
-                                            <option v-for="(category,c) in categories" v-bind:key="c" :value="category"> {{ category.name }}</option>
-                                        </select>
-                                        <span class="text-danger" v-if="errors.category  ">{{ errors.category[0] }}</span>
-                                    </div>
-                                </div>
-                                <div class="form-group row" v-if="show_operation_line">
-                                    <span class="col-sm-5">Operation Line:</span>
-                                    <div class="col-sm-7">
-                                        <select class="form-control" v-model="operation_line" @change="changeCompany('', '')">
-                                            <option v-for="(operation_line,o) in operation_lines" v-bind:key="o" :value="operation_line.operation_line"> {{ operation_line.operation_line.name }}</option>
-                                        </select>
-                                        <span class="text-danger" v-if="errors.operation_line  ">{{ errors.operation_line[0] }}</span>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <span class="col-sm-5">Area:</span>
-                                    <div class="col-sm-7">
-                                        <select class="form-control" v-model="area"  @change="changeCompany('', '')">
-                                            <option v-for="(area,a) in areas" v-bind:key="a" :value="area"> {{ area.name }}</option>
-                                        </select>
-                                        <span class="text-danger" v-if="errors.area  ">{{ errors.area[0] }}</span>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label for="colFormLabel" class="col-sm-5 col-form-label">Checklist</label>
-                                    <div class="col-sm-7">
-                                        <select class="form-control" v-model="checklist" @change="getSelectedChecklist(checklist)">
-                                            <option v-for="(checklist,c) in checklists" v-bind:key="c" :value="checklist"> {{  checklist[0].name }}</option>
-                                        </select>
-                                        <span class="text-danger" v-if="errors.checklist  ">{{ errors.checklist[0] }}</span>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label for="colFormLabel" class="col-sm-5 col-form-label">Process owner</label>
-                                    <div class="col-sm-7">
-                                        <select class="form-control" v-model="process_owner">
-                                            <option v-for="(process_owner,p) in process_owners" v-bind:key="p" :value="process_owner.id"> {{ process_owner.name }}</option>
-                                        </select>
-                                        <span class="text-danger" v-if="errors.process_owner  ">{{ errors.process_owner[0] }}</span>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label for="colFormLabel" class="col-sm-5 col-form-label">Top Management</label>
-                                    <div class="col-sm-7">
-                                        <multiselect
-                                                v-model="selectedTopManagement"
-                                                :options="topManagements"
-                                                :multiple="true"
-                                                :select-label="'select'"
-                                                track-by="id"
-                                                :custom-label="customLabelLocation"
-                                                placeholder="Multi-select"
-                                                id="selected-top-management"
-                                            >
-                                        </multiselect> 
-                                        <span class="text-danger" v-if="errors.topManagement">{{ errors.topManagement[0] }}</span>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label for="colFormLabel" class="col-sm-5 col-form-label">Date of Inspection</label>
-                                    <div class="col-sm-7">
-                                        <input type="date" class="form-control" id="colFormLabel" v-model="date_of_inspection">
-                                        <span class="text-danger" v-if="errors.date_of_inspection  ">{{ errors.date_of_inspection[0] }}</span>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label for="colFormLabel" class="col-sm-5 col-form-label">Start Time</label>
-                                    <div class="col-sm-7">
-                                        <input type="time" class="form-control" id="colFormLabel" v-model="start_time_of_inspection">
-                                        <span class="text-danger" v-if="errors.start_time_of_inspection  ">{{ errors.start_time_of_inspection[0] }}</span>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label for="colFormLabel" class="col-sm-5 col-form-label">End Time</label>
-                                    <div class="col-sm-7">
-                                        <input type="time" class="form-control" id="colFormLabel" v-model="end_time_of_inspection">
-                                        <span class="text-danger" v-if="errors.end_time_of_inspection  ">{{ errors.end_time_of_inspection[0] }}</span>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <div class="col-sm-4"></div>
-                                    <div class="col-sm-4">
-                                    <button class="btn btn-block btn-primary" @click="addReport(selected_checklist,points)" id="addReport"> POST</button>
-                                    </div>
-                                    <div class="col-sm-4"></div>
-                                </div>
-                                <div class="form-group row">
-                                    <div class="alert alert-info col-md-12" v-if="show_added">
-                                        <strong>Success!</strong> Report succesfully added
-                                    </div>
-                                </div>
+        <div style="overflow-y: scroll; max-height: 910px;">
+            <div class="row row-margin">
+                <div class="col-md-2 card card-report">
+                    <div class="card-body">
+                        <div class="form-group form-group-report">
+                            <label for="exampleInputEmail1">Company</label>
+                            <select class="form-control" v-model="company" @change="changeCompany(company, 'getCompanies')">
+                                <option v-for="(company,c) in companies" v-bind:key="c" :value="company"> {{ company.name }}</option>
+                            </select>
+                            <span class="text-danger" v-if="errors.company  ">{{ errors.company[0] }}</span>
+                        </div>
+                        <div class="form-group form-group-report">
+                            <label for="exampleInputEmail1">Location</label>
+                            <select class="form-control" v-model="location" @change="changeCompany('', '')">
+                                <option v-for="(location,l) in locations" v-bind:key="l" :value="location"> {{ location.name }}</option>
+                            </select>
+                            <span class="text-danger" v-if="errors.location  ">{{ errors.location[0] }}</span>
+                        </div>
+                        <div class="form-group form-group-report">
+                            <label for="exampleInputEmail1">Department</label>
+                            <select class="form-control" v-model="department" @change="changeCompany('', '')">
+                                <option v-for="(department,d) in departments" v-bind:key="d" :value="department"> {{ department.name }}</option>
+                            </select>
+                            <span class="text-danger" v-if="errors.company  ">{{ errors.company[0] }}</span>
+                        </div>
+                        <div class="form-group form-group-report">
+                            <label for="exampleInputEmail1">Category</label>
+                             <select class="form-control" v-model="category"  @change="changeCompany('', '')">
+                                <option v-for="(category,c) in categories" v-bind:key="c" :value="category"> {{ category.name }}</option>
+                            </select>
+                            <span class="text-danger" v-if="errors.category  ">{{ errors.category[0] }}</span>
+                        </div>
+                        <div class="form-group form-group-report" v-if="show_operation_line">
+                            <label for="exampleInputEmail1">Operation Line</label>
+                            <select class="form-control" v-model="operation_line" @change="changeCompany('', '')">
+                                <option v-for="(operation_line,o) in operation_lines" v-bind:key="o" :value="operation_line.operation_line"> {{ operation_line.operation_line.name }}</option>
+                            </select>
+                            <span class="text-danger" v-if="errors.operation_line  ">{{ errors.operation_line[0] }}</span>
+                        </div>
+                        <div class="form-group form-group-report">
+                            <label for="exampleInputEmail1">Area</label>
+                            <select class="form-control" v-model="area"  @change="changeCompany('', '')">
+                                <option v-for="(area,a) in areas" v-bind:key="a" :value="area"> {{ area.name }}</option>
+                            </select>
+                            <span class="text-danger" v-if="errors.area  ">{{ errors.area[0] }}</span>
+                        </div>
+                        <div class="form-group form-group-report">
+                            <label for="exampleInputEmail1">Date of Inspection</label>
+                            <input type="date" class="form-control" id="colFormLabel" v-model="date_of_inspection">
+                            <span class="text-danger" v-if="errors.date_of_inspection  ">{{ errors.date_of_inspection[0] }}</span>
+                        </div>
+                        <div class="form-group form-group-report">
+                            <label for="exampleInputEmail1">Start Time</label>
+                            <input type="time" class="form-control" id="colFormLabel" v-model="start_time_of_inspection">
+                            <span class="text-danger" v-if="errors.start_time_of_inspection  ">{{ errors.start_time_of_inspection[0] }}</span>
+                        </div>
+                        <div class="form-group form-group-report">
+                            <label for="exampleInputEmail1">End Time</label>
+                            <input type="time" class="form-control" id="colFormLabel" v-model="end_time_of_inspection">
+                            <span class="text-danger" v-if="errors.end_time_of_inspection  ">{{ errors.end_time_of_inspection[0] }}</span>
+                        </div>
+                        <div class="form-group form-group-report">
+                            <label for="exampleInputEmail1">Accompanied by</label>
+                            <input type="text" class="form-control" id="colFormLabel" v-model="accompanied_by">
+                            <span class="text-danger" v-if="errors.accompanied_by  ">{{ errors.accompanied_by[0] }}</span>
+                        </div>
+                        <div class="form-group form-group-report">
+                            <label for="exampleInputEmail1">Area owner</label>
+                            <span class="text-danger" v-if="errors.process_owner  ">{{ errors.process_owner[0] }}</span>
+
+                            <input type="text" class="form-control" id="colFormLabel" v-model="process_owner.name" readonly>
+                            <span class="text-danger" v-if="errors.process_owner  ">{{ errors.process_owner[0] }}</span>
+                        </div>
+                        <div class="form-group form-group-report">
+                            <label for="exampleInputEmail1">Department Head</label>
+                            <input type="text" class="form-control" id="colFormLabel" v-model="department_head.name" readonly>
+                            <span class="text-danger" v-if="errors.department_head  ">{{ errors.department_head[0] }}</span>
+                        </div>
+                        <div class="form-group form-group-report">
+                            <label for="exampleInputEmail1">BU / Cluster Head</label>
+                            <input type="text" class="form-control" id="colFormLabel" v-model="bu_head.name" readonly>
+                            <span class="text-danger" v-if="errors.bu_head">{{ errors.bu_head[0] }}</span>
+                        </div>
+                        <div class="form-group form-group-report">
+                            <label for="exampleInputEmail1">Group President</label>
+                            <input type="text" class="form-control" id="colFormLabel" v-model="group_president.name" readonly>
+                            <span class="text-danger" v-if="errors.group_president">{{ errors.group_president[0] }}</span>
+                        </div>
+                        <div class="form-group row form-group-report">
+                            <div class="col-sm-4"></div>
+                            <div class="col-sm-4">
+                            <button class="btn btn-block btn-primary" @click="addReport(selected_checklist,points)" id="addReport"> POST</button>
+                            </div>
+                            <div class="col-sm-4"></div>
+                        </div>
+                        <div class="form-group row form-group-report">
+                            <div class="alert alert-info col-md-12" v-if="show_added">
+                                <strong>Success!</strong> Report succesfully added
                             </div>
                         </div>
-                        <div class="col-md-9">
-                            <div class="table-responsive" v-if="selected_checklist.length" style="height: 770px">
+                    </div>
+                </div>
+                <div class="col-md-10">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-responsive" v-if="selected_checklist.length" style="height: 840px">
                                 <table class="table align-items-center table-flush">
                                     <thead class="thead-light">
                                         <tr class="d-flex">
                                             <th scope="col" class="col-1">ID</th>
-                                            <th scope="col" class="col-6">Name</th>
-                                            <th scope="col" class="col-2">Points</th>
-                                            <th scope="col" class="col-3">File</th>
+                                            <th scope="col" class="col-5">Requirement</th>
+                                            <th scope="col" class="col-1">Previous Rating</th>
+                                            <th scope="col" class="col-2">Upload Picture</th>
+                                            <th scope="col" class="col-1">Rating</th>
+                                            <th scope="col" class="col-1">Recurrence No.</th>
+                                            <th scope="col" class="col-1">Criticality</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr v-for="(checklist, c) in selected_checklist" v-bind:key="c" class="d-flex">
                                             <td scope="row" class="col-sm-1">{{ c + 1 }}</td>
-                                            <td class="col-sm-6" style="white-space: inherit;">{{ checklist.requirement +' - '+ checklist.description  }}</td>
+                                            <td class="col-sm-5" style="white-space: inherit;">{{ checklist.requirement +' - '+ checklist.description  }}</td>
+                                            <td class="col-sm-1">Previous Rating</td>
                                             <td class="col-sm-2">
-                                                <!-- <select class="form-control" v-model="points[c]"> -->
-                                                <select class="form-control select-points" v-model="checklist.rating">
+                                                <input type="file" multiple="multiple" :id="'attachments'+c"  class="attachments" accept="image/*" placeholder="Attach file" @change="uploadFileChange($event,c,checklist.id)"><br>
+                                            </td>
+                                            <td class="col-sm-1">
+                                                <select class="form-control select-points" v-model="checklist.rating" @change="checkRating($event,c)">
                                                     <option value="N/A"> N/A </option>
                                                     <option value="0"> 0 </option>
                                                     <option value="1"> 1 </option>
@@ -173,27 +143,61 @@
                                                     <span class="text-danger" v-if="points_error == c"> This field is required </span>
                                                 </div>
                                             </td>
-                                            <td class="col-sm-3">
-                                                <input type="file" multiple="multiple" :id="'attachments'+c"  class="attachments" accept="image/*" placeholder="Attach file" @change="uploadFileChange($event,c,checklist.id)"><br>
+                                            <td class="col-sm-1">
+                                                <select class="form-control select-points recurrence_number" :id="'recurrence-'+c" disabled v-model="checklist.recurrence_number">
+                                                    <option value="0"> 0 </option>
+                                                    <option value="1"> 1 </option>
+                                                    <option value="2"> 2 </option>
+                                                    <option value="3"> 3 </option>
+                                                    <option value="4"> 4 </option>
+                                                    <option value="5"> 5 </option>
+                                                    <option value="6"> 6 </option>
+                                                    <option value="7"> 7 </option>
+                                                    <option value="8"> 8 </option>
+                                                    <option value="9"> 9 </option>
+                                                    <option value="10"> 10 </option>
+                                                    <option value="11"> 11 </option>
+                                                    <option value="12"> 12 </option>
+                                                </select>
+                                                <div v-for="(recurrence_number_error, r) in recurrence_number_errors" :key="r">
+                                                    <span class="text-danger" v-if="recurrence_number_error == c"> This field is required </span>
+                                                </div>
+                                            </td>
+                                            <td class="col-sm-1">
+                                                <select class="form-control select-points criticality" :id="'criticality-'+c" disabled v-model="checklist.criticality">
+                                                    <option value="Critical"> Critical </option>
+                                                    <option value="Non - critical"> Non - critical </option>
+                                                </select>
+                                                <div v-for="(criticality_error, cc) in criticality_errors" :key="cc">
+                                                    <span class="text-danger" v-if="criticality_error == c"> This field is required </span>
+                                                </div>
                                             </td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
-                             <div class="table-responsive" v-else style="height: 770px; display: inline-flex; align-items: center;">
-                                 <span style="margin: 0 auto">No Checklist Selected</span>   
-                             </div>
+                            <div class="table-responsive" v-else style="height: 840px; display: inline-flex; align-items: center;">
+                                <span style="margin: 0 auto">No Checklist Selected</span>   
+                            </div>
                             <div class="row mb-3 mt-3 ml-1" v-if="selected_checklist.length ">
-                                <div class="col-6">
-                                    <span>Rating Criteria:</span><br>
-                                    <span>0: More than 2 Non-Conformance</span><br> 
-                                    <span>1: 1-2 Non-Conformances</span><br> 
-                                    <span>2: Full Compliance</span><br> 
-                                </div>
+                                <div class="col-6"></div>
                                 <div class="col-6 text-right">
                                     <span>{{ selected_checklist.length }} Checklist(s)</span>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                    <div class="row text-right mt-5">
+                        <div class="col-md-12">
+                            <button type="button" class="btn btn-primary btn- btn-lg"> PREVIEW REPORT</button>
+                        </div>
+                    </div>
+                    <div class="row row-margin">
+                        <div>
+                            <span>Rating Criteria:</span><br>
+                            <span>0: More than 2 Non-Conformance</span><br> 
+                            <span>1: 1-2 Non-Conformances</span><br> 
+                            <span>2: Full Compliance</span><br>
                         </div>
                     </div>
                 </div>
@@ -221,22 +225,22 @@
             return {
                 companies : [],
                 locations: [],
+                departments: [],
                 operation_lines: [],
                 categories: [],
                 areas: [],
-                checklists: [],
                 selected_checklist:[],
                 company: '',
+                department: '',
                 location: '',
                 operation_line: '',
                 category: '',
                 area: '',
-                checklist: '',
-                process_owners: [],
                 process_owner: '',
                 date_of_inspection: '',
                 start_time_of_inspection: '',
                 end_time_of_inspection: '',
+                accompanied_by: '',
                 selected_data: [],
                 points: [],
                 attachments: [],
@@ -247,25 +251,36 @@
                 reportsPerUser: [],
                 errors: [],
                 points_errors: [],
-                currentPage: 0,
-                itemsPerPage: 8,
-                keywords: '',
+                recurrence_number_errors: [],
+                criticality_errors: [],
                 fileSize: 0,
                 maximumSize: 5000000,
                 formData: new FormData(),
                 show_added: false,
                 loading: false,
                 show_operation_line: false,
-                topManagements: [],
-                selectedTopManagement: []
+                department_head: '',
+                bu_head: '',
+                group_president: '',
+                selectedTopManagement: [],
+                default_category: ''
             }
         },
         created(){
             this.fetchCompanies();
+            this.fetchDepartments();
             this.fetchCategories();
-            this.fetchTopManagement();
         },
         methods:{
+            checkRating(e,index){
+                if(event.target.value == 'N/A' || event.target.value == '2'){
+                    document.getElementById("recurrence-"+index).disabled = true;
+                    document.getElementById("criticality-"+index).disabled = true;
+                }else{
+                    document.getElementById("recurrence-"+index).disabled = false;
+                    document.getElementById("criticality-"+index).disabled = false;
+                }
+            },
             showLoader(){
                this.loading = true;
             },
@@ -364,20 +379,24 @@
                         this.show_operation_line = false;
                         this.operation_line = '';
                     }
-                    if(this.company && this.location ){
-                        this.fetchProccessOwner();
+                    if(this.company && this.location){
+                        if(this.department){
+                            this.fetchProccessOwner();
+                            this.fetchDepartmentHead();
+                            this.fetchbuHead();
+                            this.fetchGroupPresident();
+                        }
+                        if(this.category){
+                            this.fetchCompayAreas();
+                        }
                         this.fetchOperationLines();
                     }
-                    if(this.company && this.location && this.category){
-                        this.fetchCompayAreas();
-                    }
-                    if(this.category){
+                    this.default_category = !this.category ? this.category.name : this.default_category;
+                    if(this.default_category != this.category.name){
                         this.fetchChecklist();
+                        this.default_category = this.category.name;
                     }
                     // Clear array
-                    this.checklists = [];
-                    this.checklist = [];
-                    this.selected_checklist = [];
                     this.points_errors = [];
                 }
             },
@@ -388,10 +407,18 @@
                 })
                 .catch(error => { 
                     this.errors = error.response.data.errors;
-                }); 
+                });
+            },
+            fetchDepartments(){
+                axios.get('/departments-all')
+                 .then(response => {
+                    this.departments = response.data;
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.errors;
+                });
             },
             fetchOperationLines(){
-                // axios.get('/operation-lines-all')
                 axios.get(`/operation-lines/${this.company.id}/${this.location.id}`)
                  .then(response => {
                     this.operation_lines = response.data;
@@ -420,65 +447,84 @@
                 });
             },
             fetchChecklist(){
+                this.errors = [];
+                this.points = [];
+                this.selected_checklist = [];
+                this.attachments = [];
+                this.attachment_ids = [];
+                this.attachment_index = [];
+                var removeElements = (elms) => [...elms].forEach(el => el.value = "");
+                removeElements( document.querySelectorAll(".attachments"));
+
                 axios.get(`/checklists-per-category/${this.category.name}`)
                 .then(response => {
-                    if(this.category.name  == 'Support'){
-                        this.checklists = response.data;
-                    }else if(this.category.name  == 'Operations'){
-                        this.checklists = response.data;
-                        this.checklist = response.data[1];
-                        this.selected_checklist = response.data[1];
-                    }else{
-                        this.checklists = response.data;
-                        this.checklist = response.data[2];
-                        this.selected_checklist = response.data[2];
-                    }
+                    this.selected_checklist= response.data;
                 })
                 .catch(error => { 
                     this.errors = error.response.data.errors;
                 })
             },
             fetchProccessOwner(){
-                axios.get(`/user-process-owner/${this.company.id}/${this.location.id}`)
+                axios.get(`/user-process-owner/${this.company.id}/${this.location.id}/${this.department.id}`)
                 .then(response => {
-                    this.process_owners = response.data;
+                    this.process_owner = response.data;
                 })
                 .catch(error =>{
                     this.errors = error.response.data.errors;
                 })
             },
-            fetchTopManagement(){
-                axios.get('/user-top-management')
+            fetchDepartmentHead(){
+                axios.get(`/user-department-head/${this.company.id}/${this.location.id}/${this.department.id}`)
                 .then(response => {
-                    this.topManagements = response.data;
+                    this.department_head = response.data;
                 })
                 .catch(error =>{
                     this.errors = error.response.data.errors;
                 })
             },
-            getSelectedChecklist(checklist){
-                this.errors = [];
-                this.points = [];
-                this.selected_checklist = [];
-                this.selected_checklist = checklist;
-                this.attachments = [];
-                var removeElements = (elms) => [...elms].forEach(el => el.value = "");
-                removeElements( document.querySelectorAll(".attachments"));
+            fetchbuHead(){
+                axios.get(`/user-bu-head/${this.company.id}/${this.location.id}/${this.department.id}`)
+                .then(response => {
+                    this.bu_head = response.data;
+                })
+                .catch(error =>{
+                    this.errors = error.response.data.errors;
+                })
+            },
+            fetchGroupPresident(){
+                axios.get('/user-group-president')
+                .then(response => {
+                    this.group_president = response.data;
+                })
+                .catch(error =>{
+                    this.errors = error.response.data.errors;
+                })
             },
             addReport(selected_checklist,points){
-                let topManagementIds = [];
-                this.selectedTopManagement.filter(item => topManagementIds.push(item.id));
-
                 document.getElementById("addReport").disabled = true;
                 this.loading = true;
                 this.formData = new FormData();
                 let t = this;
                 this.points = [];
                 this.points_errors = [];
+                this.recurrence_number_errors = [];
+                this.criticality_errors = [];
                 selected_checklist.filter(function(item,index) {
-                    item.rating !== null ? t.points.push(item.rating) : t.points_errors.push(index);
+                    if(item.rating !== null){
+                        t.points.push(item.rating);
+                        if(item.rating !== 'N/A' && item.rating !== '2'){
+                            if(item.recurrence_number == null){
+                                t.recurrence_number_errors.push(index);
+                            }
+                            if(item.criticality == null){
+                                t.criticality_errors.push(index);
+                            }
+                        }
+                    }else{
+                        t.points_errors.push(index);
+                    }
                 });
-                if(this.points_errors.length){
+                if(this.points_errors.length || this.recurrence_number_errors.length || this.criticality_errors.length){
                     this.loading = false;
                     document.getElementById("addReport").disabled = false;
                     return false;
@@ -491,15 +537,18 @@
                 this.formData.append('operation_line', this.operation_line.id ? this.operation_line.id : '');
                 this.formData.append('category', this.category.id ? this.category.id : '');
                 this.formData.append('area', this.area ? this.area.id : '');
-                this.formData.append('process_owner', this.process_owner ? this.process_owner : '');
+                this.formData.append('process_owner', this.process_owner ? this.process_owner.id : '');
                 this.formData.append('date_of_inspection', this.date_of_inspection ? this.date_of_inspection : '');
                 this.formData.append('start_time_of_inspection', this.start_time_of_inspection ? this.start_time_of_inspection : '');
                 this.formData.append('end_time_of_inspection', this.end_time_of_inspection ? this.end_time_of_inspection : '');
+                this.formData.append('accompanied_by', this.accompanied_by ? this.accompanied_by : '');
                 this.formData.append('checklist', selected_checklist ? JSON.stringify(selected_checklist) : '');
                 this.formData.append('points', this.points.length == 0 ? '' : this.points);
                 this.formData.append('attachment_ids',this.attachment_ids.length > 0 ? this.attachment_ids : '');  
                 this.formData.append('attachment_index',this.attachment_index.length > 0 ? this.attachment_index : '');
-                this.formData.append('topManagement', topManagementIds.length > 0 ? topManagementIds : '');
+                this.formData.append('department_head', this.department_head.id ? this.department_head.id : '');
+                this.formData.append('bu_head', this.bu_head.id ? this.bu_head.id : '');
+                this.formData.append('group_president', this.group_president.id ? this.group_president.id : '');
 
                 axios.post('/report', this.formData)
                 .then(response => { 
@@ -543,58 +592,7 @@
                 document.getElementById('btn-checking').disabled = false;
                 document.getElementById('btn-approved').disabled = false;
                 document.getElementsByClassName('comment-input').disabled = false;
-            },
-            setPage(pageNumber) {
-                this.currentPage = pageNumber;
-            },
-            resetStartRow() {
-                this.currentPage = 0;
-            },
-            showPreviousLink() {
-                return this.currentPage == 0 ? false : true;
-            },
-            showNextLink() {
-                return this.currentPage == (this.totalPages - 1) ? false : true;
-            }, 
-            showNextLinkView() {
-                return this.currentPage == (this.totalPages - 1) ? false : true;
-            }   
-        },
-        computed:{
-            totalPages() {
-                return Math.ceil(Object.values(this.selected_checklist).length / this.itemsPerPage);
-            },
-            filteredQueues() {
-                var index = this.currentPage * this.itemsPerPage;
-                var queues_array = Object.values(this.selected_checklist).slice(index, index + this.itemsPerPage);
-
-                if(this.currentPage >= this.totalPages) {
-                    this.currentPage = this.totalPages - 1
-                }
-                if(this.currentPage == -1) {
-                    this.currentPage = 0;
-                }
-                return queues_array;
-            },
-            totalPagesView() {
-                return Math.ceil(Object.values(this.reportsPerUser).length / this.itemsPerPage);
-            },
-            filteredQueuesView() {
-                var index = this.currentPage * this.itemsPerPage;
-                var queues_array = Object.values(this.reportsPerUser).slice(index, index + this.itemsPerPage);
-
-                if(this.currentPage >= this.totalPagesView) {
-                    this.currentPage = this.totalPagesView - 1
-                }
-
-                if(this.currentPage == -1) {
-                    this.currentPage = 0;
-                }
-                return queues_array;
-            },
-            logoLink(){
-                return window.location.origin+'/img/lafil-logo.png';
-            },
+            }
         }
     }
 </script>

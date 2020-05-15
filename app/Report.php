@@ -15,7 +15,8 @@ class Report extends Model
      */
     protected $fillable = [
         'company_id', 'location_id', 'operation_line_id','category_id', 'area_id', 'process_owner_id', 'inspector_id', 
-        'date_of_inspection','start_time_of_inspection', 'end_time_of_inspection','ratings','status', 'reporting_month', 'reporting_year'
+        'date_of_inspection','start_time_of_inspection', 'end_time_of_inspection','ratings','status', 'reporting_month', 
+        'reporting_year', 'accompanied_by','department_head_id', 'cluster_head_id', 'group_president_id'
     ];
 
     // Relation

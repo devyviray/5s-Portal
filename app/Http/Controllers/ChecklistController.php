@@ -132,12 +132,8 @@ class ChecklistController extends Controller
      */
     public function getChecklistPerCategory($categoryName){
         
-        return Checklist::when($categoryName == 'Support', function($q){
-            $q->whereIn('name', ['Support', 'Perimeter']);
-        })->when($categoryName == 'Operations', function ($q){
-            $q->where('name', 'Operations');
-        })->when($categoryName == 'Offices', function ($q){
-            $q->where('name', 'Offices');
-        })->orderBy('id','asc')->get()->groupBy('batch');
+        return Checklist::where('name', $categoryName)
+            ->orderBy('id','asc')
+            ->get();
     }
 }

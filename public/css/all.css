@@ -23,18 +23,18 @@ body i {
 }
 
 #page-wrapper {
-    height: 91%;
+    /* height: 91%; */
     background: #EDEDED;
 }
 #page-inner {
-    height: 50%;
+    height: 41%;
     width:100%;
     margin:10px 20px 10px 0px;
     background-color: #FFFFFF;
     padding: 15px 30px;
 }
 #page-inner2 {
-    height: 43%; 
+    height: 33%; 
     background-color: #FFFFFF;
     padding: 20px 20px;
 }
@@ -700,7 +700,10 @@ body, #app, .py-4, .wrap-div{
     background-image: url('../img/new_design/login3.png');
 }
 .row{
-    width: 100%;
+    width: 98%;
+}
+.row-margin{
+    margin: 0 auto !important;
 }
 .img-login1{
     height: 100%;
@@ -762,14 +765,6 @@ body, #app, .py-4, .wrap-div{
      background-color: #A8C897;
      padding: 12px 2px 12px 0;
 }
-.div-spacing{
-    min-height: 35px;
-    background-color: transparent;
-}
-.lafil-logo{
-    height: 60px;
-    margin-left: 15px;
-}
 .carousel-inner>.item>img {
     height: 650px;
 }
@@ -781,14 +776,14 @@ body, #app, .py-4, .wrap-div{
 }
 .main-content{
     height: 100%;
-    overflow-y: scroll;
+    /* overflow-y: scroll; */
 }
 tbody{
     background-color: #fff;
 }
 .card-report{
-       background-color: #302d2d !important;
-       color: #fff;
+       background-color: #bfbfbf !important;
+       font-weight: bolder;
 }
 .card-view-report{
     background-color: #40B04A !important;
@@ -848,7 +843,9 @@ tbody{
     width: 70%;
     bottom: -9%;   
 }
-
+.form-group-report{
+    margin-bottom: 0.5rem !important;
+}
   
 /* vue-carousel css */
 .VueCarousel-slide {

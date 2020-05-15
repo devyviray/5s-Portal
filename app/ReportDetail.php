@@ -14,7 +14,7 @@ class ReportDetail extends Model
      * @var array
      */
     protected $fillable = [
-        'checklist_id', 'checklist_batch', 'report_id','name', 'points'
+        'checklist_id', 'checklist_batch', 'report_id','name', 'points', 'previous_rating', 'recurrence_number', 'criticality'
     ];
 
     // Relation

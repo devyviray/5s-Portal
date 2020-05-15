@@ -128,26 +128,61 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function getProcessOwnerPerCompany($companyId, $locationId){
+    public function getProcessOwnerPerCompany($companyId, $locationId, $departmentId){
 
         return User::whereHas('companies', function ($q) use ($companyId){
                 $q->where('company_id',$companyId);
             })->whereHas('roles', function ($q){
-                $q->where('role_id', 4); //Process owner
-            })->where('company_location', $locationId)->get();
+                $q->where('role_id', Config::get('constants.roles.process_owner.id'));
+            })->where('company_location', $locationId)
+            ->where('department_id', $departmentId)
+            ->first();
     }
 
     /**
-     *  Fetch Top Management user
+     *  Fetch Department Head user
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
 
-    public function topManagementUser(){
+    public function departmentHedUser($companyId, $locationId, $departmentId){
+        return User::whereHas('companies', function ($q) use ($companyId){
+            $q->where('company_id',$companyId);
+        })->whereHas('roles', function ($q){
+            $q->where('role_id', Config::get('constants.roles.department_head.id'));
+        })->where('company_location', $locationId)
+        ->where('department_id', $departmentId)
+        ->first();
+    }
+
+    /**
+     *  Fetch Department Head user
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+
+    public function buHedUser($companyId, $locationId, $departmentId){
+        return User::whereHas('companies', function ($q) use ($companyId){
+            $q->where('company_id',$companyId);
+        })->whereHas('roles', function ($q){
+            $q->where('role_id', Config::get('constants.roles.bu_head.id'));
+        })->where('company_location', $locationId)
+        ->where('department_id', $departmentId)
+        ->first();
+    }
+    /**
+     *  Fetch Group president user
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+
+    public function groupPresidentUser(){
         return User::whereHas('roles', function ($q){
-            $q->where('role_id', Config::get('constants.roles.top_management.id'));
-        })->get();
+            $q->where('role_id', Config::get('constants.roles.group_president.id'));
+        })->first();
     }
 
      /*

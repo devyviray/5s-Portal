@@ -1,43 +1,32 @@
 <template>
     <div id="wrapper">
         <loader v-if="loading"></loader>
-        <!-- <nav class="navbar navbar-default top-navbar" role="navigation">
-            <div class="row">
-                <div class="col-md-4">
-                    <img class="mt-4 ml-4 mb-4" :src="publicPath +'/img/new_design/5sPortal.png'">
-                </div>
-                <div class="col-md-4"></div>
-                <div class="col-md-4 text-right">
-                    <img class="mt-4 mr-4 mb-4" :src="publicPath +'/img/new_design/lfuggoc.png'">
-                </div>
-            </div>
-        </nav> -->
         <page-header></page-header>
         <div id="page-wrapper">
             <div>
-                <breadcrumb :user-role-level="userRoleLevel"></breadcrumb>
+                <breadcrumb :user-role-level="userRoleLevel" :user-id="userId"></breadcrumb>
             </div>
-            <div class="row" style="height: 91%;">
-                <div class="col-md-3 center-content h-100">
-                    <div class="w-100">
+            <div class="row row-margin">
+                <div class="col-md-3">
+                    <div class="w-100 mt-5">
                         <div class="text-center" style="margin-bottom: 85px;">
                             <h1 style="color: #003300;">Hi, {{ this.userName }}!</h1>
                         </div>
                         <div class="contact-us">
                             <img :src="publicPath +'/img/new_design/contact_us.png'">
-                            <div class="form-group row">
+                            <div class="form-group">
                                 <div class="col-sm-12 col-md-12 col-lg-8" style="margin: 0 auto;">
                                     <input type="text" class="form-control" id="subject" placeholder="Subject">
                                     <span class="text-danger" v-if="errors.subject">{{ errors.subject[0] }}</span>
                                 </div>
                             </div>
-                            <div class="form-group row">
+                            <div class="form-group">
                                 <div class="col-sm-12 col-md-12 col-lg-8" style="margin: 0 auto;">
                                     <textarea class="form-control" id="message" rows="7" placeholder="Message"></textarea>
                                     <span class="text-danger" v-if="errors.message">{{ errors.message[0] }}</span>
                                 </div>
                             </div>
-                            <div class="form-group row">
+                            <div class="form-group">
                                 <div class="col-sm-12 text-center">
                                     <button type="button" class="btn btn-success">SUBMIT</button>
                                 </div>
@@ -55,7 +44,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6" style="height: 100%;">
+                <div class="col-md-6">
                     <div id="page-inner">
                         <carousel 
                             :loop="true"
