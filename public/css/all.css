@@ -847,7 +847,7 @@ tbody{
     margin-bottom: 0.5rem !important;
 }
 carouselImg{
-    height: 90%;
+    height: 86% !important;
 }
   
 /* vue-carousel css */
