@@ -51,7 +51,7 @@
                             :perPage=1
                             :autoplayTimeout="2500">
                             <slide v-for="(image, i) in images" :key="i">
-                                <img :src="imageLink+image.file_path" class="carouselImg h-100 w-100">
+                                <img :src="imageLink+image.file_path" class="carouselImg w-100">
                             </slide>
                         </carousel>
                     </div>

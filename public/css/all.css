@@ -839,12 +839,15 @@ tbody{
 }
 .contact-us > img {
     position: absolute;
-    left: 13%;
-    width: 70%;
-    bottom: -9%;   
+    left: 9%;
+    width: 80%;
+    bottom: -9%;
 }
 .form-group-report{
     margin-bottom: 0.5rem !important;
+}
+carouselImg{
+    height: 90%;
 }
   
 /* vue-carousel css */
