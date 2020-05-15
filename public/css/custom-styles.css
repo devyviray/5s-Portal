@@ -34,7 +34,7 @@ body i {
     padding: 15px 30px;
 }
 #page-inner2 {
-    height: 33%; 
+    height: 35%; 
     background-color: #FFFFFF;
     padding: 20px 20px;
 }
@@ -849,7 +849,7 @@ tbody{
   
 /* vue-carousel css */
 .VueCarousel-slide {
-    height: 670px;
+    height: 400px;
     text-align: center;
 }
 .VueCarousel-dot{

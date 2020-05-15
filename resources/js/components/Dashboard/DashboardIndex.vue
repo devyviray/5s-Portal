@@ -2,11 +2,11 @@
     <div id="wrapper">
         <loader v-if="loading"></loader>
         <page-header></page-header>
-        <div id="page-wrapper">
+        <div id="page-wrapper" class="h-100">
             <div>
                 <breadcrumb :user-role-level="userRoleLevel" :user-id="userId"></breadcrumb>
             </div>
-            <div class="row row-margin">
+            <div class="row row-margin h-100">
                 <div class="col-md-3">
                     <div class="w-100 mt-5">
                         <div class="text-center" style="margin-bottom: 85px;">
@@ -51,7 +51,7 @@
                             :perPage=1
                             :autoplayTimeout="2500">
                             <slide v-for="(image, i) in images" :key="i">
-                                <img :src="imageLink+image.file_path" class="carouselImg">
+                                <img :src="imageLink+image.file_path" class="carouselImg h-100 w-100">
                             </slide>
                         </carousel>
                     </div>
