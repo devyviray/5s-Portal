@@ -86,11 +86,12 @@ class ReportController extends Controller
         $request->validate([
             'company' => 'required',
             'location' => 'required',
+            'department' => 'required',
             'category' => 'required',
             'operation_line' => 'required_if:category,==,1',
+            'date_of_inspection' => 'required',
             'area' => ['required', new ReportingMonthRule($request->company,$request->location,$request->operation_line,$request->category,$request->area,$request->date_of_inspection)],
             'process_owner' => 'required',
-            'date_of_inspection' => 'required',
             'start_time_of_inspection' => 'required',
             'end_time_of_inspection' => 'required',
             'checklist' => 'required',
@@ -120,10 +121,12 @@ class ReportController extends Controller
                 'status' => 1,
                 'reporting_month' => $date->isoFormat('M'),
                 'reporting_year' => $date->isoFormat('Y'),
+                'department_id' => $request->department,
                 'accompanied_by' => $request->accompanied_by,
                 'department_head_id' => $request->department_head,
                 'cluster_head_id' => $request->bu_head,
-                'group_president_id' => $request->group_president
+                'group_president_id' => $request->group_president,
+                'is_draft' => 1
             ];
             if($r = Report::create($data)){
                 $ids = [];
@@ -154,11 +157,12 @@ class ReportController extends Controller
                 }
             }
             // Send email to process owner
-            Mail::to(User::findOrFail($request->process_owner))->send(new ReportCreated(Auth::user()->id, $request->area, $r->id));
+            // Mail::to(User::findOrFail($request->process_owner))->send(new ReportCreated(Auth::user()->id, $request->area, $r->id));
 
             DB::commit();
 
-            return Report::all();
+            // return Report::all();
+            return $r;
 
         } catch (Exception $e) {
             DB::rollBack();
@@ -212,7 +216,8 @@ class ReportController extends Controller
      */
 
     public function getReportsPerUser($reportId){
-        return Report::with('company','category','operationLine', 'area', 'inspector', 'reportDetail.uploadedFiles')
+        return Report::with('company','location','department','category','operationLine', 'area', 'inspector',
+         'processOwner','departmentHead','reportDetail.uploadedFiles')
         ->where('id', $reportId)->get();
     }
 
@@ -363,8 +368,20 @@ class ReportController extends Controller
             }
 
             $report = Report::with('reportDetail')->where('id', $request->id)->first();
+            $report_details = json_decode($request->report_details);
             foreach($report->reportDetail as $key => $value){
-                $value->update(['points' => explode(',',$request->points)[$key]]);
+                $value->update([
+                    'points' => explode(',',$request->points)[$key],
+                    'previous_rating' => 0,
+                    'recurrence_number' =>  $report_details[$key]->recurrence_number,
+                    'criticality' => $report_details[$key]->criticality,
+                    ]);
+            }
+            if($request->descriptions){
+                foreach(json_decode($request->descriptions) as $description){
+                    $uploadedFile = UploadedFile::findOrFail($description->id);
+                    $uploadedFile->update(['description' => $description->text]);
+                }
             }
             if($request->has('attachments')){
                 $attachments = $request->file('attachments');
@@ -470,6 +487,54 @@ class ReportController extends Controller
             })->get();
     
             return count($reports);
+        }
+    }
+
+    /**
+     * Display drafts page
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function drafts(){
+        return view('report.drafts');
+    }
+
+    /**
+     * Fetch all draft report per user  
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function draftsData(){
+        return Report::with('company', 'location', 'department', 'operationLine', 'category', 'area', 'inspector', 'processOwner', 'reportDetail')
+                ->where('inspector_id', Auth::user()->id)
+                ->whereNotNull('is_draft')
+                ->orderBy('id', 'desc')->get();
+    }
+
+
+    /**
+     * Submit report, Remove tagged as drafts
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function submit(Request $request){
+        $report = Report::with('processOwner')->where('id',$request->id)->first();
+
+        DB::beginTransaction();
+        try {
+            $report->update([
+                'date_submitted' => Carbon::now(),
+                'is_draft' => null
+            ]);
+
+            // Send email to process owner
+            Mail::to($report->processOwner)->send(new ReportCreated(Auth::user()->id, $report->area_id, $report->id));
+
+            DB::commit();;
+            return $this->getReportsPerUser($report->id);
+        } catch (Exception $e) {
+            DB::rollBack();
         }
     }
 }

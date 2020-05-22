@@ -62,6 +62,7 @@ Vue.component('report-view', require('./components/Report/ReportView.vue').defau
 Vue.component('report-verified', require('./components/Report/ReportVerified.vue').default);
 Vue.component('report-edit', require('./components/Report/ReportEdit.vue').default);
 Vue.component('report-trend', require('./components/Report/ReportTrend.vue').default);
+Vue.component('report-draft', require('./components/Report/ReportDraft.vue').default);
 
 // operation line page
 Vue.component('operation-line-index', require('./components/Operation/OperationLineIndex.vue').default);

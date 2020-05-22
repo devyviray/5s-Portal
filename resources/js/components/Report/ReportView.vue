@@ -1,337 +1,293 @@
 <template>
     <div id="wrapper">
-    <loader v-if="loading"></loader>
-    <nav class="navbar navbar-default top-navbar" role="navigation">
-        <div class="row">
-            <div class="col-md-8"></div>
-            <div class="col-md-4">
+        <loader v-if="loading"></loader>
+        <page-header></page-header>
+        <div id="page-wrapper" style="height: 100%">
+            <div>
+                <breadcrumb :user-role-level="userRoleLevel" :user-id="userId"></breadcrumb>
+            </div>
+            <div v-if="reportsPerUser[0]">
                 <div class="row">
-                    <div class="col-md-8">
-                        <span class="span-username">Hi, {{ this.userName }}</span>
+                    <div class="col-md-3 ml-4">
+                        <a v-if="this.userRoleLevel == 3" :href="publicPath + '/reports-my-drafts'"><h3><i class="fas fa-chevron-circle-left"></i> Back to Draft</h3></a>
                     </div>
-                    <div class="col-md-4">
-                        <navbarRight :user-role-level="userRoleLevel" :user-id="userId"></navbarRight>
+                    <div class="col-md-7 text-center">
+                        <h1 class="text-primary">REPORT PREVIEW</h1>
+                    </div>
+                    <div class="col-md-2"></div>
+                </div>
+                <div class="row row-margin" v-if="report_submitted">
+                    <div class="col-md-11" style="margin: 0 auto">
+                        <div class="alert alert-success text-center" role="alert">
+                            REPORT SUCCESSFULLY SUBMITTED
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </nav>
-    <div id="page-wrapper">
-        <div class="div-spacing"></div>     
-        <div class="header">
-            <h1 class="page-header">
-                <img class="lafil-logo" :src="logoLink">
-                <b>5S PORTAL - REPORT & RATING </b>
-            </h1>
-            <breadcrumb :user-role-level="userRoleLevel"></breadcrumb>
-        </div>
-        <div id="page-inner">
-            <div class="card">
-                <div class="card-body"> 
-                    <div>
-                        <div class="row" v-if="reportsPerUser.length">
-                            <div class="col-md-3 card card-view-report" style="height: 770px">
-                                <div class="card-body">
-                                    <div class="form-group row">
-                                        <h1 class="col-sm-12 ">{{ this.reportsPerUser[0].category.name }}</h1>
-                                    </div>
-                                    <div class="form-group row">
-                                        <span class="col-sm-4 ">Company:</span>
-                                        <div class="col-sm-8">
-                                            <span> {{ this.reportsPerUser[0].company.name }} </span>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row" v-if="this.reportsPerUser[0].operation_line">
-                                        <span class="col-sm-4 ">Operation Line:</span>
-                                        <div class="col-sm-8">
-                                            <span> {{ this.reportsPerUser[0].operation_line.name }} </span>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <span class="col-sm-4 ">Area:</span>
-                                        <div class="col-sm-8">
-                                            <span> {{ this.reportsPerUser[0].area.name }}  </span>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <span class="col-sm-4 ">Inspector:</span>
-                                        <div class="col-sm-8">
-                                            <span> {{ this.reportsPerUser[0].inspector.name }} </span>
-                                        </div>
-                                    </div>
-                                    <div v-if="reportsPerUser.length">
-                                        <div class="form-group row">
-                                            <span class="col-sm-4">Date of Inspection:</span>
-                                            <div class="col-sm-8">
-                                                <span>{{ moment(this.reportsPerUser[0].date_of_inspection).format('LL') }}</span>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <span class="col-sm-4">Time</span>
-                                            <div class="col-sm-8">
-                                                <span>{{ moment( this.reportsPerUser[0].start_time_of_inspection, "hh").format('LT') + ' - ' + moment( this.reportsPerUser[0].end_time_of_inspection, "hh").format('LT') }} </span>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <h1 class="col-sm-12">Rating:</h1>
-                                        </div>
-                                        <div class="row mb-2">
-                                            <div class="col-sm-1"></div>
-                                            <div class="col-sm-10 div-rating">
-                                                <span>{{ countRating(this.reportsPerUser[0].report_detail) }}%</span>
-                                            </div>
-                                            <div class="col-sm-1"></div>
-                                        </div>
-                                        <div class="row mb-2">
-                                            <!-- <a class="summary-btn" href="javascript:void(0)">View Summary Report</a> -->
-                                        </div>   
-                                    </div>
-                                    <div class="form-group row" v-if="this.reportsPerUser[0].status == 1 && this.userId == this.reportsPerUser[0].process_owner_id">
-                                        <div class="col-sm-6">
-                                            <button id="btn-checking" class="btn btn-block btn-danger" @click="forCheckingReport">FOR CHECKING</button>
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <button id="btn-approved" class="btn btn-block btn-primary" data-toggle="modal" data-target="#approveModal">APPROVED</button>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <div class="alert alert-info col-md-12" v-if="show_approved">
-                                            <strong>Success!</strong> Report succesfully approved
-                                        </div>
-                                        <div class="alert alert-info col-md-12" v-if="show_forChecking">
-                                             <strong>Success!</strong> Report successfully sent to inspector for validation .
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-9" style="height: 770px">
-                                <div class="table-responsive" style="height: 770px">
-                                    <div class="col-md-12 card mb-3" v-for="(checklist, c) in reportsPerUser[0].report_detail" v-bind:key="c" style="background-color: #e6e6e6 !important; min-height: 300px;">
-                                        <div class="card-body">
-                                            <span>{{ c + 1 +'. '+checklist.name }}</span><br>
-                                            <span class="ml-4"><b>Points:{{checklist.points}}</b></span>
+                <div class="card view-report-div">
+                    <div class="row row-margin">
+                        <div class="col-md-12 mt-4 mb-4">
+                            <table class="table table-bordered">
+                                <tbody>
+                                    <tr class="d-flex">
+                                        <td class="col-sm-1">Business Unit</td>
+                                        <td class="col-sm-2"><strong>: {{ reportsPerUser[0].company.name }}</strong></td>
+                                        <td class="col-sm-1">Date of Inspection</td>
+                                        <td class="col-sm-2"><strong>: {{ reportsPerUser[0].date_of_inspection }}</strong></td>
+                                        <td class="col-sm-1">Accompanied by</td>
+                                        <td class="col-sm-2"><strong>: {{ reportsPerUser[0].accompanied_by }} </strong></td>
+                                        <td class="col-sm-1">Total No. of NC</td>
+                                        <td class="col-sm-2"><strong>: 0</strong></td>
+                                    </tr>
+                                    <tr class="d-flex">
+                                        <td class="col-sm-1">Department</td>
+                                        <td class="col-sm-2"><strong>: {{ reportsPerUser[0].department.name }}</strong></td>
+                                        <td class="col-sm-1">Time of Inspection</td>
+                                        <td class="col-sm-2"><strong>:  {{ reportsPerUser[0].start_time_of_inspection +' - '+ reportsPerUser[0].end_time_of_inspection }}</strong></td>
+                                        <td class="col-sm-1">Area Owner</td>
+                                        <td class="col-sm-2"><strong>:  {{ reportsPerUser[0].process_owner.name }} </strong></td>
+                                        <td class="col-sm-1">Total No. of Crititcal</td>
+                                        <td class="col-sm-2"><strong>: 0</strong></td>
+                                    </tr>
+                                    <tr class="d-flex">
+                                        <td class="col-sm-1">Area</td>
+                                        <td class="col-sm-2"><strong>: {{ reportsPerUser[0].area.name }} </strong></td>
+                                        <td class="col-sm-1">Inspector</td>
+                                        <td class="col-sm-2"><strong>: {{ reportsPerUser[0].inspector.name }} </strong></td>
+                                        <td class="col-sm-1">Department Head</td>
+                                        <td class="col-sm-2"><strong>: {{ reportsPerUser[0].department_head.name }}</strong></td>
+                                        <td class="col-sm-1 final-rating">Final Rating</td>
+                                        <td class="col-sm-2 final-rating"><strong>: {{ countRating(this.reportsPerUser[0].report_detail) }} %</strong></td>
+                                    </tr>   
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-md-12 mt-4 mb-4">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr class="d-flex">
+                                        <td class="col-sm-1"></td>
+                                        <td class="col-sm-8 text-center">Requirement</td>
+                                        <td class="col-sm-1">Criticality</td>
+                                        <td class="col-sm-2">Rating</td>
+                                    </tr>
+                                </thead>
+                                <tbody v-for="(checklist, c) in reportsPerUser[0].report_detail" v-bind:key="c">
+                                    <tr class="d-flex">
+                                        <td class="col-sm-1">{{  c + 1 }}</td>
+                                        <td class="col-sm-8" style="white-space:normal">{{ checklist.name }}</td>
+                                        <td class="col-sm-1"><strong> {{checklist.criticality }}</strong></td>
+                                        <td class="col-sm-2"><strong>{{ checklist.points }}</strong></td>
+                                    </tr>
+                                    <tr style="height: 200px">
+                                        <td class="col-sm-12">
                                             <div class="row mt-2 text-center">
                                                 <div class="col-md-3" v-for="(uploadFile, u) in checklist.uploaded_files" :key="u">
-                                                    <img class="report-img mb-2"  :src="attachmentLink + uploadFile.file_path"><br>
-
-                                                    <span>{{ c + 1 +'.' }} </span> <span> {{  u + 1  }} </span>
-                                                    <input type="text" :disabled="reportsPerUser[0].status != 1 || reportsPerUser[0].process_owner_id != userId" :id="uploadFile.id" class="form-control comment-input"  placeholder="Comment..." v-model="uploadFile.comment">
-                                                    <span class="text-danger" v-if="errors['comment.'+c + 1 +'' + u + 1]"> This field is required </span> 
+                                                    <a href="#" data-toggle="modal" data-target="#viewImageModal" @click="getLinkAttachment(attachmentLink + uploadFile.file_path)"><img class="report-img mb-2"  :src="attachmentLink + uploadFile.file_path"></a><br>
+                                                     <span>{{ uploadFile.description }} </span>
+                                                    <!-- <span>{{ c + 1 +'.' }} </span> <span> {{  u + 1  }} </span> -->
+                                                    <textarea cols="5" rows="3" v-if="reportsPerUser[0].status == 1 && reportsPerUser[0].process_owner_id == userId" :id="uploadFile.id" class="form-control comment-input"  placeholder="Type response here" v-model="uploadFile.comment"></textarea>
+                                                    <span class="text-danger" v-if="errors['comment.'+c + 1 +'' + u + 1]"> This field is required </span>
                                                 </div> 
                                             </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row mb-3 mt-3 ml-1" v-if="reportsPerUser.length ">
-                                    <div class="col-6">
-                                        
-                                    </div>
-                                    <div class="col-6 text-right">
-                                        <span>{{ reportsPerUser.length }} Checklist(s)</span>
-                                    </div>
-                                </div>
-                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
-                        <div v-else>
-                            No report available
+                    </div>
+                </div>
+                <div class="row row-margin" v-if="reportsPerUser[0].inspector_id == userId && reportsPerUser[0].is_draft">
+                    <div class="col-md-12 text-right mb-3 mt-3" style="padding-right: 30px">
+                        <button type="button" class="btn btn-success btn- btn-lg mr-3" @click="submitReport"> SUBMIT REPORT</button>
+                    </div>
+                </div>
+
+                <div class="row row-margin">
+                    <div class="col-md-6 pl-4 mt-3">
+                        <span>NOTES:</span><br>
+                        <span>If there are for correction on the report, click “I DO NOT ACCEPT” button</span><br> 
+                        <span>If report is acknowledged, click “ACCEPT” button</span><br><br>
+                        <span><strong>You have 24 - 36 hours to respond to the report otherwise, final rating will be posted</strong></span>
+                    </div>
+                    <div class="col-md-6 mt-3 text-right">
+                        <div v-if="reportsPerUser[0].process_owner_id == userId && reportsPerUser[0].status == 1 && !reportsPerUser[0].is_draft">
+                            <button type="button" class="btn btn-danger btn- btn-lg mr-3" @click="submitReport"> I DO NOT ACCEPT</button>
+                            <button type="button" class="btn btn-success btn- btn-lg mr-3" @click="submitReport"> I ACCEPT</button>
                         </div>
                     </div>
                 </div>
             </div>
-            
-            <!-- Approve Report Modal -->
-            <div class="modal fade" id="approveModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
-                <span class="closed" data-dismiss="modal">&times;</span>
-                <div class="modal-dialog modal-dialog-centered" role="document">
-                    <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="addCompanyLabel">Approve Report</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                    <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    Are you sure you want to approve this Report?
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn btn-secondary" data-dismiss='modal'>Close</button>
-                        <button class="btn btn-primary" @click="approvedReport">Approved</button>
-                    </div>
-                    </div>
-                </div>
-            </div>
-            
         </div>
+
+        <div class="modal fade" id="viewImageModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
+            <span class="closed" data-dismiss="modal">&times;</span>
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <img class="attachment-img"  :src="attachment_link">
+                </div>
+                <div class="modal-footer"></div>
+                </div>
+            </div>
+        </div>
+
+
     </div>
-</div>
 </template>
 <style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
 
 <script>
-    import Multiselect from 'vue-multiselect';
-    import navbarRight from '../NavbarRight';
-    import breadcrumb from '../Breadcrumb';
-    import loader from '../Loader';
-    import moment from 'moment';
-    export default {
-        props: ['userName', 'userRoleLevel' ,'reportId', 'userId'],
-        components:{
-            Multiselect,
-            navbarRight,
-            breadcrumb,
-            loader
+import Multiselect from 'vue-multiselect';
+import navbarRight from '../NavbarRight';
+import breadcrumb from '../Breadcrumb';
+import loader from '../Loader';
+import moment from 'moment';
+export default {
+    props: ['userName', 'userRoleLevel' ,'reportId', 'userId'],
+    components:{
+        Multiselect,
+        navbarRight,
+        breadcrumb,
+        loader
+    },
+    data(){
+        return {
+            reportsPerUser: [],
+            comments: [],
+            final_rating: '',
+            report_submitted: false,
+            show_forChecking: false,
+            errors: [],
+            currentPage: 0,
+            itemsPerPage: 8,
+            keywords: '',
+            loading: false,
+            attachment_link: ''
+        }
+    },
+    created(){
+        this.fetchReportsPerUser();
+    },
+    methods:{
+        moment,
+        getLinkAttachment(link){
+            this.attachment_link = link; 
         },
-        data(){
-            return {
-                reportsPerUser: [],
-                comments: [],
-                final_rating: '',
-                show_approved: false,
-                show_forChecking: false,
-                errors: [],
-                currentPage: 0,
-                itemsPerPage: 8,
-                keywords: '',
-                loading: false,
-            }
+        showLoader(){
+            this.loading = true;
         },
-        created(){
-            this.fetchReportsPerUser();
+        fetchReportsPerUser(){
+            axios.get(`/reports-per-user/${this.reportId}`)
+            .then(response => {
+                this.reportsPerUser = response.data;
+            })
+            .catch(error => { 
+                this.errors = error.response.data.errors;
+            })
         },
-        methods:{
-            moment,
-            showLoader(){
-               this.loading = true;
-            },
-            fetchReportsPerUser(){
-                axios.get(`/reports-per-user/${this.reportId}`)
-                .then(response => {
-                    this.reportsPerUser = response.data;
-                })
-                .catch(error => { 
-                    this.errors = error.response.data.errors;
-                })
-            },
-            approvedReport(){
-                this.loading = true;
+        approvedReport(){
+            this.loading = true;
+            this.enabledBtn();
+            var report_ids = [];
+            this.reportsPerUser.filter(item => report_ids.push(item.id))
+            axios.post('/report-approve', {
+                ids: report_ids,
+                final_rating: this.final_rating
+            })
+            .then(response => {
+                this.show_approved = true;
+                this.forCheckingReport = false;
+                this.disabledBtn();
+                $('#approveModal').modal('hide');
+                this.loading = false;
+            })
+            .catch(error => {
+                this.errors = error.response.data.errors
                 this.enabledBtn();
-                var report_ids = [];
-                this.reportsPerUser.filter(item => report_ids.push(item.id))
-                axios.post('/report-approve', {
-                    ids: report_ids,
-                    final_rating: this.final_rating
-                })
-                .then(response => {
-                    this.show_approved = true;
-                    this.forCheckingReport = false;
-                    this.disabledBtn();
-                    $('#approveModal').modal('hide');
-                    this.loading = false;
-                })
-                .catch(error => {
-                    this.errors = error.response.data.errors
-                    this.enabledBtn();
-                    this.loading = false;
-                })
-            },
-            forCheckingReport(){
-                this.loading = true;
-                this.enabledBtn();
-                let t = this;
-                var comment = $(".comment-input").map(function() {
-                    t.comments.push({
-                        id: $(this).attr('id'),
-                        text: $(this).val()
-                    });
-                }).get();
-                
-                var report_ids = [];
-                this.reportsPerUser.filter(item => report_ids.push(item.id))
-                
-                axios.post('/report-checking', {
-                    ids: report_ids, 
-                    comments: t.comments
-                })
-                .then(response => { 
-                    this.disabledBtn();
-                    this.show_forChecking = true;
-                    this.show_approved = false;
-                    this.loading = false;
-                    
-                })
-                .catch(error => { 
-                    this.errors = error.response.data.errors;
-                    this.enabledBtn();
-                    this.loading = false;
-                })
-            },
-            countRating(reportsPerUser){
-                var denominator = 0;
-                var total_points = 0;
-                reportsPerUser.filter(item => {
-                    if(item.points !== 'N/A'){
-                        total_points = parseInt(total_points) + parseInt(item.points);
-                        denominator = denominator + 1;
-                    }
+                this.loading = false;
+            })
+        },
+        forCheckingReport(){
+            this.loading = true;
+            this.enabledBtn();
+            let t = this;
+            var comment = $(".comment-input").map(function() {
+                t.comments.push({
+                    id: $(this).attr('id'),
+                    text: $(this).val()
                 });
-                this.final_rating = total_points / (denominator * 2) * 100;
-                return  this.final_rating.toFixed(2);
-            },
-            disabledBtn(){
-                document.getElementById('btn-checking').disabled = true;
-                document.getElementById('btn-approved').disabled = true;
-                document.getElementsByClassName('comment-input').disabled = true;
-            },
-            enabledBtn(){
-                document.getElementById('btn-checking').disabled = false;
-                document.getElementById('btn-approved').disabled = false;
-                document.getElementsByClassName('comment-input').disabled = false;
-            },
-            setPage(pageNumber) {
-                this.currentPage = pageNumber;
-            },
-            resetStartRow() {
-                this.currentPage = 0;
-            },
-            showPreviousLink() {
-                return this.currentPage == 0 ? false : true;
-            },
-            showNextLink() {
-                return this.currentPage == (this.totalPages - 1) ? false : true;
-            }, 
-            showNextLinkView() {
-                return this.currentPage == (this.totalPages - 1) ? false : true;
-            }   
+            }).get();
+            
+            var report_ids = [];
+            this.reportsPerUser.filter(item => report_ids.push(item.id))
+            
+            axios.post('/report-checking', {
+                ids: report_ids, 
+                comments: t.comments
+            })
+            .then(response => { 
+                this.disabledBtn();
+                this.show_forChecking = true;
+                this.show_approved = false;
+                this.loading = false;
+                
+            })
+            .catch(error => { 
+                this.errors = error.response.data.errors;
+                this.enabledBtn();
+                this.loading = false;
+            })
         },
-        computed:{
-            totalPagesView() {
-                return Math.ceil(Object.values(this.reportsPerUser).length / this.itemsPerPage);
-            },
-            filteredQueuesView() {
-                var index = this.currentPage * this.itemsPerPage;
-                var queues_array = Object.values(this.reportsPerUser).slice(index, index + this.itemsPerPage);
-
-                if(this.currentPage >= this.totalPagesView) {
-                    this.currentPage = this.totalPagesView - 1
+        submitReport(){
+            this.loading = true;
+            axios.post('/submit-report',{
+                id: this.reportsPerUser[0].id
+            })
+            .then(response => {
+                this.loading = false;
+                this.reportsPerUser = response.data;
+                this.report_submitted = true;
+            })
+            .catch(error => {
+                this.loading = false;
+                this.errors = error.response.data.errors;
+            })
+        },
+        countRating(reportsPerUser){
+            var denominator = 0;
+            var total_points = 0;
+            reportsPerUser.filter(item => {
+                if(item.points !== 'N/A'){
+                    total_points = parseInt(total_points) + parseInt(item.points);
+                    denominator = denominator + 1;
                 }
-
-                if(this.currentPage == -1) {
-                    this.currentPage = 0;
-                }
-                return queues_array;
-            },
-            logoLink(){
-                return window.location.origin+'/img/lafil-logo.png';
-            },
-            attachmentLink(){
-                 return window.location.origin+'/storage/';
-            }
+            });
+            this.final_rating = total_points / (denominator * 2) * 100;
+            return  this.final_rating.toFixed(2);
+        },
+        disabledBtn(){
+            document.getElementById('btn-checking').disabled = true;
+            document.getElementById('btn-approved').disabled = true;
+            document.getElementsByClassName('comment-input').disabled = true;
+        },
+        enabledBtn(){
+            document.getElementById('btn-checking').disabled = false;
+            document.getElementById('btn-approved').disabled = false;
+            document.getElementsByClassName('comment-input').disabled = false;
+        }   
+    },
+    computed:{
+        publicPath(){
+            return window.location.origin;
+        },
+        attachmentLink(){
+                return window.location.origin+'/storage/';
         }
     }
+}
 </script>

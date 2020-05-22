@@ -6,7 +6,12 @@
         <div>
             <breadcrumb :user-role-level="userRoleLevel" :user-id="userId"></breadcrumb>
         </div>
-        <div style="overflow-y: scroll; max-height: 910px;">
+        <div style="overflow-y: scroll; max-height: 827px;">
+            <div class="row row-margin mb-2">
+                <div class="col-md-12 text-right">
+                    <a :href="publicPath+'/reports-my-drafts'" class="font-weight-bold">MY DRAFTS</a>
+                </div>
+            </div>
             <div class="row row-margin">
                 <div class="col-md-2 card card-report">
                     <div class="card-body">
@@ -29,7 +34,7 @@
                             <select class="form-control" v-model="department" @change="changeCompany('', '')">
                                 <option v-for="(department,d) in departments" v-bind:key="d" :value="department"> {{ department.name }}</option>
                             </select>
-                            <span class="text-danger" v-if="errors.company  ">{{ errors.company[0] }}</span>
+                            <span class="text-danger" v-if="errors.department  ">{{ errors.department[0] }}</span>
                         </div>
                         <div class="form-group form-group-report">
                             <label for="exampleInputEmail1">Category</label>
@@ -54,57 +59,43 @@
                         </div>
                         <div class="form-group form-group-report">
                             <label for="exampleInputEmail1">Date of Inspection</label>
-                            <input type="date" class="form-control" id="colFormLabel" v-model="date_of_inspection">
+                            <input type="date" class="form-control" v-model="date_of_inspection">
                             <span class="text-danger" v-if="errors.date_of_inspection  ">{{ errors.date_of_inspection[0] }}</span>
                         </div>
                         <div class="form-group form-group-report">
                             <label for="exampleInputEmail1">Start Time</label>
-                            <input type="time" class="form-control" id="colFormLabel" v-model="start_time_of_inspection">
+                            <input type="time" class="form-control" v-model="start_time_of_inspection">
                             <span class="text-danger" v-if="errors.start_time_of_inspection  ">{{ errors.start_time_of_inspection[0] }}</span>
                         </div>
                         <div class="form-group form-group-report">
                             <label for="exampleInputEmail1">End Time</label>
-                            <input type="time" class="form-control" id="colFormLabel" v-model="end_time_of_inspection">
+                            <input type="time" class="form-control" v-model="end_time_of_inspection">
                             <span class="text-danger" v-if="errors.end_time_of_inspection  ">{{ errors.end_time_of_inspection[0] }}</span>
                         </div>
                         <div class="form-group form-group-report">
                             <label for="exampleInputEmail1">Accompanied by</label>
-                            <input type="text" class="form-control" id="colFormLabel" v-model="accompanied_by">
+                            <input type="text" class="form-control" v-model="accompanied_by">
                             <span class="text-danger" v-if="errors.accompanied_by  ">{{ errors.accompanied_by[0] }}</span>
                         </div>
                         <div class="form-group form-group-report">
                             <label for="exampleInputEmail1">Area owner</label>
-                            <span class="text-danger" v-if="errors.process_owner  ">{{ errors.process_owner[0] }}</span>
-
-                            <input type="text" class="form-control" id="colFormLabel" v-model="process_owner.name" readonly>
+                            <input type="text" class="form-control" v-model="process_owner.name" readonly>
                             <span class="text-danger" v-if="errors.process_owner  ">{{ errors.process_owner[0] }}</span>
                         </div>
                         <div class="form-group form-group-report">
                             <label for="exampleInputEmail1">Department Head</label>
-                            <input type="text" class="form-control" id="colFormLabel" v-model="department_head.name" readonly>
+                            <input type="text" class="form-control" v-model="department_head.name" readonly>
                             <span class="text-danger" v-if="errors.department_head  ">{{ errors.department_head[0] }}</span>
                         </div>
                         <div class="form-group form-group-report">
                             <label for="exampleInputEmail1">BU / Cluster Head</label>
-                            <input type="text" class="form-control" id="colFormLabel" v-model="bu_head.name" readonly>
+                            <input type="text" class="form-control" v-model="bu_head.name" readonly>
                             <span class="text-danger" v-if="errors.bu_head">{{ errors.bu_head[0] }}</span>
                         </div>
                         <div class="form-group form-group-report">
                             <label for="exampleInputEmail1">Group President</label>
-                            <input type="text" class="form-control" id="colFormLabel" v-model="group_president.name" readonly>
+                            <input type="text" class="form-control" v-model="group_president.name" readonly>
                             <span class="text-danger" v-if="errors.group_president">{{ errors.group_president[0] }}</span>
-                        </div>
-                        <div class="form-group row form-group-report">
-                            <div class="col-sm-4"></div>
-                            <div class="col-sm-4">
-                            <button class="btn btn-block btn-primary" @click="addReport(selected_checklist,points)" id="addReport"> POST</button>
-                            </div>
-                            <div class="col-sm-4"></div>
-                        </div>
-                        <div class="form-group row form-group-report">
-                            <div class="alert alert-info col-md-12" v-if="show_added">
-                                <strong>Success!</strong> Report succesfully added
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -188,8 +179,13 @@
                         </div>
                     </div>
                     <div class="row text-right mt-5">
-                        <div class="col-md-12">
-                            <button type="button" class="btn btn-primary btn- btn-lg"> PREVIEW REPORT</button>
+                        <div class="col-md-11" style="margin: 0 auto">
+                            <div class="alert alert-success text-center" role="alert" v-if="report_as_draft">
+                                REPORT SUCCESSFULLY SAVE AS DRAFT
+                            </div>
+                        </div>
+                        <div class="col-md-1">
+                            <button type="button" class="btn btn-primary btn- btn-lg" @click="addReport(selected_checklist,points)" id="addReport" :disabled="selected_checklist.length < 1"> SAVE AS DRAFT</button>
                         </div>
                     </div>
                     <div class="row row-margin">
@@ -256,13 +252,12 @@
                 fileSize: 0,
                 maximumSize: 5000000,
                 formData: new FormData(),
-                show_added: false,
+                report_as_draft: false,
                 loading: false,
                 show_operation_line: false,
                 department_head: '',
                 bu_head: '',
                 group_president: '',
-                selectedTopManagement: [],
                 default_category: ''
             }
         },
@@ -503,6 +498,7 @@
             addReport(selected_checklist,points){
                 document.getElementById("addReport").disabled = true;
                 this.loading = true;
+                this.report_as_draft = false;
                 this.formData = new FormData();
                 let t = this;
                 this.points = [];
@@ -529,11 +525,11 @@
                     document.getElementById("addReport").disabled = false;
                     return false;
                 }
-                this.show_added = false;
                 this.errors = [];
                 this.prepareFields();
                 this.formData.append('company', this.company.id ? this.company.id : '');
                 this.formData.append('location', this.location.id ? this.location.id : '');
+                this.formData.append('department', this.department.id ? this.department.id : '');
                 this.formData.append('operation_line', this.operation_line.id ? this.operation_line.id : '');
                 this.formData.append('category', this.category.id ? this.category.id : '');
                 this.formData.append('area', this.area ? this.area.id : '');
@@ -553,13 +549,13 @@
                 axios.post('/report', this.formData)
                 .then(response => { 
                     this.resetForm();
-                    this.show_added = true;
+                    this.report_as_draft = true;
                     this.loading = false;
                     document.getElementById("addReport").disabled = false;
                 })
                 .catch(error => {
                     this.errors = error.response.data.errors;
-                    this.show_added = false;
+                    this.report_as_draft = false;
                     this.loading = false;
                     document.getElementById("addReport").disabled = false;
                 });
@@ -567,21 +563,33 @@
             resetForm(){
                 this.company = '';
                 this.location = '';
+                this.department = '';
                 this.category = '';
                 this.operation_line = '';
                 this.area = '';
                 this.process_owner = '';
+                this.department_head = '',
+                this.bu_head ='',
+                this.group_president = '',
                 this.date_of_inspection = '';
                 this.start_time_of_inspection = '';
                 this.end_time_of_inspection = '';
+                this.accompanied_by = '';
                 this.points = [];
                 this.attachments = [];
-                this.selectedTopManagement = [];
                 var removeElements = (elms) => [...elms].forEach(el => el.value = "");
                 removeElements( document.querySelectorAll(".attachments"));
-                this.selected_checklist.filter(checklist => {
-                    checklist.rating = '';
-                });
+
+                const recurrence_number = document.querySelectorAll('.recurrence_number');
+                const criticality = document.querySelectorAll('.criticality');
+                recurrence_number.forEach(input => input.disabled = true);
+                criticality.forEach(input => input.disabled = true);
+                this.selected_checklist = [];
+                // this.selected_checklist.filter(checklist => {
+                //     checklist.rating = '';
+                //     checklist.recurrence_number = '';
+                //     checklist.criticality = '';
+                // });
             },
             disabledBtn(){
                 document.getElementById('btn-checking').disabled = true;
@@ -592,6 +600,11 @@
                 document.getElementById('btn-checking').disabled = false;
                 document.getElementById('btn-approved').disabled = false;
                 document.getElementsByClassName('comment-input').disabled = false;
+            }
+        },
+        computed:{
+            publicPath(){
+                return window.location.origin;
             }
         }
     }

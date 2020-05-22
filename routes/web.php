@@ -37,6 +37,14 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/reports-notification', 'ReportController@getReportsNotification');
 });
 
+// Accessible routes for inspector only
+Route::group(['middleware' => ['auth', 'role:inspector']], function () {
+    //Report
+    Route::get('/create-report', 'ReportController@create');
+    Route::get('/reports-my-drafts', 'ReportController@drafts');
+    Route::get('/reports-my-drafts-all', 'ReportController@draftsData');
+});
+
 // Accessible routes for admin , inspector and IT
 Route::group(['middleware' => ['auth', 'role:it|administrator|top management|inspector|process owner|department member']], function () {
 
@@ -104,7 +112,6 @@ Route::group(['middleware' => ['auth', 'role:it|administrator|top management|ins
     Route::delete('/faq/{faq}', 'FaqController@destroy');
 
     //Report
-    Route::get('/create-report', 'ReportController@create');
     Route::post('/report-filtered', 'ReportController@getFilteredReports');
     Route::get('/validate-report/{reportId}', 'ReportController@validateIndex');
     Route::get('/edit-report/{reportId}', 'ReportController@editIndex');
@@ -113,7 +120,7 @@ Route::group(['middleware' => ['auth', 'role:it|administrator|top management|ins
     Route::post('/report', 'ReportController@store');
     Route::patch('/report/{report}', 'ReportController@update');
     Route::delete('/report/{report}', 'ReportController@destroy');
-    Route::get('/create-report', 'ReportController@create');
+    Route::post('/submit-report', 'ReportController@submit');
     Route::get('/trend-and-analysis', 'ReportController@trendIndex');
     Route::get('/trend-and-analysis-data', 'ReportController@trendAndAnalysisData');
     Route::get('/generate-pdf', 'ReportController@generatePDF');
