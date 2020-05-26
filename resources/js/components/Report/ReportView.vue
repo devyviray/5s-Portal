@@ -23,6 +23,20 @@
                         </div>
                     </div>
                 </div>
+                <div class="row row-margin" v-if="report_approved">
+                    <div class="col-md-11" style="margin: 0 auto">
+                        <div class="alert alert-success text-center" role="alert">
+                            REPORT SUCCESSFULLY ACCEPTED
+                        </div>
+                    </div>
+                </div>
+                <div class="row row-margin" v-if="report_revised">
+                    <div class="col-md-11" style="margin: 0 auto">
+                        <div class="alert alert-success text-center" role="alert">
+                            REPORT SUCCESSFULLY REVISED
+                        </div>
+                    </div>
+                </div>
                 <div class="card view-report-div">
                     <div class="row row-margin">
                         <div class="col-md-12 mt-4 mb-4">
@@ -96,23 +110,28 @@
                         </div>
                     </div>
                 </div>
-                <div class="row row-margin" v-if="reportsPerUser[0].inspector_id == userId && reportsPerUser[0].is_draft">
-                    <div class="col-md-12 text-right mb-3 mt-3" style="padding-right: 30px">
-                        <button type="button" class="btn btn-success btn- btn-lg mr-3" @click="submitReport"> SUBMIT REPORT</button>
-                    </div>
-                </div>
-
                 <div class="row row-margin">
-                    <div class="col-md-6 pl-4 mt-3">
+                    <div class="col-md-7 pl-4 mt-3">
                         <span>NOTES:</span><br>
-                        <span>If there are for correction on the report, click “I DO NOT ACCEPT” button</span><br> 
-                        <span>If report is acknowledged, click “ACCEPT” button</span><br><br>
-                        <span><strong>You have 24 - 36 hours to respond to the report otherwise, final rating will be posted</strong></span>
+                        <span>If there are for correction on the report, click “I DO NOT ACCEPT” button – to prevent relay of report, this function is one-time only.<br>
+                            For any objection on the report, discuss with inspector and agree on the final rating.
+                        </span><br><br>
+                        <span>If report is acknowledged, click “ACCEPT” button</span><br>
+                        <span><strong>You have 24 - 72 hours to respond to the report otherwise, final rating will be posted</strong></span>
                     </div>
-                    <div class="col-md-6 mt-3 text-right">
+                    <div class="col-md-5 mt-3 text-right">
+                        <div v-if="reportsPerUser[0].inspector_id == userId && reportsPerUser[0].is_draft">
+                            <button data-toggle="modal" data-target="#submitModal" class="btn btn-success btn- btn-lg mr-3"> SUBMIT REPORT</button>
+                        </div>
+                        <div v-if="reportsPerUser[0].inspector_id == userId && reportsPerUser[0].status == 2">
+                            <button data-toggle="modal" data-target="#reviseModal" class="btn btn-success btn- btn-lg mr-3"> REVISE REPORT</button>
+                        </div>
                         <div v-if="reportsPerUser[0].process_owner_id == userId && reportsPerUser[0].status == 1 && !reportsPerUser[0].is_draft">
-                            <button type="button" class="btn btn-danger btn- btn-lg mr-3" @click="submitReport"> I DO NOT ACCEPT</button>
-                            <button type="button" class="btn btn-success btn- btn-lg mr-3" @click="submitReport"> I ACCEPT</button>
+                            <button data-toggle="modal" data-target="#disapproveModal" class="btn btn-danger btn- btn-lg mr-3" id="btn-checking"> I DO NOT ACCEPT</button>
+                            <button data-toggle="modal" data-target="#approveModal" class="btn btn-success btn- btn-lg mr-3" id="btn-approved"> I ACCEPT</button>
+                        </div>
+                        <div v-if="reportsPerUser[0].process_owner_id == userId && reportsPerUser[0].status == 3">
+                            <button data-toggle="modal" data-target="#approveModal" class="btn btn-success btn- btn-lg mr-3" id="btn-approved"> I ACCEPT</button>
                         </div>
                     </div>
                 </div>
@@ -136,6 +155,94 @@
             </div>
         </div>
 
+        <div class="modal fade" id="submitModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
+            <span class="closed" data-dismiss="modal">&times;</span>
+            <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addCompanyLabel">Submit Report</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to submit this Report?
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-dismiss='modal'>Close</button>
+                    <button class="btn btn-primary" @click="submitReport">Submit</button>
+                </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="reviseModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
+            <span class="closed" data-dismiss="modal">&times;</span>
+            <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addCompanyLabel">Revise Report</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    By clicking revise, I confirm that revisions were made in coordination with the area owner
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-dismiss='modal'>Close</button>
+                    <button class="btn btn-primary" @click="reviseReport">Revise</button>
+                </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="approveModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
+            <span class="closed" data-dismiss="modal">&times;</span>
+            <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addCompanyLabel">Accept Report</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to accept this Report?
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-dismiss='modal'>Close</button>
+                    <button class="btn btn-primary" @click="approvedReport">I Accept</button>
+                </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="disapproveModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
+            <span class="closed" data-dismiss="modal">&times;</span>
+            <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addCompanyLabel">Reason of non-acceptance</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row row-margin">
+                        <div class="col-md-12">
+                            <textarea cols="10" rows="10" class="form-control"  placeholder="Type here reason why report is not accepted" v-model="non_acceptance_reason"></textarea><br>
+                            <span class="text-danger" v-if="errors.non_acceptance_reason"> {{ errors.non_acceptance_reason[0] }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-dismiss='modal'>Close</button>
+                    <button class="btn btn-primary" @click="forCheckingReport">Submit</button>
+                </div>
+                </div>
+            </div>
+        </div>
 
     </div>
 </template>
@@ -161,13 +268,15 @@ export default {
             comments: [],
             final_rating: '',
             report_submitted: false,
-            show_forChecking: false,
+            report_approved: false,
+            report_revised: false,
             errors: [],
             currentPage: 0,
             itemsPerPage: 8,
             keywords: '',
             loading: false,
-            attachment_link: ''
+            attachment_link: '',
+            non_acceptance_reason: ''
         }
     },
     created(){
@@ -200,8 +309,7 @@ export default {
                 final_rating: this.final_rating
             })
             .then(response => {
-                this.show_approved = true;
-                this.forCheckingReport = false;
+                this.report_approved = true;
                 this.disabledBtn();
                 $('#approveModal').modal('hide');
                 this.loading = false;
@@ -213,6 +321,7 @@ export default {
             })
         },
         forCheckingReport(){
+            this.errors = [];
             this.loading = true;
             this.enabledBtn();
             let t = this;
@@ -228,13 +337,13 @@ export default {
             
             axios.post('/report-checking', {
                 ids: report_ids, 
-                comments: t.comments
+                comments: t.comments,
+                non_acceptance_reason: t.non_acceptance_reason
             })
             .then(response => { 
                 this.disabledBtn();
-                this.show_forChecking = true;
-                this.show_approved = false;
                 this.loading = false;
+                $('#disapproveModal').modal('hide');
                 
             })
             .catch(error => { 
@@ -252,6 +361,24 @@ export default {
                 this.loading = false;
                 this.reportsPerUser = response.data;
                 this.report_submitted = true;
+                $('#submitModal').modal('hide');
+            })
+            .catch(error => {
+                this.loading = false;
+                this.errors = error.response.data.errors;
+            })
+        },
+        reviseReport(){
+            this.loading = true;
+            axios.post('/revise-report',{
+                id: this.reportsPerUser[0].id,
+                final_rating: this.final_rating
+            })
+            .then(response => {
+                this.loading = false;
+                this.reportsPerUser = response.data;
+                this.report_revised = true;
+                $('#reviseModal').modal('hide');
             })
             .catch(error => {
                 this.loading = false;

@@ -21,6 +21,9 @@ class AddBuHeadToReportsTable extends Migration
             $table->integer('group_president_id');
             $table->integer('is_draft')->nullable();
             $table->dateTime('date_submitted')->nullable();
+            $table->text('non_acceptance_reason')->nullable();
+            $table->dateTime('non_acceptance_date')->nullable();
+            $table->dateTime('date_resubmit')->nullable();
         });
     }
 
@@ -39,6 +42,9 @@ class AddBuHeadToReportsTable extends Migration
             $table->dropColumn('group_president_id');
             $table->dropColumn('is_draft');
             $table->dropColumn('date_submitted');
+            $table->dropColumn('non_acceptance_reason');
+            $table->dropColumn('non_acceptance_date');
+            $table->dropColumn('date_resubmit');
         });
     }
 }

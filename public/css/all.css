@@ -852,7 +852,7 @@ tbody{
 .view-report-div{
     width: 95%;
     margin: 0 auto;
-    max-height: 630px;
+    max-height: 610px;
     overflow-y: scroll;
 }
 .final-rating{

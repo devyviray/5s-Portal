@@ -11,7 +11,7 @@ use App\{
     Report
 };
 
-class ProcessOwnerApprovedReport extends Mailable
+class AreaOwnerApprovedReport extends Mailable
 {
     use Queueable, SerializesModels;
 

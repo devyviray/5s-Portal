@@ -29,7 +29,7 @@ class UpdateReportRule implements Rule
     public function passes($attribute, $value)
     {
         $report = Report::findOrFail($value);
-       if($report->status == 1){
+       if($report->status < 3){
             return true;
        }else{
             return false;

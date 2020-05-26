@@ -11,4 +11,10 @@ return [
         'bu_head' => ['id' => '7','level' => '7', 'label' => 'BU Head'],
         'group_president' => ['id' => '8','level' => '8', 'label' => 'Group President'],
     ],
+    'status' => [
+        'pending' => 1,
+        'For Checking' => 2,
+        'Validated' => 3,
+        'Report Final' => 4
+    ]
 ];

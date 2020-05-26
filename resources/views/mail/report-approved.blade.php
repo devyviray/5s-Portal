@@ -1,14 +1,32 @@
 <div>
-    <p>
-    Good Day!<br><br>
+     <p>
+        Good Day!<br><br>
 
-    {{ $processOwner->name }} has already approved the submitted 5S report for: <br><br>
-    
-    Company: {{ $report->company->name. ' '.$report->location->name }}<br>
-    {{ $report->area->name }} - {{ $report->ratings }}%<br>
-    Inspection Date: {{ \Carbon\Carbon::parse($report->date_of_inspection)->isoFormat('Do MMM YYYY') }}<br>
-    Inspector: {{ $report->inspector->name }} <br>
-    </p><br>
-    <a href="{{ url('view-report', ['reportId' => $report->id]) }}">View report</a><br><br>
-    <img src="{{ $message->embed($pathToImage) }}"  alt="QR" title="QR" style="width="200" height=200" data-auto-embed="attachment">
+        Here is the result of your area!<br><br>
+        
+        Area: {{  $report->area->name  }}<br>
+        Date of inspection: {{ \Carbon\Carbon::parse($report->date_of_inspection)->isoFormat('Do MMM YYYY') }}<br>
+        Rate	: {{ $report->ratings }}%<br>
+        Total NC	: 10<br>
+        Total Improvement	: 3<br>
+        Total Critical NC	: 1<br>
+        Inspector	:  {{ $report->inspector->name }}
+    </p>
+    <h1>
+        @if($report->ratings < 85)
+            <span style="color:#a94442">
+                <strong>
+                    <i>Whoops! You need to keep up and work double time!<br>
+                    You can do it :) 
+                    </i>
+                </strong>
+            </span>
+        @else
+            <span style="color:#3c763d"><strong><i>Congratulations for a job well done!<br>
+                Consistency is the key!</i></strong>
+            </span>
+        @endif
+    </h1><br>
+    <a href="{{ url('view-report', ['reportId' => $report->id]) }}">View your report here</a><br><br>
+
 </div>

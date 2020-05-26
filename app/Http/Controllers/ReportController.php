@@ -21,9 +21,9 @@ use App\{
     CompanyCategory
 };
 use App\Mail\{
-    ReportCreated,
-    ProcessOwnerApprovedReport,
-    ProcessOwnerForCheckingReport,
+    InspectionReportForReview,
+    AreaOwnerApprovedReport,
+    ReturnedInspection,
     InspectorValidateReport
 };
 
@@ -157,7 +157,7 @@ class ReportController extends Controller
                 }
             }
             // Send email to process owner
-            // Mail::to(User::findOrFail($request->process_owner))->send(new ReportCreated(Auth::user()->id, $request->area, $r->id));
+            // Mail::to(User::findOrFail($request->process_owner))->send(new InspectionReportForReview(Auth::user()->id, $request->area, $r->id));
 
             DB::commit();
 
@@ -236,16 +236,16 @@ class ReportController extends Controller
 
         DB::beginTransaction();
         try {
-            Report::whereIn('id', $request->ids)->update(['status' => 4, 'ratings' => number_format((float)$request->final_rating, 2, '.', '')]);
-
-            // Send email to inspector and top management
-            $report = Report::with('inspector','topManagements')->where('id',$request->ids[0])->first();
-            Mail::to($report->topManagements->push($report->inspector))->send(new ProcessOwnerApprovedReport($report->process_owner_id, $report->id));
+            Report::whereIn('id', $request->ids)->update([
+                    'status' => 4, 
+                    'ratings' => number_format((float)$request->final_rating, 2, '.', '')
+                ]);
+            // Send email to Process owner and Department Head
+            $report = Report::with('inspector','processOwner','departmentHead')->where('id',$request->ids[0])->first();
+            Mail::to([$report->processOwner,$report->departmentHead,$report->inspector])->send(new AreaOwnerApprovedReport($report->process_owner_id, $report->id));
 
             DB::commit();
-
             return  $report;
-
         } catch (Exception $e) {
             DB::rollBack();
         }
@@ -260,6 +260,7 @@ class ReportController extends Controller
     public function checkingReportPerUser(Request $request){
         $request->validate([
             'ids' => 'required',
+            'non_acceptance_reason' => 'required'
         ]);
 
         DB::beginTransaction();
@@ -270,10 +271,14 @@ class ReportController extends Controller
                 $uploadedFile->update(['comment' => $comment['text']]);
                 $ids[] = $comment['id'];
             }
-            Report::whereIn('id', $request->ids)->update(['status' => 2]); //Status for checking 
+            Report::whereIn('id', $request->ids)->update([
+                'status' => 2, //Status for checking
+                'non_acceptance_reason' => $request->non_acceptance_reason,
+                'non_acceptance_date' => Carbon::now()
+                ]); 
             // Send email to inspector
             $report = Report::findOrFail($request->ids[0]);
-            Mail::to(User::findOrFail($report->inspector_id))->send(new ProcessOwnerForCheckingReport($report->process_owner_id, $report->area_id , $report->id));
+            Mail::to(User::findOrFail($report->inspector_id))->send(new ReturnedInspection($report->process_owner_id, $report->area_id , $report->id));
 
             DB::commit();
             return  $report;
@@ -527,11 +532,39 @@ class ReportController extends Controller
                 'date_submitted' => Carbon::now(),
                 'is_draft' => null
             ]);
-
             // Send email to process owner
-            Mail::to($report->processOwner)->send(new ReportCreated(Auth::user()->id, $report->area_id, $report->id));
+            Mail::to($report->processOwner)->send(new InspectionReportForReview(Auth::user()->id, $report->area_id, $report->id));
 
             DB::commit();;
+            return $this->getReportsPerUser($report->id);
+        } catch (Exception $e) {
+            DB::rollBack();
+        }
+    }
+
+    /**
+     * Revise report, Tagged reports as final
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function revised(Request $request){
+        $request->validate([
+            'id' => 'required',
+            'final_rating' => 'required'
+        ]);
+
+        DB::beginTransaction();
+        try {
+            Report::where('id', $request->id)->update([
+                    'status' => 4, 
+                    'ratings' => number_format((float)$request->final_rating, 2, '.', ''),
+                    'date_resubmit' => Carbon::now()
+                ]);
+            // Send email to Process owner and Department Head
+            $report = Report::with('inspector','processOwner','departmentHead')->where('id',$request->id)->first();
+            Mail::to([$report->processOwner,$report->departmentHead,$report->inspector])->send(new AreaOwnerApprovedReport($report->process_owner_id, $report->id));
+
+            DB::commit();
             return $this->getReportsPerUser($report->id);
         } catch (Exception $e) {
             DB::rollBack();

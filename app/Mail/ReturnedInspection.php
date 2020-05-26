@@ -12,7 +12,7 @@ use App\{
     Report
 };
 
-class ProcessOwnerForCheckingReport extends Mailable
+class ReturnedInspection extends Mailable
 {
     use Queueable, SerializesModels;
 

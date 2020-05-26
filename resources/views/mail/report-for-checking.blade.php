@@ -1,11 +1,19 @@
 <div>
     <p>
-    Good Day!<br><br>
+        Dear 5S Inspector,<br><br>
 
-    {{ $processOwner->name }} has already checked and verified the 5S report for {{ $area->name }}. <br>
-    The 5s champion has comments on the non-conformance. Please verify this comments.
+        Good Day!<br><br>
+
+        Your inspection to below area has been rejected by the process owner:<br><br>
+
+        Inspection date	: {{ \Carbon\Carbon::parse($report->date_of_inspection)->isoFormat('Do MMM YYYY') }}<br>
+        Area	: {{ $area->name }} <br>
+        Reason of rejection	: {{ $report->non_acceptance_reason }}
     </p><br>
-    <a href="{{ url('validate-report', ['reportId' => $report->id]) }}">PLEASE VISIT THE 5S PORTAL</a><br>
-    <p>Thank you for using this application.</p><br><br>
-    <img src="{{ $message->embed($pathToImage) }}"  alt="QR" title="QR" style="width="200" height=200" data-auto-embed="attachment">
+    <h1>
+        <span style="color:#fa3a0e">
+            You have 24 – 72 hours to respond to the report otherwise, final rating will be posted.
+        </span>
+    </h1><br>
+    <a href="{{ url('validate-report', ['reportId' => $report->id]) }}">View Your report here</a><br>
 </div>

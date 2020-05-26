@@ -12,7 +12,7 @@ use App\{
     Report
 };
 
-class ReportCreated extends Mailable
+class InspectionReportForReview extends Mailable
 {
     use Queueable, SerializesModels;
 

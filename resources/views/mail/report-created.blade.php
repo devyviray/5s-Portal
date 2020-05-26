@@ -1,11 +1,14 @@
 <div>
     <p>
-        Good Day!<br><br>
+        Dear 5S Partner,<br><br>
 
-        {{ $inspector->name }} has submitted a 5S report for {{ $area->name }}. You have 72 hours to check and verify the noted non-conformances.<br>
-        If you are unable to verify the non-conformances within the allotted time the grade reflected in the report will be the final grade.
+        Good day!<br><br>
+
+        <h1>
+            <span style="color:#fa3a0e">
+                You have 24 – 72 hours to respond to the report otherwise, final rating will be posted.
+            </span>
+        </h1>
     </p><br>
-    <a href="{{ url('view-report', ['reportId' => $report->id]) }}">PLEASE VISIT THE 5S PORTAL</a><br> 
-    <p>Thank you for using this application.</p><br><br>
-    <img src="{{ $message->embed($pathToImage) }}"  alt="QR" title="QR" style="width="200" height=200" data-auto-embed="attachment">
+    <a href="{{ url('view-report', ['reportId' => $report->id]) }}">View your report here</a><br>
 </div>

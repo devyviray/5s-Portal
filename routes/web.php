@@ -43,6 +43,7 @@ Route::group(['middleware' => ['auth', 'role:inspector']], function () {
     Route::get('/create-report', 'ReportController@create');
     Route::get('/reports-my-drafts', 'ReportController@drafts');
     Route::get('/reports-my-drafts-all', 'ReportController@draftsData');
+    Route::post('/revise-report', 'ReportController@revised');
 });
 
 // Accessible routes for admin , inspector and IT

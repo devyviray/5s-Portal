@@ -8,7 +8,8 @@
             </div>
             <div class="row">
                 <div class="col-md-3 ml-4">
-                    <a :href="publicPath + '/reports-my-drafts'"><h3><i class="fas fa-chevron-circle-left"></i> Back to Draft</h3></a>
+                    <a v-if="this.reportsPerUser[0].status == 1" :href="publicPath + '/reports-my-drafts'"><h3><i class="fas fa-chevron-circle-left"></i> Back to Draft</h3></a>
+                    <a v-if="this.reportsPerUser[0].status == 2" :href="publicPath + '/reports-notifications'"><h3><i class="fas fa-chevron-circle-left"></i> Back to Notification</h3></a>
                 </div>
                 <div class="col-md-7 text-center">
                     <h1 class="text-primary">REPORT EDIT</h1>
@@ -61,20 +62,9 @@
                             <label for="exampleInputEmail1">Department Head</label><br>
                             <p class="custom-p">{{ this.reportsPerUser[0].department_head.name }} </p>
                         </div>
-                        <div class="form-group form-group-report">
+                        <div class="form-group form-group-report mb-4">
                             <label for="exampleInputEmail1">Rating</label><br>
                             <p class="custom-p">{{ countRating(this.reportsPerUser[0].report_detail) }} %</p>
-                        </div>
-                        <div class="form-group row" v-if="this.reportsPerUser[0].status == 1">
-                        <div class="col-sm-3"></div>
-                            <div class="alert alert-danger col-md-12 mt-2" v-if="errors.id">
-                                <strong><span class="text-white" v-if="errors.id">{{ errors.id[0] }}</span></strong>
-                            </div>
-                        </div>
-                        <div class="form-group row" v-else>
-                            <div class="alert alert-info col-md-12">
-                                <strong>Success!</strong> Report succesfully updated
-                            </div>
                         </div>
                     </div>
                     <div class="col-md-10" style="height: 800px">
@@ -101,7 +91,7 @@
                                                         <input type="file" multiple="multiple" :id="'attachments'+c"  class="attachments ml-2 mt-2" accept="image/*" placeholder="Attach file" @change="uploadFileChange($event,c,checklist.id,checklist.checklist_id)">
                                                     </td>
                                                     <td class="col-sm-1">
-                                                        <select class="form-control select-points" v-model="checklist.points" :disabled="reportsPerUser[0].status !=1" @change="checkRating($event,c)">
+                                                        <select class="form-control select-points" v-model="checklist.points" :disabled="reportsPerUser[0].status > 3" @change="checkRating($event,c)">
                                                             <option value="N/A"> N/A </option>
                                                             <option value="0"> 0 </option>
                                                             <option value="1"> 1 </option>
@@ -160,7 +150,7 @@
                         </div>
                         <div class="row row-margin text-right mt-3">
                             <div class="col-md-12">
-                                <button type="button" id="btn-approved" class="btn btn-primary btn- btn-lg" data-toggle="modal" data-target="#updateModal">UPDATE REPORT</button>
+                                <button type="button" id="btn-approved" class="btn btn-primary btn- btn-lg" data-toggle="modal" data-target="#updateModal" v-if="this.reportsPerUser[0].status < 3">UPDATE REPORT</button>
                             </div>
                         </div>
                         <div class="row row-margin">
