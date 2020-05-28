@@ -2,11 +2,11 @@
     <div id="wrapper">
         <loader v-if="loading"></loader>
         <page-header></page-header>
-        <div id="page-wrapper">
+        <div>
             <div>
                 <breadcrumb :user-role-level="userRoleLevel" :user-id="userId"></breadcrumb>
             </div>
-            <div class="row">
+            <div class="row row-margin">
                 <div class="col-md-3 ml-4">
                     <a v-if="this.reportsPerUser[0].status == 1" :href="publicPath + '/reports-my-drafts'"><h3><i class="fas fa-chevron-circle-left"></i> Back to Draft</h3></a>
                     <a v-if="this.reportsPerUser[0].status == 2" :href="publicPath + '/reports-notifications'"><h3><i class="fas fa-chevron-circle-left"></i> Back to Notification</h3></a>
@@ -16,7 +16,7 @@
                 </div>
                 <div class="col-md-2"></div>
             </div>
-            <div style="overflow-y: scroll; max-height: 800px;" v-if="reportsPerUser.length > 0">
+            <div style="max-height: 800px;" v-if="reportsPerUser.length > 0">
                 <div class="row row-margin">
                     <div class="col-md-2 card card-report">
                         <div class="form-group row">

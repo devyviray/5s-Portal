@@ -1,85 +1,71 @@
 <template>
     <div id="wrapper">
         <loader v-if="loading"></loader>
-        <nav class="navbar navbar-default top-navbar" role="navigation">
-            <div class="row">
-                <div class="col-md-8"></div>
-                <div class="col-md-4">
-                    <div class="row">
-                        <div class="col-md-8">
-                            <span class="span-username">Hi, {{ this.userName }}</span>
-                        </div>
-                        <div class="col-md-4">
-                            <navbarRight :user-role-level="userRoleLevel" :user-id="userId"></navbarRight>
-                        </div>
-                    </div>
-                </div>
+        <page-header></page-header>
+        <div>
+            <div>
+                <breadcrumb :user-role-level="userRoleLevel" :user-id="userId"></breadcrumb>
             </div>
-        </nav>
-        <div id="page-wrapper">
-            <div class="div-spacing"></div>     
-            <div class="header">
-                <h1 class="page-header">
-                    <img class="lafil-logo" :src="logoLink">
-                    <b>5S PORTAL - CHECKLIST</b>
-                </h1>
-                <breadcrumb :user-role-level="userRoleLevel"></breadcrumb>
-            </div>
-            <div id="page-inner">
-                <div class="card-header border-0">
-                    <div class="row align-items-center">
-                        <div class="col">
-                            <h3 class="mb-0">Checklist List</h3>
-                        </div> 
-                        <div class="col text-right">
-                            <a href="javascript.void(0)" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#addModal">Add new</a>
-                        </div>
-                    </div>
-                    <div class="row align-items-center">
-                        <div class="col-xl-4 mb-2 mt-3 float-right">
-                            <input type="text" class="form-control" placeholder="Search" v-model="keywords" id="keywords">
-                        </div> 
-                    </div>
-                </div>
-                <!-- Checklst table -->
-                <table class="table align-items-center table-flush">
-                    <thead class="thead-light">
-                        <tr>
-                            <th></th>
-                            <!-- <th scope="col">ID</th> -->
-                            <th scope="col">Name</th>
-                            <th scope="col">Batch</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(checklist, c) in filteredQueues" v-bind:key="c">
-                            <td class="text-right">
-                                <div class="dropdown">
-                                    <a class="btn btn-sm btn-icon-only text-light" href="#" role="button"
-                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <i class="fa fa-ellipsis-v"></i>
-                                    </a>
-                                    <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
-                                        <a class="dropdown-item" data-toggle="modal" data-target="#editModal" style="cursor: pointer" @click="copyObject(checklist,c)">Edit</a>
-                                        <a class="dropdown-item" data-toggle="modal" data-target="#deleteModal" style="cursor: pointer" @click="copyObject(checklist,c)">Delete</a>
+            <div class="row row-margin">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div id="page-inner">
+                            <div class="card-header border-0">
+                                <div class="row align-items-center">
+                                    <div class="col">
+                                        <h3 class="mb-0">Checklist List</h3>
+                                    </div> 
+                                    <div class="col text-right">
+                                        <a href="javascript.void(0)" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#addModal">Add new</a>
                                     </div>
                                 </div>
-                            </td>
-                            <td>{{ checklist[0].name }}</td>
-                            <td>{{ checklist[0].batch }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="row mb-3 mt-3 ml-3" v-if="filteredQueues.length ">
-                <div class="col-6">
-                    <button :disabled="!showPreviousLink()" class="btn btn-default btn-sm btn-fill" v-on:click="setPage(currentPage - 1)"> Previous </button>
-                        <span class="text-dark">Page {{ currentPage + 1 }} of {{ totalPages }}</span>
-                    <button :disabled="!showNextLink()" class="btn btn-default btn-sm btn-fill" v-on:click="setPage(currentPage + 1)"> Next </button>
-                </div>
-                <div class="col-6 text-right">
-                    <span>{{ filteredQueues.length }} Filtered User(s)</span><br>
-                    <span>{{ checklists.length }} Total User(s)</span>
+                                <div class="row align-items-center">
+                                    <div class="col-xl-4 mb-2 mt-3 float-right">
+                                        <input type="text" class="form-control" placeholder="Search" v-model="keywords" id="keywords">
+                                    </div> 
+                                </div>
+                            </div>
+                            <!-- Checklst table -->
+                            <table class="table align-items-center table-flush">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th></th>
+                                        <!-- <th scope="col">ID</th> -->
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Batch</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="(checklist, c) in filteredQueues" v-bind:key="c">
+                                        <td class="text-right">
+                                            <div class="dropdown">
+                                                <a class="btn btn-sm btn-icon-only text-light" href="#" role="button"
+                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    <i class="fa fa-ellipsis-v"></i>
+                                                </a>
+                                                <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
+                                                    <a class="dropdown-item" data-toggle="modal" data-target="#editModal" style="cursor: pointer" @click="copyObject(checklist,c)">Edit</a>
+                                                    <a class="dropdown-item" data-toggle="modal" data-target="#deleteModal" style="cursor: pointer" @click="copyObject(checklist,c)">Delete</a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>{{ checklist[0].name }}</td>
+                                        <td>{{ checklist[0].batch }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row mb-3 mt-3 ml-3" v-if="filteredQueues.length ">
+                            <div class="col-6">
+                                <button :disabled="!showPreviousLink()" class="btn btn-default btn-sm btn-fill" v-on:click="setPage(currentPage - 1)"> Previous </button>
+                                    <span class="text-dark">Page {{ currentPage + 1 }} of {{ totalPages }}</span>
+                                <button :disabled="!showNextLink()" class="btn btn-default btn-sm btn-fill" v-on:click="setPage(currentPage + 1)"> Next </button>
+                            </div>
+                            <div class="col-6 text-right">
+                                <span>{{ filteredQueues.length }} of {{ checklists.length }} Total User(s)</span>
+                            </div>
+                        </div>
+                    </div>  
                 </div>
             </div>
         </div>
@@ -354,7 +340,7 @@
                 })
                 .then(response => {
                     this.checklists = [];
-                    this.checklists = response.data;
+                    this.checklists = Object.values(response.data);
                     this.checklist_added = true;
                     document.getElementById('add_btn').disabled = false;
                     this.checklist_name = '';
@@ -420,7 +406,7 @@
             fetchChecklists (){
                 axios.get('/checklists-all')
                 .then(response => { 
-                    this.checklists = response.data;
+                    this.checklists = Object.values(response.data);
                 })
                 .catch(error => { 
                     this.errors = error.response.data.errors;
@@ -440,12 +426,18 @@
             }   
         },  
         computed:{
+            filteredChecklist(){
+                let self = this;
+                return self.checklists.filter(checklist => {
+                    return checklist[0].name.toLowerCase().includes(this.keywords.toLowerCase())
+                });
+            },
             totalPages() {
-                return Math.ceil(Object.values(this.checklists).length / this.itemsPerPage);
+                return Math.ceil(Object.values(this.filteredChecklist).length / this.itemsPerPage);
             },
             filteredQueues() {
                 var index = this.currentPage * this.itemsPerPage;
-                var queues_array = Object.values(this.checklists).slice(index, index + this.itemsPerPage);
+                var queues_array = Object.values(this.filteredChecklist).slice(index, index + this.itemsPerPage);
 
                 if(this.currentPage >= this.totalPages) {
                     this.currentPage = this.totalPages - 1

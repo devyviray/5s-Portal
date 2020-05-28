@@ -2,11 +2,11 @@
     <div id="wrapper">
     <loader v-if="loading"></loader>
     <page-header></page-header>
-    <div id="page-wrapper">   
+    <div>   
         <div>
             <breadcrumb :user-role-level="userRoleLevel" :user-id="userId"></breadcrumb>
         </div>
-        <div style="overflow-y: scroll; max-height: 827px;">
+        <div style="max-height: 827px;">
             <div class="row row-margin mb-2">
                 <div class="col-md-12 text-right">
                     <a :href="publicPath+'/reports-my-drafts'" class="font-weight-bold">MY DRAFTS</a>

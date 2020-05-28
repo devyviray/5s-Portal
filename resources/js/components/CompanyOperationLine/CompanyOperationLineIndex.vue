@@ -1,94 +1,82 @@
 <template>
     <div id="wrapper">
         <loader v-if="loading"></loader>
-        <nav class="navbar navbar-default top-navbar" role="navigation">
-            <div class="row">
-                <div class="col-md-8"></div>
-                <div class="col-md-4">
-                    <div class="row">
-                        <div class="col-md-8">
-                            <span class="span-username">Hi, {{ this.userName }}</span>
-                        </div>
-                        <div class="col-md-4">
-                            <navbarRight :user-role-level="userRoleLevel" :user-id="userId"></navbarRight>
-                        </div>
-                    </div>
-                </div>
+        <page-header></page-header>
+        <div>
+            <div>
+                <breadcrumb :user-role-level="userRoleLevel" :user-id="userId"></breadcrumb>
             </div>
-        </nav>
-        <div id="page-wrapper">
-            <div class="div-spacing"></div>     
-            <div class="header">
-                <h1 class="page-header">
-                    <img class="lafil-logo" :src="logoLink">
-                    <b>5S PORTAL - COMPANY OPERATION LINE</b>
-                </h1>
-                <breadcrumb :user-role-level="userRoleLevel"></breadcrumb>
-            </div>
-            <div id="page-inner">
-                <div class="card-header border-0">
-                    <div class="row align-items-center">
-                        <div class="col">
-                            <h3 class="mb-0">Company Operation Line List</h3>
-                        </div> 
-                        <div class="col text-right">
-                            <a href="javascript.void(0)" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#addModal">Add new</a>
-                        </div>
-                    </div>
-                    <div class="row align-items-center">
-                        <div class="col-xl-4 mb-2 mt-3 float-right">
-                            <input type="text" class="form-control" placeholder="Search" v-model="keywords" id="keywords">
-                        </div> 
-                    </div>
-                </div>
-                <!-- Locations table -->
-                <table class="table align-items-center table-flush">
-                    <thead class="thead-light">
-                        <tr>
-                            <th></th>
-                            <th scope="col">ID</th>
-                            <th scope="col">Name</th>
-                            <th scope="col">Location</th>
-                            <th scope="col">Operation Line</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(companyOperationLine, c) in company_operation_lines" v-bind:key="c">
-                            <td>{{ c }}</td>
-                            <td class="text-right">
-                                <div class="dropdown">
-                                    <a class="btn btn-sm btn-icon-only text-light" href="#" role="button"
-                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <i class="fa fa-ellipsis-v"></i>
-                                    </a>
-                                    <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
-                                        <a class="dropdown-item" data-toggle="modal" data-target="#editModal" style="cursor: pointer" @click="copyObject(companyOperationLine,c)">Edit</a>
-                                        <a class="dropdown-item" data-toggle="modal" data-target="#deleteModal" style="cursor: pointer" @click="copyObject(companyOperationLine,c)">Delete</a>
+            <div>
+                <div class="row row-margin">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div id="page-inner">
+                                <div class="card-header border-0">
+                                    <div class="row align-items-center">
+                                        <div class="col">
+                                            <h3 class="mb-0">Company Operation Line List</h3>
+                                        </div> 
+                                        <div class="col text-right">
+                                            <a href="javascript.void(0)" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#addModal">Add new</a>
+                                        </div>
+                                    </div>
+                                    <div class="row align-items-center">
+                                        <div class="col-xl-4 mb-2 mt-3 float-right">
+                                            <input type="text" class="form-control" placeholder="Search" v-model="keywords" id="keywords">
+                                        </div> 
                                     </div>
                                 </div>
-                            </td>
-                            <td scope="row">{{ companyOperationLine[0].company_location.company.name }}</td>
-                            <td>{{ companyOperationLine[0].company_location.location.name }}</td>
-                            <td>
-                                <span v-for="(operationLine, o) in companyOperationLine" :key="o">
-                                    {{ operationLine.operation_line.name }} <br>
-                                </span>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                                <!-- Locations table -->
+                                <table class="table align-items-center table-flush">
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th></th>
+                                            <th scope="col">ID</th>
+                                            <th scope="col">Name</th>
+                                            <th scope="col">Location</th>
+                                            <th scope="col">Operation Line</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="(companyOperationLine, c) in filteredQueues" v-bind:key="c">
+                                             <td class="text-right">
+                                                <div class="dropdown">
+                                                    <a class="btn btn-sm btn-icon-only text-light" href="#" role="button"
+                                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                        <i class="fa fa-ellipsis-v"></i>
+                                                    </a>
+                                                    <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
+                                                        <a class="dropdown-item" data-toggle="modal" data-target="#editModal" style="cursor: pointer" @click="copyObject(companyOperationLine,c)">Edit</a>
+                                                        <a class="dropdown-item" data-toggle="modal" data-target="#deleteModal" style="cursor: pointer" @click="copyObject(companyOperationLine,c)">Delete</a>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>{{ c + 1 }}</td>
+                                            <td scope="row">{{ companyOperationLine[0].company_location.company.name }}</td>
+                                            <td>{{ companyOperationLine[0].company_location.location.name }}</td>
+                                            <td>
+                                                <span v-for="(operationLine, o) in companyOperationLine" :key="o">
+                                                    {{ operationLine.operation_line.name }} <br>
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="row mb-3 mt-3 ml-3" v-if="filteredQueues.length ">
+                                <div class="col-6">
+                                    <button :disabled="!showPreviousLink()" class="btn btn-default btn-sm btn-fill" v-on:click="setPage(currentPage - 1)"> Previous </button>
+                                        <span class="text-dark">Page {{ currentPage + 1 }} of {{ totalPages }}</span>
+                                    <button :disabled="!showNextLink()" class="btn btn-default btn-sm btn-fill" v-on:click="setPage(currentPage + 1)"> Next </button>
+                                </div>
+                                <div class="col-6 text-right">
+                                    <span>{{ filteredQueues.length }}  of {{ company_operation_lines.length }} Total Company Area(s)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <!-- <div class="row mb-3 mt-3 ml-3" v-if="filteredQueues.length ">
-                <div class="col-6">
-                    <button :disabled="!showPreviousLink()" class="btn btn-default btn-sm btn-fill" v-on:click="setPage(currentPage - 1)"> Previous </button>
-                        <span class="text-dark">Page {{ currentPage + 1 }} of {{ totalPages }}</span>
-                    <button :disabled="!showNextLink()" class="btn btn-default btn-sm btn-fill" v-on:click="setPage(currentPage + 1)"> Next </button>
-                </div>
-                <div class="col-6 text-right">
-                    <span>{{ filteredQueues.length }} Filtered Company Area(s)</span><br>
-                    <span>{{ company_areas.length }} Total Company Area(s)</span>
-                </div>
-            </div> -->
         </div>
         <!-- Add Company Area Modal -->
         <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
@@ -279,7 +267,7 @@
                 index: '',
                 errors: [],
                 currentPage: 0,
-                itemsPerPage: 10,
+                itemsPerPage: 15,
                 keywords: '',
                 loading: false,
                 show_operation_line: false
@@ -345,7 +333,7 @@
             fetchCompanyOperationLines(){
                 axios.get('company-operation-lines-all')
                 .then(response => {
-                    this.company_operation_lines = response.data;
+                    this.company_operation_lines = Object.values(response.data);
                 })
                 .catch(error => { 
                     this.errors = error.response.data.errors;
@@ -441,29 +429,29 @@
             }   
         },  
         computed:{
-            // filteredCompanyOperationLines(){
-            //     let self = this;
-            //     return self.company_operation_lines.filter(company_operation_line => {
-            //         return company_operation_line.company_id.toLowerCase().includes(this.keywords.toLowerCase())
-            //     });
-            // },
-            // totalPages() {
-            //     return Math.ceil(this.company_operation_lines.length / this.itemsPerPage);
-            // },
-            // filteredQueues() {
-            //     var index = this.currentPage * this.itemsPerPage;
-            //     var queues_array = this.filteredCompanyOperationLines.slice(index, index + this.itemsPerPage);
+            filteredCompanyOperationLines(){
+                let self = this;
+                return self.company_operation_lines.filter(company_operation_line => {
+                    return company_operation_line[0].company_location.company.name.toLowerCase().includes(this.keywords.toLowerCase())
+                });
+            },
+            totalPages() {
+                return Math.ceil(this.filteredCompanyOperationLines.length / this.itemsPerPage);
+            },
+            filteredQueues() {
+                var index = this.currentPage * this.itemsPerPage;
+                var queues_array = this.filteredCompanyOperationLines.slice(index, index + this.itemsPerPage);
 
-            //     if(this.currentPage >= this.totalPages) {
-            //         this.currentPage = this.totalPages - 1
-            //     }
+                if(this.currentPage >= this.totalPages) {
+                    this.currentPage = this.totalPages - 1
+                }
 
-            //     if(this.currentPage == -1) {
-            //         this.currentPage = 0;
-            //     }
+                if(this.currentPage == -1) {
+                    this.currentPage = 0;
+                }
 
-            //     return queues_array;
-            // },
+                return queues_array;
+            },
             logoLink(){
                 return window.location.origin+'/img/lafil-logo.png';
             },

@@ -477,21 +477,35 @@ class ReportController extends Controller
         return $pdf->stream('report.pdf');
     }
 
+
     /**
-     * Get notification or report for process owner
+     * Display notification index
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function reportsNotificationIndex(){
+        return view('report.notifications');
+    }
+
+    /**
+     * Get notification or report for process owner and inspector
      *
      * @return \Illuminate\Http\Response
      */
 
     public function getReportsNotification(){
         if(Auth::user()->level() !== 1 && Auth::user()->level() !== 4 && Auth::user()->level() !== 5 && Auth::user()->level() !== 6){
-            $reports = Report::when(Auth::user()->level() == 2, function ($q){
-                $q->where('status' ,1)->where('process_owner_id', Auth::user()->id);
+            $reports = Report::with('company', 'location', 'department', 'operationLine', 'category', 'area', 'inspector', 'processOwner', 'reportDetail')
+            ->when(Auth::user()->level() == 2, function ($q){
+                $q->where('status' ,1)
+                ->whereNull('is_draft')
+                ->where('process_owner_id', Auth::user()->id);
             })->when(Auth::user()->level() == 3, function ($q){
-                $q->where('status',2)->where('inspector_id', Auth::user()->id);
+                $q->where('status',2)
+                ->where('inspector_id', Auth::user()->id);
             })->get();
     
-            return count($reports);
+            return $reports;
         }
     }
 
@@ -569,5 +583,14 @@ class ReportController extends Controller
         } catch (Exception $e) {
             DB::rollBack();
         }
+    }
+
+    /**
+     * Display summary page
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function summary(){
+        return view('report.summary');
     }
 }

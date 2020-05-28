@@ -1,100 +1,88 @@
 <template>
     <div id="wrapper">
-         <loader v-if="loading"></loader>
-         <nav class="navbar navbar-default top-navbar" role="navigation">
-            <div class="row">
-                <div class="col-md-8"></div>
-                <div class="col-md-4">
-                    <div class="row">
-                        <div class="col-md-8">
-                            <span class="span-username">Hi, {{ this.userName }}</span>
-                        </div>
-                        <div class="col-md-4">
-                            <navbarRight :user-role-level="userRoleLevel" :user-id="userId"></navbarRight>
-                        </div>
-                    </div>
-                </div>
+        <loader v-if="loading"></loader>
+        <page-header></page-header>
+        <div>
+            <div>
+                <breadcrumb :user-role-level="userRoleLevel" :user-id="userId"></breadcrumb>
             </div>
-        </nav>
-        <div id="page-wrapper">
-            <div class="div-spacing"></div>     
-            <div class="header">
-                <h1 class="page-header">
-                    <img class="lafil-logo" :src="logoLink">
-                    <b>5S PORTAL - USER</b>
-                </h1>
-                <breadcrumb :user-role-level="userRoleLevel"></breadcrumb>
-            </div>
-            <div id="page-inner">
-                <div class="card-header border-0">
-                    <div class="row align-items-center">
-                        <div class="col">
-                            <h3 class="mb-0">User List</h3>
-                        </div> 
-                        <div class="col text-right">
-                            <a href="javascript.void(0)" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#addModal">Add new</a>
-                        </div>
-                    </div>
-                    <div class="row align-items-center">
-                        <div class="col-xl-4 mb-2 mt-3 float-right">
-                            <input type="text" class="form-control" placeholder="Search" v-model="keywords" id="keywords">
-                        </div> 
-                    </div>
-                </div>
-                <!-- Locations table -->
-                <table class="table align-items-center table-flush">
-                    <thead class="thead-light">
-                        <tr>
-                            <th></th>
-                            <th scope="col">ID</th>
-                            <th scope="col">Name</th>
-                            <th scope="col">Email</th>
-                            <th scope="col">Company</th>
-                            <th scope="col">Department</th>
-                            <th scope="col">Role</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(user, u) in filteredQueues" v-bind:key="u">
-                            <td class="text-right">
-                                <div class="dropdown">
-                                    <a class="btn btn-sm btn-icon-only text-light" href="#" role="button"
-                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <i class="fa fa-ellipsis-v"></i>
-                                    </a>
-                                    <div class="dropdown-menu dropdown-menu-left dropdown-menu-arrow">
-                                        <a class="dropdown-item" data-toggle="modal" data-target="#editModal" style="cursor: pointer" @click="copyObject(user)">Edit</a>
-                                        <a class="dropdown-item" data-toggle="modal" data-target="#deleteModal" style="cursor: pointer" @click="copyObject(user)">Delete</a>
+            <div>
+                <div class="row row-margin">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div id="page-inner">
+                                <div class="card-header border-0">
+                                    <div class="row align-items-center">
+                                        <div class="col">
+                                            <h3 class="mb-0">User List</h3>
+                                        </div> 
+                                        <div class="col text-right">
+                                            <a href="javascript.void(0)" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#addModal">Add new</a>
+                                        </div>
+                                    </div>
+                                    <div class="row align-items-center">
+                                        <div class="col-xl-4 mb-2 mt-3 float-right">
+                                            <input type="text" class="form-control" placeholder="Search" v-model="keywords" id="keywords">
+                                        </div> 
                                     </div>
                                 </div>
-                            </td>
-                            <td scope="row">{{ user.id }}</td>
-                            <td>{{ user.name }}</td>
-                            <td>{{ user.email }}</td>
-                            <td>
-                                <span v-for="(company, c) in user.companies" :key="c">
-                                    {{ company.name + ' - ' + user.location.name }} <br/>
-                                </span>
-                            </td>
-                            <td>{{ user.department.name }} </td>
-                            <td>
-                                <span v-for="(role, r) in user.roles" :key="r">
-                                    {{ role.name }} <br/>
-                                </span> 
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="row mb-3 mt-3 ml-3" v-if="filteredQueues.length ">
-                <div class="col-6">
-                    <button :disabled="!showPreviousLink()" class="btn btn-default btn-sm btn-fill" v-on:click="setPage(currentPage - 1)"> Previous </button>
-                        <span class="text-dark">Page {{ currentPage + 1 }} of {{ totalPages }}</span>
-                    <button :disabled="!showNextLink()" class="btn btn-default btn-sm btn-fill" v-on:click="setPage(currentPage + 1)"> Next </button>
-                </div>
-                <div class="col-6 text-right">
-                    <span>{{ filteredQueues.length }} Filtered User(s)</span><br>
-                    <span>{{ users.length }} Total User(s)</span>
+                                <!-- Locations table -->
+                                <table class="table align-items-center table-flush">
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th></th>
+                                            <th scope="col">ID</th>
+                                            <th scope="col">Name</th>
+                                            <th scope="col">Email</th>
+                                            <th scope="col">Company</th>
+                                            <th scope="col">Department</th>
+                                            <th scope="col">Role</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="(user, u) in filteredQueues" v-bind:key="u">
+                                            <td class="text-right">
+                                                <div class="dropdown">
+                                                    <a class="btn btn-sm btn-icon-only text-light" href="#" role="button"
+                                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                        <i class="fa fa-ellipsis-v"></i>
+                                                    </a>
+                                                    <div class="dropdown-menu dropdown-menu-left dropdown-menu-arrow">
+                                                        <a class="dropdown-item" data-toggle="modal" data-target="#editModal" style="cursor: pointer" @click="copyObject(user)">Edit</a>
+                                                        <a class="dropdown-item" data-toggle="modal" data-target="#deleteModal" style="cursor: pointer" @click="copyObject(user)">Delete</a>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td scope="row">{{ user.id }}</td>
+                                            <td>{{ user.name }}</td>
+                                            <td>{{ user.email }}</td>
+                                            <td>
+                                                <span v-for="(company, c) in user.companies" :key="c">
+                                                    {{ company.name + ' - ' + user.location.name }} <br/>
+                                                </span>
+                                            </td>
+                                            <td>{{ user.department.name }} </td>
+                                            <td>
+                                                <span v-for="(role, r) in user.roles" :key="r">
+                                                    {{ role.name }} <br/>
+                                                </span> 
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="row mb-3 mt-3 ml-3" v-if="filteredQueues.length ">
+                                <div class="col-6">
+                                    <button :disabled="!showPreviousLink()" class="btn btn-default btn-sm btn-fill" v-on:click="setPage(currentPage - 1)"> Previous </button>
+                                        <span class="text-dark">Page {{ currentPage + 1 }} of {{ totalPages }}</span>
+                                    <button :disabled="!showNextLink()" class="btn btn-default btn-sm btn-fill" v-on:click="setPage(currentPage + 1)"> Next </button>
+                                </div>
+                                <div class="col-6 text-right">
+                                    <span>{{ filteredQueues.length }} of {{ users.length }} Total User(s)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -317,7 +305,7 @@
                 role: [], 
                 errors: [],
                 currentPage: 0,
-                itemsPerPage: 50,
+                itemsPerPage: 15,
                 keywords: '',
                 loading: false,
             }

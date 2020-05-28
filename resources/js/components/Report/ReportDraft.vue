@@ -2,7 +2,7 @@
     <div id="wrapper">
         <loader v-if="loading"></loader>
         <page-header></page-header>
-        <div id="page-wrapper" style="height: 100%">
+        <div id="page-wrapper">
             <div>
                 <breadcrumb :user-role-level="userRoleLevel" :user-id="userId"></breadcrumb>
             </div>

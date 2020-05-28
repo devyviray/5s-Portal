@@ -23,18 +23,18 @@ body i {
 }
 
 #page-wrapper {
-    /* height: 91%; */
+    height: 91%;
     background: #EDEDED;
 }
 #page-inner {
-    height: 41%;
+    height: 50%;
     width:100%;
     margin:10px 20px 10px 0px;
     background-color: #FFFFFF;
     padding: 15px 30px;
 }
 #page-inner2 {
-    height: 35%; 
+    height: 42%;
     background-color: #FFFFFF;
     padding: 20px 20px;
 }
@@ -776,7 +776,8 @@ body, #app, .py-4, .wrap-div{
 }
 .main-content{
     height: 100%;
-    /* overflow-y: scroll; */
+    overflow-y: scroll;
+    background: #EDEDED;
 }
 tbody{
     background-color: #fff;

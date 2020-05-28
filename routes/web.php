@@ -34,7 +34,8 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/report-checking', 'ReportController@checkingReportPerUser');
     Route::get('/view-report/{reportId}', 'ReportController@show');
     Route::get('/reports-per-user/{reportId}', 'ReportController@getReportsPerUser');
-    Route::get('/reports-notification', 'ReportController@getReportsNotification');
+    Route::get('/reports-notification', 'ReportController@reportsNotificationIndex');
+    Route::get('/reports-notification-all', 'ReportController@getReportsNotification');
 });
 
 // Accessible routes for inspector only
@@ -44,6 +45,7 @@ Route::group(['middleware' => ['auth', 'role:inspector']], function () {
     Route::get('/reports-my-drafts', 'ReportController@drafts');
     Route::get('/reports-my-drafts-all', 'ReportController@draftsData');
     Route::post('/revise-report', 'ReportController@revised');
+    Route::get('/reports-summary', 'ReportController@summary');
 });
 
 // Accessible routes for admin , inspector and IT

@@ -2,11 +2,11 @@
     <div id="wrapper">
         <loader v-if="loading"></loader>
         <page-header></page-header>
-        <div id="page-wrapper" class="h-100">
+        <div>
             <div>
                 <breadcrumb :user-role-level="userRoleLevel" :user-id="userId"></breadcrumb>
             </div>
-            <div class="row row-margin h-100">
+            <div class="row row-margin">
                 <div class="col-md-3">
                     <div class="w-100 mt-5">
                         <div class="text-center" style="margin-bottom: 85px;">
@@ -77,9 +77,9 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3 center-content h-100">
-                    <div class="w-100 h-100 text-center">
-                        <div id="page-inner" class="h-100">
+                <div class="col-md-3">
+                    <div class="w-100 text-center">
+                        <div id="page-inner">
                             <div class="ranking">
                                 <h3 class="text-success border-bottom">RANKINGS FOR THE MONTH</h3>
                                 <h2 class="text-success border-bottom"><strong>APRIL</strong></h2>

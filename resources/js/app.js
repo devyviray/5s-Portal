@@ -63,6 +63,8 @@ Vue.component('report-verified', require('./components/Report/ReportVerified.vue
 Vue.component('report-edit', require('./components/Report/ReportEdit.vue').default);
 Vue.component('report-trend', require('./components/Report/ReportTrend.vue').default);
 Vue.component('report-draft', require('./components/Report/ReportDraft.vue').default);
+Vue.component('report-notification', require('./components/Report/ReportNotification.vue').default);
+Vue.component('report-summary', require('./components/Report/ReportSummary.vue').default);
 
 // operation line page
 Vue.component('operation-line-index', require('./components/Operation/OperationLineIndex.vue').default);
