@@ -30,9 +30,6 @@ export default {
             notifications: 0
         }
     },
-    created(){
-        this.fetchCompanies();
-    },
     methods:{
         logoutForm(){
             this.$parent.showLoader();
