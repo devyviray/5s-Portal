@@ -12,54 +12,207 @@
                         <h1 class="text-primary">SUMMARY OF REPORTS</h1>
                     </div>
                     <div class="col-md-12">
-                        <div class="card">
-                                                PAGE NOT YET AVAILABLE
-                            <!-- <div class="col-md-4 text-left mb-3 mt-3">
-                                <input type="text" class="form-control" placeholder="Search by area owner" v-model="keywords" id="keywords">
+                        <ul class="nav nav-tabs" id="myTab" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link custom-navlink active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">All Business Units</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link custom-navlink" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Per Business Unit</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content" id="myTabContent">
+                            <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                                <div v-if="!view_ranking">
+                                    <div class="row mt-4">
+                                        <div class="col-md-1">
+                                            <select class="form-control">
+                                                <option>2019</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <button type="button" class="btn btn-success">Generate PDF</button>
+                                        </div>
+                                        <div class="col-md-2 text-right">
+                                            <button type="button" class="btn btn-secondary" @click="viewRanking">View Ranking</button>
+                                        </div>
+                                    </div>
+                                    <div class="card mt-4">
+                                        <table class="table align-items-center table-flush">
+                                            <thead class="thead-light">
+                                                <tr>
+                                                    <th scope="col">Business Unit</th>
+                                                    <th scope="col">JAN</th>
+                                                    <th scope="col">FEB</th>
+                                                    <th scope="col">MAR</th>
+                                                    <th scope="col">APR</th>
+                                                    <th scope="col">MAY</th>
+                                                    <th scope="col">JUN</th>
+                                                    <th scope="col">JUL</th>
+                                                    <th scope="col">AUG</th>
+                                                    <th scope="col">SEP</th>
+                                                    <th scope="col">OCT</th>
+                                                    <th scope="col">NOV</th>
+                                                    <th scope="col">DEC</th>
+                                                    <th scope="col">AVERAGE</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>PFMC – FLOUR MANILA</td>
+                                                    <td>85.00</td>
+                                                    <td>86.59</td>
+                                                    <td>75.00</td>
+                                                    <td>86.25</td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td>83.21</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div v-else>
+                                    <div class="row mt-4">
+                                        <div class="col-md-1">
+                                            <button type="button" class="btn btn-secondary" @click="exitRanking">Exit Ranking</button>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <button type="button" class="btn btn-success">Generate PDF</button>
+                                        </div>
+                                    </div>
+                                    <div class="card mt-4">
+                                        <table class="table align-items-center table-flush">
+                                            <thead class="thead-light">
+                                                <tr>
+                                                    <th scope="col">Business Unit</th>
+                                                    <th scope="col">JAN</th>
+                                                    <th scope="col">FEB</th>
+                                                    <th scope="col">MAR</th>
+                                                    <th scope="col">APR</th>
+                                                    <th scope="col">MAY</th>
+                                                    <th scope="col">JUN</th>
+                                                    <th scope="col">JUL</th>
+                                                    <th scope="col">AUG</th>
+                                                    <th scope="col">SEP</th>
+                                                    <th scope="col">OCT</th>
+                                                    <th scope="col">NOV</th>
+                                                    <th scope="col">DEC</th>
+                                                    <th scope="col">AVERAGE</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>PFMC – FLOUR MANILA</td>
+                                                    <td>85.00</td>
+                                                    <td>86.59</td>
+                                                    <td>75.00</td>
+                                                    <td>86.25</td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td>83.21</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
                             </div>
-                            <table class="table align-items-center table-flush">
-                                <thead class="thead-light">
-                                    <tr>
-                                    <th scope="col"></th>
-                                        <th scope="col">ID</th>
-                                        <th scope="col">Business Unit</th>
-                                        <th scope="col">Department</th>
-                                        <th scope="col">Date of Insepction</th>
-                                        <th scope="col">Area Owner</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr v-for="(report, r) in filteredQueues" v-bind:key="r">
-                                          <td class="text-right">
-                                            <div class="dropdown">
-                                                <a class="btn btn-sm btn-icon-only text-light" href="#" role="button"
-                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                    <i class="fa fa-ellipsis-v"></i>
-                                                </a>
-                                                <div class="dropdown-menu dropdown-menu-left dropdown-menu-arrow">
-                                                    <a :href="publicPath+'/edit-report/'+report.id" class="dropdown-item">Edit</a>
-                                                    <a :href="publicPath+'/view-report/'+report.id" class="dropdown-item">Preview</a>
-                                                </div>
+                            <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                                <div class="row mt-4">
+                                    <div class="col-md-1">
+                                        <select class="form-control">
+                                            <option>2019</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group row">
+                                            <label for="colFormLabel" class="col-sm-4 col-form-label">Business Unit</label>
+                                            <div class="col-sm-8">
+                                                <select class="form-control">
+                                                    <option>PFMC - FLOUR ILOILO</option>
+                                                </select>
                                             </div>
-                                        </td>
-                                        <td scope="row">{{ report.id }}</td>
-                                        <td>{{ report.company.name +' - ' +  report.location.name }}</td>
-                                        <td>{{ report.department.name }}</td>
-                                        <td>{{ report.date_of_inspection }}</td>
-                                        <td>{{ report.process_owner.name }} </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <div class="row mb-3 mt-3 ml-3" v-if="filteredQueues.length ">
-                                <div class="col-6">
-                                    <button :disabled="!showPreviousLink()" class="btn btn-default btn-sm btn-fill" v-on:click="setPage(currentPage - 1)"> Previous </button>
-                                        <span class="text-dark">Page {{ currentPage + 1 }} of {{ totalPages }}</span>
-                                    <button :disabled="!showNextLink()" class="btn btn-default btn-sm btn-fill" v-on:click="setPage(currentPage + 1)"> Next </button>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group row">
+                                            <label for="colFormLabel" class="col-sm-4 col-form-label">Department</label>
+                                            <div class="col-sm-8">
+                                                <select class="form-control">
+                                                    <option>FLOUR MILL</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group row">
+                                            <label for="colFormLabel" class="col-sm-4 col-form-label">Area</label>
+                                            <div class="col-sm-8">
+                                              <select class="form-control">
+                                                    <option>All</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <button type="button" class="btn btn-secondary">Filter</button>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <button type="button" class="btn btn-success">Generate PDF</button>
+                                    </div>
                                 </div>
-                                <div class="col-6 text-right">
-                                    <span>{{ filteredQueues.length }} of {{ reports.length }} Total Document(s)</span>
+                                <div class="card mt-4">
+                                    <table class="table align-items-center table-flush">
+                                        <thead class="thead-light">
+                                            <tr>
+                                                <th scope="col">Business Unit</th>
+                                                <th scope="col">JAN</th>
+                                                <th scope="col">FEB</th>
+                                                <th scope="col">MAR</th>
+                                                <th scope="col">APR</th>
+                                                <th scope="col">MAY</th>
+                                                <th scope="col">JUN</th>
+                                                <th scope="col">JUL</th>
+                                                <th scope="col">AUG</th>
+                                                <th scope="col">SEP</th>
+                                                <th scope="col">OCT</th>
+                                                <th scope="col">NOV</th>
+                                                <th scope="col">DEC</th>
+                                                <th scope="col">AVERAGE</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>PFMC – FLOUR MANILA</td>
+                                                <td>85.00</td>
+                                                <td>86.59</td>
+                                                <td>75.00</td>
+                                                <td>86.25</td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td>83.21</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
-                            </div> -->
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -81,7 +234,7 @@
             Multiselect,
             navbarRight,
             breadcrumb,
-            loader,
+            loader
         },
         data(){
             return {
@@ -91,6 +244,7 @@
                 itemsPerPage: 50,
                 keywords: '',
                 loading: false,
+                view_ranking: false
             }
         },
         created(){
@@ -98,6 +252,12 @@
         },
         methods:{
             moment,
+            viewRanking(){
+                this.view_ranking = true;
+            },
+            exitRanking(){
+                this.view_ranking = false;
+            },
             fetchDraftReports(){
                 axios.get('/reports-my-drafts-all')
                  .then(response => {
