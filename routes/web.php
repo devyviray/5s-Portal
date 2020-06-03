@@ -116,6 +116,7 @@ Route::group(['middleware' => ['auth', 'role:it|administrator|top management|ins
 
     //Report
     Route::post('/report-filtered', 'ReportController@getFilteredReports');
+    Route::get('/report-filtered-to-pdf/{year}/{company}/{location}/{category}/{operation_line}/{area}', 'ReportController@filteredReportToPDF');
     Route::get('/validate-report/{reportId}', 'ReportController@validateIndex');
     Route::get('/edit-report/{reportId}', 'ReportController@editIndex');
     Route::post('/report-validate', 'ReportController@validateReportPerUser');

@@ -9,6 +9,7 @@ use Mail;
 use Storage;
 use PDF;
 use Carbon\Carbon;
+use Config;
 use App\Rules\{
     ReportingMonthRule,
     UpdateReportRule
@@ -190,23 +191,60 @@ class ReportController extends Controller
     
     public function getFilteredReports(Request $request){
         $request->validate([
+            'year' => 'required',
             'company' => 'required',
             'location' => 'required',
+            'category' => 'required',
+            'operation_line' => 'required_if:category,==,1',
+            'area' => 'required'
         ]);
 
         return Report::with('company', 'location', 'operationLine', 'category', 'area', 'inspector', 'processOwner', 'reportDetail')
+        ->where('reporting_year',$request->year)
         ->where('company_id', $request->company)
         ->where('location_id', $request->location)
-        ->when($request->category, function($q) use ($request){
-            $q->where('category_id', $request->category);
-        })->when($request->operation_line, function($q) use ($request){
+        ->where('category_id', $request->category)
+        ->when($request->operation_line, function($q) use ($request){
             $q->where('operation_line_id', $request->operation_line);
-        })->when($request->area, function($q) use ($request){
+        })
+        ->when($request->area !== 'ALL', function ($q) use($request){
             $q->where('area_id', $request->area);
-        })->when(Auth::user()->level() < 3, function($q){
-            $q->where('process_owner_id', Auth::user()->id);
-        })->orderBy('id', 'desc')->get();
+        })
+        ->where('status',Config::get('constants.status.final'))
+        ->get()
+        ->groupBy('area_id');
     }
+
+
+    /**
+     * Generate filtered reports to PDF
+     *
+     * @return \Illuminate\Http\Response
+     */
+    
+    public function filteredReportToPDF($year,$company,$location,$category,$operation_line,$area){
+
+        $data = Report::with('company', 'location', 'operationLine', 'category', 'area', 'inspector', 'processOwner', 'reportDetail')
+        ->where('reporting_year',$year)
+        ->where('company_id', $company)
+        ->where('location_id', $location)
+        ->where('category_id', $category)
+        ->when($operation_line !== '0', function($q) use ($operation_line){
+            $q->where('operation_line_id', $operation_line);
+        })
+        ->when($area !== 'ALL', function ($q) use($area){
+            $q->where('area_id', $area);
+        })
+        ->where('status',Config::get('constants.status.final'))
+        ->get()
+        ->groupBy('area_id')
+        ->toArray();
+
+        $pdf = PDF::loadView('report.per-bu-pdf', compact('data'))->setPaper('a4', 'landscape');
+
+        return $pdf->stream('report.per-bu-pdf');
+    }
+
 
     /**
      *Fetch All reports per user  

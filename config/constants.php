@@ -13,8 +13,8 @@ return [
     ],
     'status' => [
         'pending' => 1,
-        'For Checking' => 2,
-        'Validated' => 3,
-        'Report Final' => 4
+        'for_checking' => 2,
+        'validated' => 3,
+        'final' => 4
     ]
 ];

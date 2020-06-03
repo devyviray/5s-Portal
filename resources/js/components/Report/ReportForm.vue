@@ -17,42 +17,42 @@
                     <div class="card-body">
                         <div class="form-group form-group-report">
                             <label for="exampleInputEmail1">Company</label>
-                            <select class="form-control" v-model="company" @change="changeCompany(company, 'getCompanies')">
+                            <select class="form-control" v-model="company" @change="changeCompany">
                                 <option v-for="(company,c) in companies" v-bind:key="c" :value="company"> {{ company.name }}</option>
                             </select>
                             <span class="text-danger" v-if="errors.company  ">{{ errors.company[0] }}</span>
                         </div>
                         <div class="form-group form-group-report">
                             <label for="exampleInputEmail1">Location</label>
-                            <select class="form-control" v-model="location" @change="changeCompany('', '')">
+                            <select class="form-control" v-model="location" @change="changeLocation">
                                 <option v-for="(location,l) in locations" v-bind:key="l" :value="location"> {{ location.name }}</option>
                             </select>
                             <span class="text-danger" v-if="errors.location  ">{{ errors.location[0] }}</span>
                         </div>
                         <div class="form-group form-group-report">
                             <label for="exampleInputEmail1">Department</label>
-                            <select class="form-control" v-model="department" @change="changeCompany('', '')">
+                            <select class="form-control" v-model="department" @change="changeDepartment">
                                 <option v-for="(department,d) in departments" v-bind:key="d" :value="department"> {{ department.name }}</option>
                             </select>
                             <span class="text-danger" v-if="errors.department  ">{{ errors.department[0] }}</span>
                         </div>
                         <div class="form-group form-group-report">
                             <label for="exampleInputEmail1">Category</label>
-                             <select class="form-control" v-model="category"  @change="changeCompany('', '')">
+                             <select class="form-control" v-model="category"  @change="changeCategory">
                                 <option v-for="(category,c) in categories" v-bind:key="c" :value="category"> {{ category.name }}</option>
                             </select>
                             <span class="text-danger" v-if="errors.category  ">{{ errors.category[0] }}</span>
                         </div>
                         <div class="form-group form-group-report" v-if="show_operation_line">
                             <label for="exampleInputEmail1">Operation Line</label>
-                            <select class="form-control" v-model="operation_line" @change="changeCompany('', '')">
+                            <select class="form-control" v-model="operation_line" @change="changeOperationLine">
                                 <option v-for="(operation_line,o) in operation_lines" v-bind:key="o" :value="operation_line.operation_line"> {{ operation_line.operation_line.name }}</option>
                             </select>
                             <span class="text-danger" v-if="errors.operation_line  ">{{ errors.operation_line[0] }}</span>
                         </div>
                         <div class="form-group form-group-report">
                             <label for="exampleInputEmail1">Area</label>
-                            <select class="form-control" v-model="area"  @change="changeCompany('', '')">
+                            <select class="form-control" v-model="area">
                                 <option v-for="(area,a) in areas" v-bind:key="a" :value="area"> {{ area.name }}</option>
                             </select>
                             <span class="text-danger" v-if="errors.area  ">{{ errors.area[0] }}</span>
@@ -358,41 +358,58 @@
                     document.getElementById('attachments'+index).value = "";
                 }
             },
-            changeCompany(company,action){
-                if(action == 'getCompanies'){
-                    axios.get(`/company-location/${company.id}`)
-                    .then(response => { 
-                        this.locations = response.data.locations;
-                    })
-                    .catch(error => {
-                        this.errors = error.response.data.errors;
-                    })
-                }else {
-                    if(this.category.id == 1){
-                        this.show_operation_line = true;
-                    }else{
-                        this.show_operation_line = false;
-                        this.operation_line = '';
-                    }
+            changeCompany(){
+                this.location = '';
+                this.operation_lines = [];
+                this.operation_line = '';
+                this.areas = [];
+                this.area = '';
+                axios.get(`/company-location/${this.company.id}`)
+                .then(response => { 
+                    this.locations = response.data.locations;
+                })
+                .catch(error => {
+                    this.errors = error.response.data.errors;
+                })
+                if(this.location && this.category){
+                    this.fetchCompayAreas();
+                }
+            },
+            changeLocation(){
+               if(this.category.name == "Operations"){
+                    this.fetchOperationLines();
+                }else{
+                    this.fetchCompayAreas();
+                }
+            },
+            changeDepartment(){
+                if(this.company && this.location){
+                    this.fetchProccessOwner();
+                    this.fetchDepartmentHead();
+                    this.fetchbuHead();
+                    this.fetchGroupPresident();
+                }
+            },
+            changeCategory(){
+                if(this.category.name == "Operations"){
+                    this.show_operation_line = true;
                     if(this.company && this.location){
-                        if(this.department){
-                            this.fetchProccessOwner();
-                            this.fetchDepartmentHead();
-                            this.fetchbuHead();
-                            this.fetchGroupPresident();
-                        }
-                        if(this.category){
-                            this.fetchCompayAreas();
-                        }
                         this.fetchOperationLines();
                     }
-                    this.default_category = !this.category ? this.category.name : this.default_category;
-                    if(this.default_category != this.category.name){
-                        this.fetchChecklist();
-                        this.default_category = this.category.name;
+                }else{
+                    if(this.company && this.location){
+                        this.fetchCompayAreas();
                     }
-                    // Clear array
-                    this.points_errors = [];
+                    this.show_operation_line = false;
+                    this.operation_lines = [];
+                    this.operation_line = '';
+                }
+                this.areas = [];
+                this.area = '';
+            },
+            changeOperationLine(){
+                if(this.company && this.location && this.category){
+                    this.fetchCompayAreas();
                 }
             },
             fetchCompanies(){
@@ -435,7 +452,7 @@
                 var operationId = this.operation_line ? this.operation_line.id : 0;
                 axios.get(`/company-areas-per-company/${this.company.id}/${this.location.id}/${this.category.id}/${operationId}`)
                  .then(response => {
-                    this.areas = response.data[0].areas;
+                    this.areas =  response.data.length > 0 ? response.data[0].areas : [];
                 })
                 .catch(error => { 
                     this.errors = error.response.data.errors;

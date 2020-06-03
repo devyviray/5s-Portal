@@ -131,45 +131,66 @@
                             <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
                                 <div class="row mt-4">
                                     <div class="col-md-1">
-                                        <select class="form-control">
-                                            <option>2019</option>
+                                        <label for="disabledTextInput">Year</label>
+                                        <select class="form-control" v-model="year">
+                                            <option v-for="(year,y) in years" :key="y" :value="year">
+                                                {{ year }}
+                                            </option>
                                         </select>
+                                        <span class="text-danger" v-if="errors.year">{{ errors.year[0] }}</span>
                                     </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group row">
-                                            <label for="colFormLabel" class="col-sm-4 col-form-label">Business Unit</label>
-                                            <div class="col-sm-8">
-                                                <select class="form-control">
-                                                    <option>PFMC - FLOUR ILOILO</option>
-                                                </select>
-                                            </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="disabledTextInput">Company</label>
+                                            <select class="form-control" v-model="company" @change="changeCompany">
+                                                <option v-for="(company,c) in companies" v-bind:key="c" :value="company"> {{ company.name }}</option>
+                                            </select>
+                                            <span class="text-danger" v-if="errors.company">{{ errors.company[0] }}</span>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group row">
-                                            <label for="colFormLabel" class="col-sm-4 col-form-label">Department</label>
-                                            <div class="col-sm-8">
-                                                <select class="form-control">
-                                                    <option>FLOUR MILL</option>
-                                                </select>
-                                            </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="disabledTextInput">Location</label>
+                                           <select class="form-control" v-model="location" @change="changeLocation">
+                                                <option v-for="(location,l) in locations" v-bind:key="l" :value="location"> {{ location.name }}</option>
+                                            </select>
+                                            <span class="text-danger" v-if="errors.location">{{ errors.location[0] }}</span>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group row">
-                                            <label for="colFormLabel" class="col-sm-4 col-form-label">Area</label>
-                                            <div class="col-sm-8">
-                                              <select class="form-control">
-                                                    <option>All</option>
-                                                </select>
-                                            </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="disabledTextInput">Category</label>
+                                            <select class="form-control" v-model="category"  @change="changeCategory">
+                                                <option v-for="(category,c) in categories" v-bind:key="c" :value="category"> {{ category.name }}</option>
+                                            </select>
+                                            <span class="text-danger" v-if="errors.category  ">{{ errors.category[0] }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2" v-if="show_operation_line">
+                                        <div class="form-group">
+                                            <label for="disabledTextInput">Operation Line</label>
+                                           <select class="form-control" v-model="operation_line" @change="changeOperationLine">
+                                                <option v-for="(operation_line,o) in operation_lines" v-bind:key="o" :value="operation_line.operation_line"> {{ operation_line.operation_line.name }}</option>
+                                            </select>
+                                            <span class="text-danger" v-if="errors.operation_line  ">{{ errors.operation_line[0] }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="disabledTextInput">Area</label>
+                                            <select class="form-control" v-model="area">
+                                                <option v-if="areas.length >0" value="ALL">ALL</option>
+                                                <option v-for="(area,a) in areas" v-bind:key="a" :value="area"> {{ area.name }}</option>
+                                            </select>
+                                            <span class="text-danger" v-if="errors.area  ">{{ errors.area[0] }}</span>
                                         </div>
                                     </div>
                                     <div class="col-md-1">
-                                        <button type="button" class="btn btn-secondary">Filter</button>
+                                        <button class="btn btn-secondary" @click="fetchFilteredReport">Filter</button>
                                     </div>
                                     <div class="col-md-1">
-                                        <button type="button" class="btn btn-success">Generate PDF</button>
+                                        <button class="btn btn-success" @click="filteredReportToPdf">Generate PDF</button><br>
+                                        <span class="text-danger" v-if="no_data ">No data to generate</span>
                                     </div>
                                 </div>
                                 <div class="card mt-4">
@@ -177,6 +198,9 @@
                                         <thead class="thead-light">
                                             <tr>
                                                 <th scope="col">Business Unit</th>
+                                                <th scope="col">Category</th>
+                                                <th scope="col">Operation Line</th>
+                                                <th scope="col">Area</th>
                                                 <th scope="col">JAN</th>
                                                 <th scope="col">FEB</th>
                                                 <th scope="col">MAR</th>
@@ -192,23 +216,85 @@
                                                 <th scope="col">AVERAGE</th>
                                             </tr>
                                         </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>PFMC – FLOUR MANILA</td>
-                                                <td>85.00</td>
-                                                <td>86.59</td>
-                                                <td>75.00</td>
-                                                <td>86.25</td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td>83.21</td>
+                                        <tbody v-if="reports.length > 0">
+                                            <tr v-for="(report,r) in filteredQueues" :key="r">
+                                                <td>{{ report[0].company.name + ' - ' + report[0].location.name }}</td>
+                                                <td>
+                                                    {{ report[0].category.name  }}
+                                                </td>
+                                                <td>
+                                                    <span v-if="report[0].operation_line">
+                                                        {{ report[0].operation_line.name  }}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    {{ report[0].area.name  }}
+                                                </td>
+                                                <td>
+                                                    <span v-for="(rp, p) in report" :key="p">
+                                                        <span v-if="rp.reporting_month == '1'">{{  numberFormat(rp.ratings) }}</span>
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span v-for="(rp, p) in report" :key="p">
+                                                        <span v-if="rp.reporting_month == '2'">{{  numberFormat(rp.ratings) }}</span>
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span v-for="(rp, p) in report" :key="p">
+                                                        <span v-if="rp.reporting_month == '3'">{{  numberFormat(rp.ratings) }}</span>
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span v-for="(rp, p) in report" :key="p">
+                                                        <span v-if="rp.reporting_month == '4'">{{  numberFormat(rp.ratings) }}</span>
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span v-for="(rp, p) in report" :key="p">
+                                                        <span v-if="rp.reporting_month == '5'">{{  numberFormat(rp.ratings) }}</span>
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span v-for="(rp, p) in report" :key="p">
+                                                        <span v-if="rp.reporting_month == '6'">{{  numberFormat(rp.ratings) }}</span>
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span v-for="(rp, p) in report" :key="p">
+                                                        <span v-if="rp.reporting_month == '7'">{{  numberFormat(rp.ratings) }}</span>
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span v-for="(rp, p) in report" :key="p">
+                                                        <span v-if="rp.reporting_month == '8'">{{  numberFormat(rp.ratings) }}</span>
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span v-for="(rp, p) in report" :key="p">
+                                                        <span v-if="rp.reporting_month == '9'">{{  numberFormat(rp.ratings) }}</span>
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span v-for="(rp, p) in report" :key="p">
+                                                        <span v-if="rp.reporting_month == '10'">{{  numberFormat(rp.ratings) }}</span>
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span v-for="(rp, p) in report" :key="p">
+                                                        <span v-if="rp.reporting_month == '11'">{{  numberFormat(rp.ratings) }}</span>
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span v-for="(rp, p) in report" :key="p">
+                                                        <span v-if="rp.reporting_month == '12'">{{  numberFormat(rp.ratings) }}</span>
+                                                    </span>
+                                                </td>
+                                                <td>{{ countAverage(report) }}</td>
                                             </tr>
+                                        </tbody>
+                                        <tbody v-else>
+                                            <td>No data available in the table</td>
                                         </tbody>
                                     </table>
                                 </div>
@@ -239,33 +325,193 @@
         data(){
             return {
                 reports: [],
+                companies: [],
+                company: '',
+                departments: [],
+                department: '',
+                locations: [],
+                location: '',
+                categories: [],
+                category: '',
+                operation_lines: [],
+                operation_line: '',
+                areas: [],
+                area: '',
                 errors: [],
                 currentPage: 0,
                 itemsPerPage: 50,
                 keywords: '',
                 loading: false,
-                view_ranking: false
+                view_ranking: false,
+                show_operation_line: false,
+                years:  '',
+                year: '',
+                no_data: false
             }
         },
         created(){
-            this.fetchDraftReports();
+            this.fetchCompanies();
+            this.fetchDepartments();
+            this.fetchCategories();
+            this.generateYear();
         },
         methods:{
             moment,
+            numberFormat(num){
+                if(num){
+                    return Number(parseFloat(num).toFixed(2)).toLocaleString('en', { minimumFractionDigits: 2 });
+                }
+            },
+            generateYear(){
+                var years = []
+                var start_year = 2018;
+                var upcoming_years = 15;
+                for(var i=0;i<=upcoming_years;i++){
+                    years.push(start_year = start_year + 1);
+                } 
+                this.years = years;
+            },
+            showLoader(){
+               this.loading = true;
+            },
             viewRanking(){
                 this.view_ranking = true;
             },
             exitRanking(){
                 this.view_ranking = false;
+            },  
+            countAverage(reports){
+                var reporting_month_count = 0;
+                var total_points = 0;
+                reports.filter(report => {
+                    reporting_month_count = reporting_month_count + 1;
+                    total_points = total_points + report.ratings;
+                });
+
+                return this.numberFormat(total_points / reporting_month_count);
             },
-            fetchDraftReports(){
-                axios.get('/reports-my-drafts-all')
+            changeCompany(){
+                this.location = '';
+                this.operation_lines = [];
+                this.operation_line = '';
+                this.areas = [];
+                this.area = '';
+                axios.get(`/company-location/${this.company.id}`)
+                .then(response => { 
+                    this.locations = response.data.locations;
+                })
+                .catch(error => {
+                    this.errors = error.response.data.errors;
+                })
+                if(this.location && this.category){
+                    this.fetchCompayAreas();
+                }
+            },
+            changeLocation(){
+               if(this.category.name == "Operations"){
+                    this.fetchOperationLines();
+                }else{
+                    this.fetchCompayAreas();
+                }
+            },
+            changeCategory(){
+                if(this.category.name == "Operations"){
+                    this.show_operation_line = true;
+                    if(this.company && this.location){
+                        this.fetchOperationLines();
+                    }
+                }else{
+                    if(this.company && this.location){
+                        this.fetchCompayAreas();
+                    }
+                    this.show_operation_line = false;
+                    this.operation_lines = [];
+                    this.operation_line = '';
+                }
+                this.areas = [];
+                this.area = '';
+            },
+            changeOperationLine(){
+                if(this.company && this.location && this.category){
+                    this.fetchCompayAreas();
+                }
+            },
+            fetchCompanies(){
+                axios.get('/companies-all')
                  .then(response => {
-                    this.reports = response.data;
+                    this.companies = response.data;
                 })
                 .catch(error => { 
                     this.errors = error.response.data.errors;
                 });
+            },
+            fetchDepartments(){
+                axios.get('/departments-all')
+                 .then(response => {
+                    this.departments = response.data;
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.errors;
+                });
+            },
+            fetchCategories(){
+                axios.get('/categories-all')
+                 .then(response => {
+                    this.categories = response.data;
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.errors;
+                }); 
+            },
+            fetchOperationLines(){
+                axios.get(`/operation-lines/${this.company.id}/${this.location.id}`)
+                 .then(response => {
+                    this.operation_lines = response.data;
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.errors;
+                }); 
+            },
+            fetchCompayAreas(){
+                var operationId = this.operation_line ? this.operation_line.id : 0;
+                axios.get(`/company-areas-per-company/${this.company.id}/${this.location.id}/${this.category.id}/${operationId}`)
+                 .then(response => {
+                    this.areas =  response.data.length > 0 ? response.data[0].areas : [];
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.errors;
+                });
+            },
+            fetchFilteredReport(){
+                this.loading = true;
+                this.errors = [];
+                axios.post('/report-filtered', {
+                    year: this.year,
+                    company: this.company.id,
+                    location: this.location.id,
+                    category: this.category.id,
+                    operation_line: this.operation_line.id,
+                    area: this.area == 'ALL' ? this.area :  this.area.id
+                })
+                .then(response => { 
+                    this.reports = Object.values(response.data);
+                    this.loading = false;
+                })
+                .catch(error => { 
+                    this.loading = false;
+                    this.errors = error.response.data.errors
+                })
+            },
+            filteredReportToPdf(){
+                var t = this;
+                t.no_data = false;
+                if(t.reports.length < 1){
+                    t.no_data = true;
+                    return false;
+                }
+                var operationId = t.operation_line ? t.operation_line.id : 0;
+                var area = t.area == 'ALL' ? t.area : t.area.id;
+                window.open(window.location.origin+'/report-filtered-to-pdf/'+t.year+'/'+t.company.id+'/'+t.location.id+'/'+t.category.id+'/'+operationId+'/'+area, '_blank');
             },
             setPage(pageNumber) {
                 this.currentPage = pageNumber;
@@ -287,7 +533,7 @@
             filteredObjects(){
                 let self = this;
                 return self.reports.filter(report => {
-                    return report.process_owner.name.toLowerCase().includes(this.keywords.toLowerCase())
+                    return report[0].area.name.toLowerCase().includes(this.keywords.toLowerCase())
                 });
             },
             totalPages() {
@@ -309,7 +555,7 @@
             },
             publicPath(){
                 return window.location.origin;
-            },
+            }
         }
     }
 </script>
