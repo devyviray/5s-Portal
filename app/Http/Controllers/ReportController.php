@@ -631,4 +631,49 @@ class ReportController extends Controller
     public function summary(){
         return view('report.summary');
     }
+
+    /**
+     * Query to get summary per BU
+     *
+     * @return \Illuminate\Http\Response
+     */
+
+    public function summaryPerBUQuery($year){
+        $final_array = [];
+        $reports = Report::with('company', 'location', 'operationLine', 'category', 'area', 'inspector', 'processOwner', 'reportDetail')
+        ->where('reporting_year',$year)
+        ->where('status',Config::get('constants.status.final'))
+        ->get()
+        ->groupBy(['company_id','location_id'])
+        ->toArray();
+
+        if($reports){
+            foreach($reports as $report){
+                foreach($report as $r){
+                    array_push($final_array,$r);
+                }
+            }
+        }
+        return $final_array;
+    }
+    /**
+     * Summary report per BU
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function summaryPerBU(Request $request){
+        return $this->summaryPerBUQuery($request->year);
+    }
+
+    /**
+     * Generate summary for BU to PDF
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function summaryPerBUToPDF($year){
+        $data = $this->summaryPerBUQuery($year);
+        $pdf = PDF::loadView('report.summary-per-bu-pdf', compact('data'))->setPaper('a4', 'landscape');
+        
+        return $pdf->stream('report.summary-per-bu-pdf');
+    }
 }

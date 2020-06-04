@@ -25,12 +25,15 @@
                                 <div v-if="!view_ranking">
                                     <div class="row mt-4">
                                         <div class="col-md-1">
-                                            <select class="form-control">
-                                                <option>2019</option>
+                                            <select class="form-control" v-model="year1" @change="fetchSummaryPerBu">
+                                                <option v-for="(year,y) in years" :key="y" :value="year">
+                                                    {{ year }}
+                                                </option>
                                             </select>
                                         </div>
                                         <div class="col-md-1">
-                                            <button type="button" class="btn btn-success">Generate PDF</button>
+                                            <button type="button" class="btn btn-success" @click="summaryPerBuToPdf">Generate PDF</button>
+                                            <span class="text-danger" v-if="no_year">No data to generate</span>
                                         </div>
                                         <div class="col-md-2 text-right">
                                             <button type="button" class="btn btn-secondary" @click="viewRanking">View Ranking</button>
@@ -56,23 +59,26 @@
                                                     <th scope="col">AVERAGE</th>
                                                 </tr>
                                             </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>PFMC – FLOUR MANILA</td>
-                                                    <td>85.00</td>
-                                                    <td>86.59</td>
-                                                    <td>75.00</td>
-                                                    <td>86.25</td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td>83.21</td>
+                                            <tbody v-if="reports_summary.length > 0">
+                                                <tr v-for="(summary,s) in reports_summary" :key="s">
+                                                    <td>{{ summary[0].company.name+ ' - ' +summary[0].location.name }}</td>
+                                                    <td>{{ getRating(summary, 1) }}</td>
+                                                    <td>{{ getRating(summary, 2) }}</td>
+                                                    <td>{{ getRating(summary, 3) }}</td>
+                                                    <td>{{ getRating(summary, 4) }}</td>
+                                                    <td>{{ getRating(summary, 5) }}</td>
+                                                    <td>{{ getRating(summary, 6) }}</td>
+                                                    <td>{{ getRating(summary, 7) }}</td>
+                                                    <td>{{ getRating(summary, 8) }}</td>
+                                                    <td>{{ getRating(summary, 9) }}</td>
+                                                    <td>{{ getRating(summary, 10) }}</td>
+                                                    <td>{{ getRating(summary, 11) }}</td>
+                                                    <td>{{ getRating(summary, 12) }}</td>
+                                                    <td>{{ getAverage(summary) }}</td>
                                                 </tr>
+                                            </tbody>
+                                            <tbody v-else>
+                                                <td>No data available in the table</td>
                                             </tbody>
                                         </table>
                                     </div>
@@ -179,7 +185,7 @@
                                         <div class="form-group">
                                             <label for="disabledTextInput">Area</label>
                                             <select class="form-control" v-model="area">
-                                                <option v-if="areas.length >0" value="ALL">ALL</option>
+                                                <option v-if="areas.length > 0" value="ALL">ALL</option>
                                                 <option v-for="(area,a) in areas" v-bind:key="a" :value="area"> {{ area.name }}</option>
                                             </select>
                                             <span class="text-danger" v-if="errors.area  ">{{ errors.area[0] }}</span>
@@ -190,7 +196,7 @@
                                     </div>
                                     <div class="col-md-1">
                                         <button class="btn btn-success" @click="filteredReportToPdf">Generate PDF</button><br>
-                                        <span class="text-danger" v-if="no_data ">No data to generate</span>
+                                        <span class="text-danger" v-if="no_data">No data to generate</span>
                                     </div>
                                 </div>
                                 <div class="card mt-4">
@@ -325,6 +331,7 @@
         data(){
             return {
                 reports: [],
+                reports_summary: [],
                 companies: [],
                 company: '',
                 departments: [],
@@ -345,8 +352,10 @@
                 view_ranking: false,
                 show_operation_line: false,
                 years:  '',
+                year1: '',
                 year: '',
-                no_data: false
+                no_data: false,
+                no_year: false
             }
         },
         created(){
@@ -357,6 +366,42 @@
         },
         methods:{
             moment,
+            getRating(reports,month){
+                var total_areas = 0;
+                var total_ratings = 0;
+
+                if(reports){
+                    reports.filter(report =>{
+                        if(report.reporting_month == month){
+                            total_areas = total_areas + 1;
+                            total_ratings = total_ratings + report.ratings;
+                        }
+                    });
+                    return this.numberFormat(total_ratings / total_areas);
+                }
+                return '-';
+            },
+            getAverage(reports){
+                var reporting_month = [];
+                var total_rating = 0;
+                if(reports){
+                    reports.filter(report =>{ // Get month that has report
+                        if(!reporting_month.includes(report.reporting_month)){
+                            reporting_month.push(report.reporting_month)
+                        }
+                    });
+
+                    for(var i = 1; i < 13; i++){ // Add all reports per month
+                        var monthly_average = this.getRating(reports,i);
+                        if(monthly_average){
+                            total_rating == 0 ? total_rating = monthly_average :  
+                            total_rating = parseFloat(total_rating) + parseFloat(monthly_average);
+                        }
+                    }
+                    return this.numberFormat(total_rating / reporting_month.length);
+                }
+                return '-';
+            },
             numberFormat(num){
                 if(num){
                     return Number(parseFloat(num).toFixed(2)).toLocaleString('en', { minimumFractionDigits: 2 });
@@ -504,7 +549,6 @@
             },
             filteredReportToPdf(){
                 var t = this;
-                t.no_data = false;
                 if(t.reports.length < 1){
                     t.no_data = true;
                     return false;
@@ -512,6 +556,29 @@
                 var operationId = t.operation_line ? t.operation_line.id : 0;
                 var area = t.area == 'ALL' ? t.area : t.area.id;
                 window.open(window.location.origin+'/report-filtered-to-pdf/'+t.year+'/'+t.company.id+'/'+t.location.id+'/'+t.category.id+'/'+operationId+'/'+area, '_blank');
+            },
+            summaryPerBuToPdf(){
+                var t = this;
+                if(t.year1 == ''){
+                    t.no_year = true;
+                    return false;
+                }
+                window.open(window.location.origin+'/report-summary-per-bu-to-pdf/'+t.year1, '_blank');
+            },
+            fetchSummaryPerBu(){
+                this.loading = true;
+                this.errors = [];
+                axios.post('/report-summary-per-bu', {
+                    year: this.year1
+                })
+                .then(response => { 
+                    this.reports_summary = Object.values(response.data);
+                    this.loading = false;
+                })
+                .catch(error => { 
+                    this.loading = false;
+                    this.errors = error.response.data.errors
+                })
             },
             setPage(pageNumber) {
                 this.currentPage = pageNumber;

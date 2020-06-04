@@ -128,6 +128,8 @@ Route::group(['middleware' => ['auth', 'role:it|administrator|top management|ins
     Route::get('/trend-and-analysis', 'ReportController@trendIndex');
     Route::get('/trend-and-analysis-data', 'ReportController@trendAndAnalysisData');
     Route::get('/generate-pdf', 'ReportController@generatePDF');
+    Route::post('/report-summary-per-bu', 'ReportController@summaryPerBU');
+    Route::get('/report-summary-per-bu-to-pdf/{year}', 'ReportController@summaryPerBUToPDF');
 
     // operation line
     Route::get('/operation-lines', 'OperationLineController@index')->name('operation-lines');

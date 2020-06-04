@@ -34,12 +34,7 @@
                     <tr style="font-size: 15px">
                         <td>
                             {{ $d[0]['company']['name'] }} <br>
-                            {{ $d[0]['location']['name'] }} <br>
-                            {{ $d[0]['category']['name'] }}<br>
-                            @if($d[0]['operation_line'])
-                            {{ $d[0]['operation_line']['name'] }}<br>
-                            @endif
-                            {{ $d[0]['area']['name'] }}
+                            {{ $d[0]['location']['name'] }}
                         </td>
                         <td>{{ getRating($d, 1) }}</td>
                         <td>{{ getRating($d, 2) }}</td>
@@ -82,29 +77,44 @@ function getYear($reports){
 }
 
 function getRating($reports, $item){
-    $rating = '-';
+    $total_areas = 0;
+    $total_ratings = 0;
+
     if($reports){
         foreach ($reports as $report) {
             if($report['reporting_month'] == $item && $report['ratings']){
-                $rating =  $report['ratings'];
+                $total_areas = $total_areas + 1;
+                $total_ratings = $total_ratings + $report['ratings'];
             }
         }
-        return $rating; 
-    }else{
-        return $rating;
+        return  $total_areas ? numberFormat($total_ratings / $total_areas)  : '-';
     }
+    return '-';
 }
 function getAverage($reports){
-    $reporting_month_count = 0;
-    $total_points = 0;
+    $reporting_month = [];
+    $total_rating = 0;
 
-    foreach ($reports as $report) {
-        $reporting_month_count = $reporting_month_count + 1;
-        $total_points = $total_points + $report['ratings'];
+    if($reports){
+        foreach ($reports as $report) {// Get month that has report
+            if(!in_array($report['reporting_month'], $reporting_month)) {
+                array_push($reporting_month, $report['reporting_month']);
+            }
+        }
+
+        for($i = 1; $i < 13; $i++){ // Add all reports per month
+            $monthly_average = getRating($reports,$i);
+            if($monthly_average !== '-'){
+                $total_rating == 0 ? $total_rating = $monthly_average :  
+                $total_rating = $total_rating + $monthly_average;
+            }
+        }
+        return count($reporting_month) ? $total_rating / count($reporting_month)  : '-';
     }
-    return numberFormat($total_points / $reporting_month_count);
 }
+
 function numberFormat($number){
     return round($number,2);
 }
+
 ?>
