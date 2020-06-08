@@ -676,4 +676,16 @@ class ReportController extends Controller
         
         return $pdf->stream('report.summary-per-bu-pdf');
     }
+
+    /**
+     * Generate summary for all BU to PDF
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function rankingPerBUToPDF($year){
+        $data = $this->summaryPerBUQuery($year);
+        $pdf = PDF::loadView('report.ranking-per-bu-pdf', compact('data'))->setPaper('a4', 'landscape');
+        
+        return $pdf->stream('report.ranking-per-bu-pdf');
+    }
 }

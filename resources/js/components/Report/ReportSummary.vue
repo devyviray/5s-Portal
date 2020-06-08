@@ -89,7 +89,8 @@
                                             <button type="button" class="btn btn-secondary" @click="exitRanking">Exit Ranking</button>
                                         </div>
                                         <div class="col-md-1">
-                                            <button type="button" class="btn btn-success">Generate PDF</button>
+                                            <button type="button" class="btn btn-success" @click="rankingPerBuToPdf">Generate PDF</button>
+                                            <span class="text-danger" v-if="no_year1">No data to generate</span>
                                         </div>
                                     </div>
                                     <div class="card mt-4">
@@ -112,23 +113,26 @@
                                                     <th scope="col">AVERAGE</th>
                                                 </tr>
                                             </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>PFMC – FLOUR MANILA</td>
-                                                    <td>85.00</td>
-                                                    <td>86.59</td>
-                                                    <td>75.00</td>
-                                                    <td>86.25</td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td>83.21</td>
+                                            <tbody v-if="reports_summary.length > 0">
+                                                <tr v-for="(summary,s) in reports_summary" :key="s">
+                                                    <td>{{ summary[0].company.name+ ' - ' +summary[0].location.name }}</td>
+                                                    <td>{{ getRanking(summary,1) }}</td>
+                                                    <td>{{ getRanking(summary, 2) }}</td>
+                                                    <td>{{ getRanking(summary, 3) }}</td>
+                                                    <td>{{ getRanking(summary, 4) }}</td>
+                                                    <td>{{ getRanking(summary, 5) }}</td>
+                                                    <td>{{ getRanking(summary, 6) }}</td>
+                                                    <td>{{ getRanking(summary, 7) }}</td>
+                                                    <td>{{ getRanking(summary, 8) }}</td>
+                                                    <td>{{ getRanking(summary, 9) }}</td>
+                                                    <td>{{ getRanking(summary, 10) }}</td>
+                                                    <td>{{ getRanking(summary, 11) }}</td>
+                                                    <td>{{ getRanking(summary, 12) }}</td>
+                                                    <td>{{ getRankingAverage(summary) }}</td>
                                                 </tr>
+                                            </tbody>
+                                            <tbody v-else>
+                                                <td>No data available in the table</td>
                                             </tbody>
                                         </table>
                                     </div>
@@ -320,6 +324,7 @@
     import breadcrumb from '../Breadcrumb';
     import loader from '../Loader';
     import moment from 'moment';
+    import converter from 'number-to-words';
     export default {
         props: ['userName', 'userRoleLevel' ,'reportId', 'userId'],
         components:{
@@ -355,7 +360,8 @@
                 year1: '',
                 year: '',
                 no_data: false,
-                no_year: false
+                no_year: false,
+                no_year1: false
             }
         },
         created(){
@@ -366,6 +372,45 @@
         },
         methods:{
             moment,
+            getRanking(reports, month){
+                var total_rating = 0;
+                var rankings = [];
+                if(reports){
+                    total_rating = this.getRating(reports,month);
+                    if(total_rating){
+                        this.reports_summary.filter(reports => {
+                            if(this.getRating(reports,month)){
+                                rankings.push(this.getRating(reports,month));
+                            }
+                        });
+                    }
+                    var final_ranking = rankings.sort((a, b) => b - a).indexOf(total_rating) + 1;
+                    if(final_ranking){
+                        return converter.toOrdinal(final_ranking);
+                    }
+                }
+            },
+            getRankingAverage(reports){
+                var reporting_month = [];
+                var total_rankings = 0;
+
+                if(reports){
+                    reports.filter(report =>{ // Get month that has report
+                        if(!reporting_month.includes(report.reporting_month)){
+                            reporting_month.push(report.reporting_month)
+                        }
+                    });
+
+                    for(var i = 1; i < 13; i++){ // Add all reports per month
+                        var monthly_ranking = this.getRanking(reports,i);
+                        if(monthly_ranking){
+                            total_rankings = total_rankings == 0 ? monthly_ranking :  parseFloat(total_rankings) + parseFloat(monthly_ranking);
+                        }
+                    }
+                    return this.numberFormat(parseFloat(total_rankings) / reporting_month.length);
+                }
+                return '-';
+            },
             getRating(reports,month){
                 var total_areas = 0;
                 var total_ratings = 0;
@@ -579,6 +624,14 @@
                     this.loading = false;
                     this.errors = error.response.data.errors
                 })
+            },
+            rankingPerBuToPdf(){
+                var t = this;
+                if(t.year1 == ''){
+                    t.no_year1 = true;
+                    return false;
+                }
+                window.open(window.location.origin+'/report-ranking-per-bu-to-pdf/'+t.year1, '_blank');
             },
             setPage(pageNumber) {
                 this.currentPage = pageNumber;
