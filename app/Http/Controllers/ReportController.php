@@ -676,7 +676,7 @@ class ReportController extends Controller
         
         return $pdf->stream('report.summary-per-bu-pdf');
     }
-
+    
     /**
      * Generate summary for all BU to PDF
      *
@@ -687,5 +687,90 @@ class ReportController extends Controller
         $pdf = PDF::loadView('report.ranking-per-bu-pdf', compact('data'))->setPaper('a4', 'landscape');
         
         return $pdf->stream('report.ranking-per-bu-pdf');
+    }
+
+     /**
+     * Displaying inspection history page
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function inspectionHistory($reportId){
+        return view('report.inspection-history', compact('reportId'));
+    }
+
+    /**
+     * Get last 3 inspections
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function inspectionHistoryData(Report $report){
+
+        $reporting_month = $report->reporting_month;
+        $reporting_year = $report->reporting_year;
+        $data = [];
+        if($reporting_month > 3){
+            $reporting_month = $reporting_month - 1;
+            for($i = 1; $i < 4; $i++){
+                $report = Report::with('company','location','department','category','operationLine', 'area', 'inspector',
+                'processOwner','departmentHead','reportDetail.uploadedFiles')
+                ->where('company_id', $report->company_id)
+                ->where('location_id', $report->location_id)
+                ->when($report->operation_line_id, function ($q) { 
+                    $q->where('operation_line_id', $report->operation_line_id);
+                })
+                ->where('category_id', $report->category_id)
+                ->where('area_id', $report->area_id)
+                ->where('reporting_month',  $reporting_month)
+                ->where('reporting_year',  $reporting_year)
+                ->where('status',Config::get('constants.status.final'))
+                ->first();
+                $reporting_month = $reporting_month - 1;
+                $report ? $data[] = $report : '';
+            }
+        }else{
+            $month_year = [];
+            switch ($report->reporting_month) {
+                case 3:
+                    $month_year = [
+                        [ 'month' => 2, 'year' => $report->reporting_year],
+                        [ 'month' => 1, 'year' => $report->reporting_year],
+                        [ 'month' => 12, 'year' => $report->reporting_year - 1]
+                    ];
+                    break;
+                case 2:
+                    $month_year = [
+                        [ 'month' => 1, 'year' => $report->reporting_year],
+                        [ 'month' => 12, 'year' => $report->reporting_year - 1],
+                        [ 'month' => 11, 'year' => $report->reporting_year - 1]
+                    ];
+                    break;
+                case 1:
+                    $month_year = [
+                        [ 'month' => 12, 'year' => $report->reporting_year - 1],
+                        [ 'month' => 11, 'year' => $report->reporting_year - 1],
+                        [ 'month' => 10, 'year' => $report->reporting_year - 1]
+                    ];
+                    break;
+
+                default :
+            }
+            foreach($month_year as $my){
+                $r = Report::with('company','location','department','category','operationLine', 'area', 'inspector',
+                'processOwner','departmentHead','reportDetail.uploadedFiles')
+                ->where('company_id', $report->company_id)
+                ->where('location_id', $report->location_id)
+                ->when($report->operation_line_id, function ($q) { 
+                    $q->where('operation_line_id', $report->operation_line_id);
+                })
+                ->where('category_id', $report->category_id)
+                ->where('area_id', $report->area_id)
+                ->where('reporting_month',  $my['month'])
+                ->where('reporting_year', $my['year'])
+                ->where('status',Config::get('constants.status.final'))
+                ->first();
+                $r ? $data[] = $r : '';
+            }
+        }
+        return $data;
     }
 }

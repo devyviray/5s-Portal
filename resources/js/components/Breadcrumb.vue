@@ -30,6 +30,9 @@ export default {
             notifications: 0
         }
     },
+    created(){
+        this.fetchNotification();
+    },
     methods:{
         logoutForm(){
             this.$parent.showLoader();

@@ -114,7 +114,7 @@ Route::group(['middleware' => ['auth', 'role:it|administrator|top management|ins
     Route::patch('/faq/{faq}', 'FaqController@update');
     Route::delete('/faq/{faq}', 'FaqController@destroy');
 
-    //Report
+//Report
     Route::post('/report-filtered', 'ReportController@getFilteredReports');
     Route::get('/report-filtered-to-pdf/{year}/{company}/{location}/{category}/{operation_line}/{area}', 'ReportController@filteredReportToPDF');
     Route::get('/validate-report/{reportId}', 'ReportController@validateIndex');
@@ -131,6 +131,8 @@ Route::group(['middleware' => ['auth', 'role:it|administrator|top management|ins
     Route::post('/report-summary-per-bu', 'ReportController@summaryPerBU');
     Route::get('/report-summary-per-bu-to-pdf/{year}', 'ReportController@summaryPerBUToPDF');
     Route::get('/report-ranking-per-bu-to-pdf/{year}', 'ReportController@rankingPerBUToPDF');
+    Route::get('/report-inspection-history/{report}', 'ReportController@inspectionHistory');
+    Route::get('/report-inspection-history-data/{report}', 'ReportController@inspectionHistoryData');
 
     // operation line
     Route::get('/operation-lines', 'OperationLineController@index')->name('operation-lines');

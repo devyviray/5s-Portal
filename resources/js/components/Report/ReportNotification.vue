@@ -34,9 +34,9 @@
                                         <td>{{ report.area.name }}</td>
                                         <td>{{ report.inspector.name }}</td>
                                         <td>{{ report.date_of_inspection }}</td>
-                                        <td>0</td>
-                                        <td>0</td>
-                                        <td>0</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
                                         <td>
                                             <a :href="publicPath+'/view-report/'+report.id"><u>View Report</u></a>
                                             <span v-if="report.inspector_id == userId">
@@ -45,7 +45,7 @@
                                             </span>
                                         </td>
                                         <td>
-                                            <a href="#"><u> View last 3 months</u></a>
+                                            <a :href="publicPath+'/report-inspection-history/'+report.id" target="_blank"><u> View last 3 months</u></a>
                                         </td>
                                     </tr>
                                 </tbody>
