@@ -82,18 +82,15 @@
                         <div id="page-inner">
                             <div class="ranking">
                                 <h3 class="text-success border-bottom">RANKINGS FOR THE MONTH</h3>
-                                <h2 class="text-success border-bottom"><strong>APRIL</strong></h2>
-                                <div class="row">
-                                    <div class="col-md-3">1st</div>
-                                    <div class="col-md-9">PFMC-FLOUR</div>
+                                <h2 class="text-success border-bottom"><strong>{{ moment().subtract(1, "month").format('MMMM').toUpperCase() }}</strong></h2>
+                                <div v-if="final_rating.length > 0">
+                                    <div class="row mb-2" v-for="(final, f) in final_rating" :key="f">
+                                        <div class="col-md-3">{{ toOrdinal(f+1) }}</div>
+                                        <div class="col-md-9 text-left">{{ final.company }}</div>
+                                    </div>
                                 </div>
-                                   <div class="row">
-                                    <div class="col-md-3">1st</div>
-                                    <div class="col-md-9">PFMC-FLOUR</div>
-                                </div>
-                                   <div class="row">
-                                    <div class="col-md-3">1st</div>
-                                    <div class="col-md-9">PFMC-FLOUR</div>
+                                <div class="row" v-else>
+                                    <div class="col-md-12">No data available</div>
                                 </div>
                             </div>
                         </div>
@@ -109,7 +106,9 @@
     import pageHeader from '../PageHeader';
     import navbarRight from '../NavbarRight';
     import breadcrumb from '../Breadcrumb';
-    import loader from '../Loader'
+    import loader from '../Loader';
+    import converter from 'number-to-words';
+    import moment from 'moment';
     export default {
         props: ['userName','userRoleLevel', 'userId'],
         components: {
@@ -122,6 +121,8 @@
         },
         data(){
             return {
+                reports: [],
+                final_rating: [],
                 images: [], 
                 errors: [],
                 loading: false,
@@ -129,10 +130,15 @@
         },
         created(){
             this.fetchImages();
+            this.fetchPreviousMonthRating();
         },
         methods:{
+            moment,
             showLoader(){
                this.loading = true;
+            },
+            toOrdinal(num){
+                 return converter.toOrdinal(num);
             },
             fetchImages(){
                 axios.get('home-page-all')
@@ -142,6 +148,35 @@
                 .catch(error => { 
                     this.errors = error.response.data.errors;
                 })
+            },
+            fetchPreviousMonthRating(){
+                axios.get('/report-previous-month-ranking')
+                .then(response => { 
+                    this.reports = Object.values(response.data);
+                    if(this.reports.length > 0){
+                        this.reports.filter(report => {
+                            var total_areas = 0;
+                            var total_ratings = 0;
+                            report.filter(r => {
+                                total_areas = total_areas + 1;
+                                total_ratings = parseFloat(total_ratings) + parseFloat(r.ratings);
+                            });
+                            this.final_rating.push({
+                                company: report[0].company.name +' - '+ report[0].location.name,
+                                rating: this.numberFormat(total_ratings / total_areas)
+                            })
+                            this.final_rating.sort((a, b) => b.rating - a.rating);
+                        });
+                    }
+                })
+                .catch(error => {
+                    this.errors = error.response.data.errors
+                })
+            },
+            numberFormat(num){
+                if(num){
+                    return Number(parseFloat(num).toFixed(2)).toLocaleString('en', { minimumFractionDigits: 2 });
+                }
             },
         },
         computed:{

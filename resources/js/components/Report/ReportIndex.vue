@@ -181,27 +181,6 @@
             createReport(){
                 return window.location.href = window.location.origin+'/create-report';
             },
-            // changeCompany(company,action){
-            //     if(action == 'getCompanies'){
-            //         axios.get(`/company-location/${company.id}`)
-            //         .then(response => { 
-            //             this.locations = response.data.locations;
-            //         })
-            //         .catch(error => {
-            //             this.errors = error.response.data.errors;
-            //         })
-            //     }else {
-            //         if(this.category.id == 1){
-            //              this.show_operation_line = true
-            //         }else{
-            //             this.show_operation_line = false;
-            //             this.operation_line = '';
-            //         }
-            //         if(this.company && this.location && this.category){
-            //             this.fetchCompayAreas();
-            //         }
-            //     }
-            // },
             changeCategory(){
                 if(this.category.id == 1){
                         this.show_operation_line = true

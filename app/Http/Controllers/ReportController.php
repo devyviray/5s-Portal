@@ -705,72 +705,51 @@ class ReportController extends Controller
      */
     public function inspectionHistoryData(Report $report){
 
-        $reporting_month = $report->reporting_month;
-        $reporting_year = $report->reporting_year;
-        $data = [];
-        if($reporting_month > 3){
-            $reporting_month = $reporting_month - 1;
-            for($i = 1; $i < 4; $i++){
-                $report = Report::with('company','location','department','category','operationLine', 'area', 'inspector',
-                'processOwner','departmentHead','reportDetail.uploadedFiles')
-                ->where('company_id', $report->company_id)
-                ->where('location_id', $report->location_id)
-                ->when($report->operation_line_id, function ($q) { 
-                    $q->where('operation_line_id', $report->operation_line_id);
-                })
-                ->where('category_id', $report->category_id)
-                ->where('area_id', $report->area_id)
-                ->where('reporting_month',  $reporting_month)
-                ->where('reporting_year',  $reporting_year)
-                ->where('status',Config::get('constants.status.final'))
-                ->first();
-                $reporting_month = $reporting_month - 1;
-                $report ? $data[] = $report : '';
-            }
-        }else{
-            $month_year = [];
-            switch ($report->reporting_month) {
-                case 3:
-                    $month_year = [
-                        [ 'month' => 2, 'year' => $report->reporting_year],
-                        [ 'month' => 1, 'year' => $report->reporting_year],
-                        [ 'month' => 12, 'year' => $report->reporting_year - 1]
-                    ];
-                    break;
-                case 2:
-                    $month_year = [
-                        [ 'month' => 1, 'year' => $report->reporting_year],
-                        [ 'month' => 12, 'year' => $report->reporting_year - 1],
-                        [ 'month' => 11, 'year' => $report->reporting_year - 1]
-                    ];
-                    break;
-                case 1:
-                    $month_year = [
-                        [ 'month' => 12, 'year' => $report->reporting_year - 1],
-                        [ 'month' => 11, 'year' => $report->reporting_year - 1],
-                        [ 'month' => 10, 'year' => $report->reporting_year - 1]
-                    ];
-                    break;
+        $report = Report::with('company','location','department','category','operationLine', 'area', 'inspector',
+        'processOwner','departmentHead','reportDetail.uploadedFiles')
+        ->where('company_id', $report->company_id)
+        ->where('location_id', $report->location_id)
+        ->when($report->operation_line_id, function ($q) { 
+            $q->where('operation_line_id', $report->operation_line_id);
+        })
+        ->where('category_id', $report->category_id)
+        ->where('area_id', $report->area_id)
+        ->where('status',Config::get('constants.status.final'))
+        ->where('id', '!=',$report->id)
+        ->orderBy('id','desc')
+        ->take('3')
+        ->get();
 
-                default :
-            }
-            foreach($month_year as $my){
-                $r = Report::with('company','location','department','category','operationLine', 'area', 'inspector',
-                'processOwner','departmentHead','reportDetail.uploadedFiles')
-                ->where('company_id', $report->company_id)
-                ->where('location_id', $report->location_id)
-                ->when($report->operation_line_id, function ($q) { 
-                    $q->where('operation_line_id', $report->operation_line_id);
-                })
-                ->where('category_id', $report->category_id)
-                ->where('area_id', $report->area_id)
-                ->where('reporting_month',  $my['month'])
-                ->where('reporting_year', $my['year'])
-                ->where('status',Config::get('constants.status.final'))
-                ->first();
-                $r ? $data[] = $r : '';
+        return $report;
+    }
+
+    /**
+     * Get Previous month report
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function previousMonthRanking(){
+
+        $now = Carbon::now();
+        $month = $now->month == 1 ? 12 : $now->month -1;
+        $year = $now->month == 1 ? $now->year -1 : $now->year;
+
+        $final_array = [];
+        $reports = Report::with('company', 'location', 'operationLine', 'category', 'area', 'inspector', 'processOwner', 'reportDetail')
+        ->where('reporting_month',$month)
+        ->where('reporting_year',$year)
+        ->where('status',Config::get('constants.status.final'))
+        ->get()
+        ->groupBy(['company_id','location_id'])
+        ->toArray();
+
+        if($reports){
+            foreach($reports as $report){
+                foreach($report as $r){
+                    array_push($final_array,$r);
+                }
             }
         }
-        return $data;
+        return $final_array;
     }
 }

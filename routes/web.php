@@ -133,6 +133,7 @@ Route::group(['middleware' => ['auth', 'role:it|administrator|top management|ins
     Route::get('/report-ranking-per-bu-to-pdf/{year}', 'ReportController@rankingPerBUToPDF');
     Route::get('/report-inspection-history/{report}', 'ReportController@inspectionHistory');
     Route::get('/report-inspection-history-data/{report}', 'ReportController@inspectionHistoryData');
+    Route::get('/report-previous-month-ranking', 'ReportController@previousMonthRanking');
 
     // operation line
     Route::get('/operation-lines', 'OperationLineController@index')->name('operation-lines');
