@@ -8,6 +8,9 @@
             </div>
             <div class="row row-margin">
                 <div class="col-md-3">
+                    <div class="alert alert-success text-center" v-if="email_sent">
+                        <strong>Success!</strong> Email Succeffully sent
+                    </div>
                     <div class="w-100 mt-5">
                         <div class="text-center" style="margin-bottom: 85px;">
                             <h1 style="color: #003300;">Hi, {{ this.userName }}!</h1>
@@ -16,19 +19,19 @@
                             <img :src="publicPath +'/img/new_design/contact_us.png'">
                             <div class="form-group">
                                 <div class="col-sm-12 col-md-12 col-lg-8" style="margin: 0 auto;">
-                                    <input type="text" class="form-control" id="subject" placeholder="Subject">
+                                    <input type="text" class="form-control" id="subject" placeholder="Subject" v-model="contactUs.subject">
                                     <span class="text-danger" v-if="errors.subject">{{ errors.subject[0] }}</span>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <div class="col-sm-12 col-md-12 col-lg-8" style="margin: 0 auto;">
-                                    <textarea class="form-control" id="message" rows="7" placeholder="Message"></textarea>
+                                    <textarea class="form-control" id="message" rows="7" placeholder="Message" v-model="contactUs.message"></textarea>
                                     <span class="text-danger" v-if="errors.message">{{ errors.message[0] }}</span>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <div class="col-sm-12 text-center">
-                                    <button type="button" class="btn btn-success">SUBMIT</button>
+                                    <button class="btn btn-success" @click="contactUs">SUBMIT</button>
                                 </div>
                             </div>
                             <div>
@@ -123,9 +126,11 @@
             return {
                 reports: [],
                 final_rating: [],
+                contact_us: [],
                 images: [], 
                 errors: [],
                 loading: false,
+                email_sent: false
             }
         },
         created(){
@@ -178,6 +183,22 @@
                     return Number(parseFloat(num).toFixed(2)).toLocaleString('en', { minimumFractionDigits: 2 });
                 }
             },
+            contactUs(){
+                this.email_sent = false;
+                this.loading = true;
+                this.errors = [];
+                axios.post('/contact-us',{
+                    subject: this.contactUs.subject,
+                    message: this.contactUs.message
+                }).then(response => {
+                    this.contactUs = [];
+                    this.email_sent = true;
+                    this.loading = false;
+                }).catch(error => { 
+                    this.errors = error.response.data.errors;
+                    this.loading = false;
+                })
+            }
         },
         computed:{
             publicPath(){

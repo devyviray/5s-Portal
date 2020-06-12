@@ -86,9 +86,9 @@ Route::group(['middleware' => ['auth', 'role:it|administrator|top management|ins
      Route::post('/user', 'UserController@store');
      Route::patch('/user/{user}', 'UserController@update');
      Route::delete('/user/{user}', 'UserController@destroy');
-     Route::get('/user-process-owner/{companyId}/{locationId}/{departmentId}', 'UserController@getProcessOwnerPerCompany');
-     Route::get('/user-department-head/{companyId}/{locationId}/{departmentId}', 'UserController@departmentHedUser');
-     Route::get('/user-bu-head/{companyId}/{locationId}/{departmentId}', 'UserController@buHedUser');
+     Route::get('/user-process-owner/{companyId}/{locationId}', 'UserController@getProcessOwnerPerCompany');
+     Route::get('/user-department-head/{companyId}/{locationId}', 'UserController@departmentHedUser');
+     Route::get('/user-bu-head/{companyId}/{locationId}', 'UserController@buHedUser');
      Route::get('/user-group-president', 'UserController@groupPresidentUser');
      Route::post('/change-password', 'UserController@changePassword');
 

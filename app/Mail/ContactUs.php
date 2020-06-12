@@ -39,11 +39,11 @@ class ContactUs extends Mailable
     public function build()
     {
         return $this->subject($this->subjects)->view('mail.contact-us')
-                ->with([
-                    'user' => $this->user,
-                    'date' => $this->date,
-                    'subjects' => $this->subjects,
-                    'messages' => $this->messages,
-                ]);
+        ->with([
+            'user' => $this->user,
+            'date' => $this->date,
+            'subjects' => $this->subjects,
+            'messages' => $this->messages,
+        ]);
     }
 }

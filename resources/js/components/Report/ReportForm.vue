@@ -79,12 +79,16 @@
                         </div>
                         <div class="form-group form-group-report">
                             <label for="exampleInputEmail1">Area owner</label>
-                            <input type="text" class="form-control" v-model="process_owner.name" readonly>
+                            <select class="form-control" v-model="process_owner">
+                                <option v-for="(process_owner,p) in process_owners" v-bind:key="p" :value="process_owner"> {{ process_owner.name }}</option>
+                            </select>
                             <span class="text-danger" v-if="errors.process_owner  ">{{ errors.process_owner[0] }}</span>
                         </div>
                         <div class="form-group form-group-report">
                             <label for="exampleInputEmail1">Department Head</label>
-                            <input type="text" class="form-control" v-model="department_head.name" readonly>
+                            <select class="form-control" v-model="department_head">
+                                <option v-for="(department_head,d) in department_heads" v-bind:key="d" :value="department_head"> {{ department_head.name }}</option>
+                            </select>
                             <span class="text-danger" v-if="errors.department_head  ">{{ errors.department_head[0] }}</span>
                         </div>
                         <div class="form-group form-group-report">
@@ -233,6 +237,7 @@
                 category: '',
                 area: '',
                 process_owner: '',
+                process_owners: [],
                 date_of_inspection: '',
                 start_time_of_inspection: '',
                 end_time_of_inspection: '',
@@ -256,6 +261,7 @@
                 loading: false,
                 show_operation_line: false,
                 department_head: '',
+                department_heads: [],
                 bu_head: '',
                 group_president: '',
                 default_category: ''
@@ -360,10 +366,16 @@
             },
             changeCompany(){
                 this.location = '';
+                this.locations = [];
                 this.operation_lines = [];
                 this.operation_line = '';
                 this.areas = [];
                 this.area = '';
+                this.process_owners = [];
+                this.process_owner = '';
+                this.department_heads = [];
+                this.department_head = '';
+                this.bu_head = '';
                 axios.get(`/company-location/${this.company.id}`)
                 .then(response => { 
                     this.locations = response.data.locations;
@@ -374,6 +386,7 @@
                 if(this.location && this.category){
                     this.fetchCompayAreas();
                 }
+                this.changeDepartment();
             },
             changeLocation(){
                if(this.category.name == "Operations"){
@@ -381,6 +394,7 @@
                 }else{
                     this.fetchCompayAreas();
                 }
+                this.changeDepartment();
             },
             changeDepartment(){
                 if(this.company && this.location){
@@ -391,6 +405,16 @@
                 }
             },
             changeCategory(){
+                if(!this.default_category){
+                    this.fetchChecklist();
+                    this.default_category = this.category.name;
+                }else{
+                    if(this.default_category !== this.category.name){
+                        this.fetchChecklist();
+                        this.default_category = this.category.name;
+                    }
+                }
+
                 if(this.category.name == "Operations"){
                     this.show_operation_line = true;
                     if(this.company && this.location){
@@ -470,32 +494,32 @@
 
                 axios.get(`/checklists-per-category/${this.category.name}`)
                 .then(response => {
-                    this.selected_checklist= response.data;
+                    this.selected_checklist = response.data;
                 })
                 .catch(error => { 
                     this.errors = error.response.data.errors;
                 })
             },
             fetchProccessOwner(){
-                axios.get(`/user-process-owner/${this.company.id}/${this.location.id}/${this.department.id}`)
+                axios.get(`/user-process-owner/${this.company.id}/${this.location.id}`)
                 .then(response => {
-                    this.process_owner = response.data;
+                    this.process_owners = response.data;
                 })
                 .catch(error =>{
                     this.errors = error.response.data.errors;
                 })
             },
             fetchDepartmentHead(){
-                axios.get(`/user-department-head/${this.company.id}/${this.location.id}/${this.department.id}`)
+                axios.get(`/user-department-head/${this.company.id}/${this.location.id}`)
                 .then(response => {
-                    this.department_head = response.data;
+                    this.department_heads = response.data;
                 })
                 .catch(error =>{
                     this.errors = error.response.data.errors;
                 })
             },
             fetchbuHead(){
-                axios.get(`/user-bu-head/${this.company.id}/${this.location.id}/${this.department.id}`)
+                axios.get(`/user-bu-head/${this.company.id}/${this.location.id}`)
                 .then(response => {
                     this.bu_head = response.data;
                 })

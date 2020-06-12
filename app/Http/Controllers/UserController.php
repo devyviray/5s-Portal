@@ -128,15 +128,14 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function getProcessOwnerPerCompany($companyId, $locationId, $departmentId){
+    public function getProcessOwnerPerCompany($companyId, $locationId){
 
         return User::whereHas('companies', function ($q) use ($companyId){
-                $q->where('company_id',$companyId);
-            })->whereHas('roles', function ($q){
-                $q->where('role_id', Config::get('constants.roles.process_owner.id'));
-            })->where('company_location', $locationId)
-            ->where('department_id', $departmentId)
-            ->first();
+            $q->where('company_id',$companyId);
+        })->whereHas('roles', function ($q){
+            $q->where('role_id', Config::get('constants.roles.process_owner.id'));
+        })->where('company_location', $locationId)
+        ->get();
     }
 
     /**
@@ -146,14 +145,13 @@ class UserController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function departmentHedUser($companyId, $locationId, $departmentId){
+    public function departmentHedUser($companyId, $locationId){
         return User::whereHas('companies', function ($q) use ($companyId){
             $q->where('company_id',$companyId);
         })->whereHas('roles', function ($q){
             $q->where('role_id', Config::get('constants.roles.department_head.id'));
         })->where('company_location', $locationId)
-        ->where('department_id', $departmentId)
-        ->first();
+        ->get();
     }
 
     /**
@@ -163,13 +161,12 @@ class UserController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function buHedUser($companyId, $locationId, $departmentId){
+    public function buHedUser($companyId, $locationId){
         return User::whereHas('companies', function ($q) use ($companyId){
             $q->where('company_id',$companyId);
         })->whereHas('roles', function ($q){
             $q->where('role_id', Config::get('constants.roles.bu_head.id'));
         })->where('company_location', $locationId)
-        ->where('department_id', $departmentId)
         ->first();
     }
     /**

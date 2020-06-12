@@ -1,6 +1,6 @@
 <div>
     <p>
-        On {{ $date }} , {{ $user->name }}<{{ $user->email }}> wrote:<br><br>
+        On {{ $date }} , {{ $user->name }} < {{ $user->email }} > wrote:<br><br>
 
         {{ $messages }}
     </p>

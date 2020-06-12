@@ -34,8 +34,7 @@ class ContactUsController extends Controller
             'subject' => 'required',
             'message' => 'required'
         ]);
-
-        Mail::to('tqmmnl-ilogroup@lafiladmin.com')->send(new ContactUs(Auth::user()->id, Carbon::now()->toDayDateTimeString() ,$request->subject,$request->message));
+        Mail::to('miko.delrosario@lafilgroup.com')->send(new ContactUs(Auth::user()->id, Carbon::now()->toDayDateTimeString() ,$request->subject,$request->message));
         
     }
 
