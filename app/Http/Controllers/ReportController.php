@@ -274,6 +274,10 @@ class ReportController extends Controller
 
         DB::beginTransaction();
         try {
+            foreach($request->comments as $comment){
+                $uploadedFile = UploadedFile::findOrFail($comment['id']);
+                $uploadedFile->update(['comment' => $comment['text']]);
+            }
             Report::whereIn('id', $request->ids)->update([
                     'status' => 4, 
                     'ratings' => number_format((float)$request->final_rating, 2, '.', '')

@@ -39,28 +39,28 @@
                 </div>
                 <div class="card view-report-div">
                     <div class="row row-margin">
-                        <div class="col-md-12 mt-4 mb-4">
+                        <div class="col-md-12 mt-4 mb-2">
                             <table class="table table-bordered">
                                 <tbody>
                                     <tr class="d-flex">
                                         <td class="col-sm-1">Business Unit</td>
                                         <td class="col-sm-2"><strong>: {{ reportsPerUser[0].company.name }}</strong></td>
                                         <td class="col-sm-1">Date of Inspection</td>
-                                        <td class="col-sm-2"><strong>: {{ reportsPerUser[0].date_of_inspection }}</strong></td>
+                                        <td class="col-sm-2"><strong>: {{ moment(this.reportsPerUser[0].date_of_inspection).format('LL') }}</strong></td>
                                         <td class="col-sm-1">Accompanied by</td>
                                         <td class="col-sm-2"><strong>: {{ reportsPerUser[0].accompanied_by }} </strong></td>
                                         <td class="col-sm-1">Total No. of NC</td>
-                                        <td class="col-sm-2"><strong>: 0</strong></td>
+                                        <td class="col-sm-2"><strong>: {{ countNonCriticality(reportsPerUser[0]) }}</strong></td>
                                     </tr>
                                     <tr class="d-flex">
                                         <td class="col-sm-1">Department</td>
                                         <td class="col-sm-2"><strong>: {{ reportsPerUser[0].department.name }}</strong></td>
                                         <td class="col-sm-1">Time of Inspection</td>
-                                        <td class="col-sm-2"><strong>:  {{ reportsPerUser[0].start_time_of_inspection +' - '+ reportsPerUser[0].end_time_of_inspection }}</strong></td>
+                                        <td class="col-sm-2"><strong>: {{ moment( this.reportsPerUser[0].start_time_of_inspection, "hh").format('LT') + ' - ' + moment( this.reportsPerUser[0].end_time_of_inspection, "hh").format('LT') }}</strong></td>
                                         <td class="col-sm-1">Area Owner</td>
                                         <td class="col-sm-2"><strong>:  {{ reportsPerUser[0].process_owner.name }} </strong></td>
                                         <td class="col-sm-1">Total No. of Crititcal</td>
-                                        <td class="col-sm-2"><strong>: 0</strong></td>
+                                        <td class="col-sm-2"><strong>: {{ countCriticality(reportsPerUser[0]) }}</strong></td>
                                     </tr>
                                     <tr class="d-flex">
                                         <td class="col-sm-1">Area</td>
@@ -75,7 +75,12 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div class="col-md-12 mt-4 mb-4">
+                        <div class="row text-right">
+                            <div class="col-md-12">
+                                <a :href="publicPath+'/report-inspection-history/'+reportsPerUser[0].id" target="_blank"><u> View last 3 inspections</u></a>
+                            </div>
+                        </div>
+                        <div class="col-md-12 mt-2 mb-4">
                             <table class="table table-bordered">
                                 <thead>
                                     <tr class="d-flex">
@@ -100,6 +105,9 @@
                                                      <span>{{ uploadFile.description }} </span>
                                                     <!-- <span>{{ c + 1 +'.' }} </span> <span> {{  u + 1  }} </span> -->
                                                     <textarea cols="5" rows="3" v-if="reportsPerUser[0].status == 1 && reportsPerUser[0].process_owner_id == userId" :id="uploadFile.id" class="form-control comment-input"  placeholder="Type response here" v-model="uploadFile.comment"></textarea>
+                                                    <div v-else>
+                                                        <textarea cols="5" rows="3" v-if="uploadFile.comment" :id="uploadFile.id" class="form-control comment-input"  v-model="uploadFile.comment" disabled></textarea>
+                                                    </div>
                                                     <span class="text-danger" v-if="errors['comment.'+c + 1 +'' + u + 1]"> This field is required </span>
                                                 </div> 
                                             </div>
@@ -290,6 +298,24 @@ export default {
         showLoader(){
             this.loading = true;
         },
+        countNonCriticality(report){
+            var nc = 0;
+            report.report_detail.filter(report_detail => { 
+                if(report_detail.criticality == 'Non - Critical'){
+                    nc = nc + 1;
+                }
+            });
+            return nc;
+        },
+        countCriticality(report){
+            var criticality = 0;
+            report.report_detail.filter(report_detail => { 
+                if(report_detail.criticality == 'Critical'){
+                    criticality = criticality + 1;
+                }
+            });
+            return criticality;
+        },
         fetchReportsPerUser(){
             axios.get(`/reports-per-user/${this.reportId}`)
             .then(response => {
@@ -304,9 +330,17 @@ export default {
             this.enabledBtn();
             var report_ids = [];
             this.reportsPerUser.filter(item => report_ids.push(item.id))
+            let t = this;
+            var comment = $(".comment-input").map(function() {
+                t.comments.push({
+                    id: $(this).attr('id'),
+                    text: $(this).val()
+                });
+            }).get();
             axios.post('/report-approve', {
                 ids: report_ids,
-                final_rating: this.final_rating
+                final_rating: this.final_rating,
+                comments: t.comments,
             })
             .then(response => {
                 this.report_approved = true;

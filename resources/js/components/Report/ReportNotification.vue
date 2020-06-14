@@ -34,9 +34,9 @@
                                         <td>{{ report.area.name }}</td>
                                         <td>{{ report.inspector.name }}</td>
                                         <td>{{ report.date_of_inspection }}</td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
+                                        <td>{{ countNonCriticality(report) }}</td>
+                                        <td>{{ countCriticality(report) }}</td>
+                                        <td>{{ countRating(report.report_detail) }}</td>
                                         <td>
                                             <a :href="publicPath+'/view-report/'+report.id"><u>View Report</u></a>
                                             <span v-if="report.inspector_id == userId">
@@ -45,7 +45,7 @@
                                             </span>
                                         </td>
                                         <td>
-                                            <a :href="publicPath+'/report-inspection-history/'+report.id" target="_blank"><u> View last 3 months</u></a>
+                                            <a :href="publicPath+'/report-inspection-history/'+report.id" target="_blank"><u> View last 3 inspections</u></a>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -103,6 +103,36 @@
             moment,
             showLoader(){
                this.loading = true;
+            },
+            countNonCriticality(report){
+                var nc = 0;
+                report.report_detail.filter(report_detail => { 
+                    if(report_detail.criticality == 'Non - Critical'){
+                        nc = nc + 1;
+                    }
+                });
+                return nc;
+            },
+            countCriticality(report){
+                var criticality = 0;
+                report.report_detail.filter(report_detail => { 
+                    if(report_detail.criticality == 'Critical'){
+                        criticality = criticality + 1;
+                    }
+                });
+                return criticality;
+            },
+            countRating(report){
+                var denominator = 0;
+                var total_points = 0;
+                report.filter(item => {
+                    if(item.points !== 'N/A'){
+                        total_points = parseInt(total_points) + parseInt(item.points);
+                        denominator = denominator + 1;
+                    }
+                });
+                this.final_rating = total_points / (denominator * 2) * 100;
+                return  this.final_rating.toFixed(2);
             },
             fetchReportNotifications(){
                 axios.get('/reports-notification-all')

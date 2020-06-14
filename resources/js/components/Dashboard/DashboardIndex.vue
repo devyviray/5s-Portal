@@ -75,7 +75,7 @@
                                 <h3>Conduct your self inspection</h3>
                             </div>
                             <div class="col-md-6 center-content">
-                                <h3><a href="#"><i class="fas fa-file-signature"></i>Download checklist here</a></h3>
+                                <h3><a href="#" data-toggle="modal" data-target="#submitModal"><i class="fas fa-file-signature"></i> Download checklist here</a></h3>
                             </div>
                         </div>
                     </div>
@@ -101,6 +101,45 @@
                 </div>
             </div>
         </div>
+
+
+        <div class="modal fade" id="submitModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
+            <span class="closed" data-dismiss="modal">&times;</span>
+            <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addCompanyLabel">Download Checklist</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="role">Please select Checklist</label> 
+                            <select class="form-control" v-model="selected_checklist" @change="fetchChecklist">
+                                <option value="Operations">Operation and Support Checklist</option>
+                                <option value="Offices"> Office Checklist </option>
+                                <option value="Perimeter"> Perimeter Checklist </option>
+                            </select>
+                            <span class="text-danger" v-if="errors.role">{{ errors.role[0] }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <download-excel v-if="checklists.length > 0"
+                        :data   = "checklists"
+                        :fields = "json_fields"
+                        class   = "btn btn-sm btn-success"
+                        :name    =  "checklist_name">
+                        EXPORT TO EXCEL
+                    </download-excel>
+                </div>
+                </div>
+            </div>
+        </div>
+
+
     </div>
 </template>
 
@@ -112,6 +151,7 @@
     import loader from '../Loader';
     import converter from 'number-to-words';
     import moment from 'moment';
+    import JsonExcel from 'vue-json-excel';
     export default {
         props: ['userName','userRoleLevel', 'userId'],
         components: {
@@ -120,7 +160,8 @@
             pageHeader,
             navbarRight,
             breadcrumb,
-            loader
+            loader,
+            'downloadExcel': JsonExcel 
         },
         data(){
             return {
@@ -130,7 +171,22 @@
                 images: [], 
                 errors: [],
                 loading: false,
-                email_sent: false
+                email_sent: false,
+                selected_checklist: '',
+                checklists: [],
+                checklist_name: '',
+                json_fields: {
+                    'REQUIREMENT': {
+                        callback: (value) => {
+                            return value.requirement;
+                        }
+                    },
+                    'DESCRIPTION': {
+                        callback: (value) => {
+                            return value.description;
+                        }
+                    }
+                }
             }
         },
         created(){
@@ -198,7 +254,21 @@
                     this.errors = error.response.data.errors;
                     this.loading = false;
                 })
-            }
+            },
+            fetchChecklist(){
+                this.errors = [];
+                this.loading = true;
+                axios.get(`/checklists-per-category/${this.selected_checklist}`)
+                .then(response => {
+                    this.checklists = response.data;
+                    this.checklist_name = this.selected_checklist == 'Operations' ? 'Operation and Support Checklist.xls' : this.selected_checklist+' Checklist.xls';
+                    this.loading = false;
+                })
+                .catch(error => { 
+                    this.errors = error.response.data.errors;
+                    this.loading = false;
+                })
+            },
         },
         computed:{
             publicPath(){
