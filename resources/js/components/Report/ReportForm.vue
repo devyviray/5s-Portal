@@ -187,6 +187,9 @@
                             <div class="alert alert-success text-center" role="alert" v-if="report_as_draft">
                                 REPORT SUCCESSFULLY SAVE AS DRAFT
                             </div>
+                            <div class="alert alert-danger text-center" role="alert" v-if="errors.server_error">
+                                <span><b> Server Error - </b> {{ errors.server_error }}</span>
+                            </div>
                         </div>
                         <div class="col-md-1">
                             <button type="button" class="btn btn-primary btn- btn-lg" @click="addReport(selected_checklist,points)" id="addReport" :disabled="selected_checklist.length < 1"> SAVE AS DRAFT</button>

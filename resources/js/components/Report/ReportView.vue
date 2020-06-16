@@ -37,6 +37,13 @@
                         </div>
                     </div>
                 </div>
+                <div class="row row-margin" v-if="errors.server_error">
+                    <div class="col-md-11" style="margin: 0 auto">
+                        <div class="alert alert-danger text-center" role="alert">
+                            <span><b> Server Error - </b> {{ errors.server_error }}</span>
+                        </div>
+                    </div>
+                </div>
                 <div class="card view-report-div">
                     <div class="row row-margin">
                         <div class="col-md-12 mt-4 mb-2">
@@ -326,6 +333,7 @@ export default {
             })
         },
         approvedReport(){
+            this.errors = [];
             this.loading = true;
             this.enabledBtn();
             var report_ids = [];
@@ -387,6 +395,7 @@ export default {
             })
         },
         submitReport(){
+            this.errors = [];
             this.loading = true;
             axios.post('/submit-report',{
                 id: this.reportsPerUser[0].id

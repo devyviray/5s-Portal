@@ -10,6 +10,7 @@ use Storage;
 use PDF;
 use Carbon\Carbon;
 use Config;
+Use Exception;
 use App\Rules\{
     ReportingMonthRule,
     UpdateReportRule
@@ -19,7 +20,8 @@ use App\{
     Report,
     ReportDetail,
     UploadedFile,
-    CompanyCategory
+    CompanyCategory,
+    ErrorLog
 };
 use App\Mail\{
     InspectionReportForReview,
@@ -161,12 +163,13 @@ class ReportController extends Controller
             // Mail::to(User::findOrFail($request->process_owner))->send(new InspectionReportForReview(Auth::user()->id, $request->area, $r->id));
 
             DB::commit();
-
-            // return Report::all();
             return $r;
 
         } catch (Exception $e) {
             DB::rollBack();
+            $error = ErrorLog::create(['message' => $e->getMessage(),'model' => 'App\Report','user_id' => Auth::user()->id]);
+            DB::commit();
+            return response()->json(['errors' => [ 'server_error' => 'Please seek an assistance from your system administrator.']], 500);
         }
     }
 
@@ -290,6 +293,9 @@ class ReportController extends Controller
             return  $report;
         } catch (Exception $e) {
             DB::rollBack();
+            $error = ErrorLog::create(['message' => $e->getMessage(),'model' => 'App\Report','user_id' => Auth::user()->id]);
+            DB::commit();
+            return response()->json(['errors' => [ 'server_error' => 'Please seek an assistance from your system administrator.']], 500);
         }
     }
 
@@ -327,6 +333,9 @@ class ReportController extends Controller
 
         } catch (Exception $e) {
             DB::rollBack();
+            $error = ErrorLog::create(['message' => $e->getMessage(),'model' => 'App\Report','user_id' => Auth::user()->id]);
+            DB::commit();
+            return response()->json(['errors' => [ 'server_error' => 'Please seek an assistance from your system administrator.']], 500);
         }
     
     }
@@ -374,11 +383,13 @@ class ReportController extends Controller
             Mail::to(User::findOrFail($report->process_owner_id))->send(new InspectorValidateReport($report->process_owner_id, $report->id));
 
             DB::commit();
-
             return Report::with('company','category','operationLine', 'area', 'inspector', 'reportDetail.uploadedFiles')->where('id', $request->ids[0])->get();
 
         } catch (Exception $e) {
             DB::rollBack();
+            $error = ErrorLog::create(['message' => $e->getMessage(),'model' => 'App\Report','user_id' => Auth::user()->id]);
+            DB::commit();
+            return response()->json(['errors' => [ 'server_error' => 'Please seek an assistance from your system administrator.']], 500);
         }
     }
 
@@ -447,6 +458,9 @@ class ReportController extends Controller
 
         } catch (Exception $e) {
             DB::rollBack();
+            $error = ErrorLog::create(['message' => $e->getMessage(),'model' => 'App\Report','user_id' => Auth::user()->id]);
+            DB::commit();
+            return response()->json(['errors' => [ 'server_error' => 'Please seek an assistance from your system administrator.']], 500);
         }
         
     }
@@ -595,6 +609,9 @@ class ReportController extends Controller
             return $this->getReportsPerUser($report->id);
         } catch (Exception $e) {
             DB::rollBack();
+            $error = ErrorLog::create(['message' => $e->getMessage(),'model' => 'App\Report','user_id' => Auth::user()->id]);
+            DB::commit();
+            return response()->json(['errors' => [ 'server_error' => 'Please seek an assistance from your system administrator.']], 500);
         }
     }
 
@@ -624,6 +641,10 @@ class ReportController extends Controller
             return $this->getReportsPerUser($report->id);
         } catch (Exception $e) {
             DB::rollBack();
+            $error = ErrorLog::create(['message' => $e->getMessage(),'model' => 'App\Report','user_id' => Auth::user()->id]);
+            DB::commit();
+            return response()->json(['errors' => [ 'server_error' => 'Please seek an assistance from your system administrator.']], 500);
+
         }
     }
 
