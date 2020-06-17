@@ -45,11 +45,10 @@ Route::group(['middleware' => ['auth', 'role:inspector']], function () {
     Route::get('/reports-my-drafts', 'ReportController@drafts');
     Route::get('/reports-my-drafts-all', 'ReportController@draftsData');
     Route::post('/revise-report', 'ReportController@revised');
-    Route::get('/reports-summary', 'ReportController@summary');
 });
 
 // Accessible routes for admin , inspector and IT
-Route::group(['middleware' => ['auth', 'role:it|administrator|top management|inspector|process owner|department member']], function () {
+Route::group(['middleware' => ['auth', 'role:it|administrator|group president|inspector|process owner|department member']], function () {
 
     // Home page
     Route::get('/home-page', 'HomePageController@index');
@@ -128,6 +127,7 @@ Route::group(['middleware' => ['auth', 'role:it|administrator|top management|ins
     Route::get('/trend-and-analysis', 'ReportController@trendIndex');
     Route::get('/trend-and-analysis-data', 'ReportController@trendAndAnalysisData');
     Route::get('/generate-pdf', 'ReportController@generatePDF');
+    Route::get('/reports-summary', 'ReportController@summary');
     Route::post('/report-summary-per-bu', 'ReportController@summaryPerBU');
     Route::get('/report-summary-per-bu-to-pdf/{year}', 'ReportController@summaryPerBUToPDF');
     Route::get('/report-ranking-per-bu-to-pdf/{year}', 'ReportController@rankingPerBUToPDF');

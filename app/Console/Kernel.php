@@ -29,6 +29,8 @@ class Kernel extends ConsoleKernel
                 ->hourly();
         $schedule->command('notified:processowner')
                 ->twiceDaily(1, 13);
+        $schedule->command('payments:create')
+                ->monthlyOn(1, '00:01');
     }
 
     /**

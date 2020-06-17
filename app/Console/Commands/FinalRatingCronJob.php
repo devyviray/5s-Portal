@@ -41,8 +41,10 @@ class FinalRatingCronJob extends Command
      */
     public function handle()
     {
-        $reports = Report::with('reportDetail')->where('created_at', '<=', Carbon::now()->subDays(3)->toDateTimeString())
-           ->whereNull('ratings')->get();
+        $reports = Report::with('reportDetail')->where('date_submitted', '<=', Carbon::now()->subDays(3)->toDateTimeString())
+           ->whereNull('ratings')
+           ->whereNull('is_draft')
+           ->get();
    
            foreach($reports as $report){
                $denominator = $report->reportDetail->count() * 2;

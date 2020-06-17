@@ -7,9 +7,9 @@
         Area: {{  $report->area->name  }}<br>
         Date of inspection: {{ \Carbon\Carbon::parse($report->date_of_inspection)->isoFormat('Do MMM YYYY') }}<br>
         Rate	: {{ $report->ratings }}%<br>
-        Total NC	: 10<br>
-        Total Improvement	: 3<br>
-        Total Critical NC	: 1<br>
+        {{-- Total NC	: <br>
+        Total Improvement	: <br>
+        Total Critical NC	: <br> --}}
         Inspector	:  {{ $report->inspector->name }}
     </p>
     <h1>

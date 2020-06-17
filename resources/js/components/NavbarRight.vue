@@ -9,19 +9,19 @@
                 </a>
                 <ul class="dropdown-menu dropdown-user">
                     <li> <a href="#changePasswordModal" data-toggle="modal"><i class="fa fa-user fa-fw"></i> Change Password</a> </li>
-                    <li v-if="userRoleLevel > 2"> <a :href="homePageLink"><i class="fa fa-trello fa-fw"></i> Home Page</a> </li>
-                    <li v-if="userRoleLevel > 2"> <a :href="userLink"><i class="fa fa-users fa-fw"></i> Users</a> </li>
-                    <li v-if="userRoleLevel > 2"> <a :href="roleLink"><i class="fa fa-user-md fa-fw"></i> Roles</a> </li>
-                    <li v-if="userRoleLevel > 2"> <a :href="companyLink"><i class="fa fa-building-o fa-fw"></i> Companies</a> </li>
-                    <li v-if="userRoleLevel > 2"> <a :href="locationLink"><i class="fa fa-globe fa-fw"></i> Locations</a> </li>
-                    <li v-if="userRoleLevel > 2"> <a :href="departmentLink"><i class="fa fa-trello fa-fw"></i> Departments</a> </li>
-                    <li v-if="userRoleLevel > 2"> <a :href="operationLink"><i class="fa fa-road"></i> Operation lines</a> </li>
-                    <li v-if="userRoleLevel > 2"> <a :href="companyOperationLink"><i class="fa fa-eject"></i> Company Operation lines</a> </li>
-                    <li v-if="userRoleLevel > 2"> <a :href="categoryLink"><i class="fa fa-files-o"></i> Categories</a> </li>
-                    <li v-if="userRoleLevel > 2"> <a :href="areaLink"><i class="fa fa-sitemap"></i> Areas</a> </li>
-                    <li v-if="userRoleLevel > 2"> <a :href="companyAreaLink"><i class="fa fa-building-o"></i> Company Areas</a> </li>
-                    <li v-if="userRoleLevel > 2"> <a :href="checklistLink"><i class="fa fa-list-ol"></i> Checklist</a> </li> 
-                    <li v-if="userRoleLevel > 2"> <a :href="faqLink"><i class="fa fa-info-circle"></i> FAQs</a> </li>
+                    <li v-if="userRoleLevel == 4"> <a :href="homePageLink"><i class="fa fa-trello fa-fw"></i> Home Page</a> </li>
+                    <li v-if="userRoleLevel == 4"> <a :href="userLink"><i class="fa fa-users fa-fw"></i> Users</a> </li>
+                    <li v-if="userRoleLevel == 4"> <a :href="roleLink"><i class="fa fa-user-md fa-fw"></i> Roles</a> </li>
+                    <li v-if="userRoleLevel == 4"> <a :href="companyLink"><i class="fa fa-building-o fa-fw"></i> Companies</a> </li>
+                    <li v-if="userRoleLevel == 4"> <a :href="locationLink"><i class="fa fa-globe fa-fw"></i> Locations</a> </li>
+                    <li v-if="userRoleLevel == 4"> <a :href="departmentLink"><i class="fa fa-trello fa-fw"></i> Departments</a> </li>
+                    <li v-if="userRoleLevel == 4"> <a :href="operationLink"><i class="fa fa-road"></i> Operation lines</a> </li>
+                    <li v-if="userRoleLevel == 4"> <a :href="companyOperationLink"><i class="fa fa-eject"></i> Company Operation lines</a> </li>
+                    <li v-if="userRoleLevel == 4"> <a :href="categoryLink"><i class="fa fa-files-o"></i> Categories</a> </li>
+                    <li v-if="userRoleLevel == 4"> <a :href="areaLink"><i class="fa fa-sitemap"></i> Areas</a> </li>
+                    <li v-if="userRoleLevel == 4"> <a :href="companyAreaLink"><i class="fa fa-building-o"></i> Company Areas</a> </li>
+                    <li v-if="userRoleLevel == 4"> <a :href="checklistLink"><i class="fa fa-list-ol"></i> Checklist</a> </li> 
+                    <li v-if="userRoleLevel == 4"> <a :href="faqLink"><i class="fa fa-info-circle"></i> FAQs</a> </li>
                     <li class="divider"></li>
                 </ul>
             </li>

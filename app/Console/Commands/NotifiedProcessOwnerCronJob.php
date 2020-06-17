@@ -46,12 +46,14 @@ class NotifiedProcessOwnerCronJob extends Command
      */
     public function handle()
     {
-        $reports = Report::where('created_at', '>=',  Carbon::parse('+48 hours'))
-        ->whereNull('ratings')->get();
+        $reports = Report::where('date_submitted', '>=',  Carbon::parse('+48 hours'))
+            ->whereNull('ratings')
+            ->whereNull('is_draft')
+            ->get();
 
         foreach($reports as $report){
-          // Send email to process owner
-          Mail::to(User::findOrFail($report->process_owner_id))->send(new NotifiedProcessOwner($report->inspector_id,$report->area_id,$report->id));
+            // Send email to process owner
+            Mail::to(User::findOrFail($report->process_owner_id))->send(new NotifiedProcessOwner($report->inspector_id,$report->area_id,$report->id));
         }
     }
 }
