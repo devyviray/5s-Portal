@@ -550,7 +550,7 @@ class ReportController extends Controller
      */
 
     public function getReportsNotification(){
-        if(Auth::user()->level() == 2 && Auth::user()->level() == 3){
+        if(Auth::user()->level() == 2 || Auth::user()->level() == 3){
             $reports = Report::with('company', 'location', 'department', 'operationLine', 'category', 'area', 'inspector', 'processOwner', 'reportDetail')
             ->when(Auth::user()->level() == 2, function ($q){
                 $q->where('status' ,1)

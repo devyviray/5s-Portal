@@ -27,7 +27,7 @@ class AreaOwnerApprovedReport extends Mailable
     public function __construct($processOwner, $report)
     {
         $this->processOwner = User::findOrFail($processOwner);
-        $this->report = Report::with('company', 'location','area','inspector')->where('id',$report)->first();
+        $this->report = Report::with('company', 'location','area','inspector','reportDetail')->where('id',$report)->first();
     }
 
     /**
@@ -40,7 +40,14 @@ class AreaOwnerApprovedReport extends Mailable
         $report = $this->report;
         $processOwner = $this->processOwner;
         $pathToImage = public_path()."/img/better_5sPortal.png";
+        $criticality = 0;
 
-        return $this->view('mail.report-approved', compact('report', 'processOwner', 'pathToImage'));
+        foreach($report->reportDetail as $reportDetail){
+            if($reportDetail['criticality'] == 'Critical'){
+                $criticality = $criticality + 1;
+            }
+        }
+
+        return $this->view('mail.report-approved', compact('report', 'processOwner', 'pathToImage','criticality'));
     }
 }

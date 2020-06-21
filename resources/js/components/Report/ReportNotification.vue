@@ -39,7 +39,7 @@
                                         <td>{{ countRating(report.report_detail) }}</td>
                                         <td>
                                             <a :href="publicPath+'/view-report/'+report.id"><u>View Report</u></a>
-                                            <span v-if="report.inspector_id == userId">
+                                            <span v-if="report.inspector_id == userId && report.status == 1">
                                                 <br><br>
                                                 <a :href="publicPath+'/edit-report/'+report.id"><u>Update Report</u></a>
                                             </span>
