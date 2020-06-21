@@ -280,6 +280,8 @@
                 if(event.target.value == 'N/A' || event.target.value == '2'){
                     document.getElementById("recurrence-"+index).disabled = true;
                     document.getElementById("criticality-"+index).disabled = true;
+                    this.selected_checklist[index].recurrence_number = null;
+                    this.selected_checklist[index].criticality = null;
                 }else{
                     document.getElementById("recurrence-"+index).disabled = false;
                     document.getElementById("criticality-"+index).disabled = false;

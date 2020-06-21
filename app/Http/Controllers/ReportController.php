@@ -378,7 +378,7 @@ class ReportController extends Controller
                 UploadedFile::whereIn('id', $request->rejected_ids)->update(['status' => '2']);
             }
 
-            // Send email to inspector
+            // Send email to process owner
             $report = Report::findOrFail($request->ids[0]);
             Mail::to(User::findOrFail($report->process_owner_id))->send(new InspectorValidateReport($report->process_owner_id, $report->id));
 
@@ -628,13 +628,18 @@ class ReportController extends Controller
 
         DB::beginTransaction();
         try {
-            Report::where('id', $request->id)->update([
-                    'status' => 4, 
-                    'ratings' => number_format((float)$request->final_rating, 2, '.', ''),
-                    'date_resubmit' => Carbon::now()
-                ]);
-            // Send email to Process owner and Department Head
             $report = Report::with('inspector','processOwner','departmentHead')->where('id',$request->id)->first();
+            $report->update([
+                'status' => 4, 
+                'ratings' => number_format((float)$request->final_rating, 2, '.', ''),
+                'date_resubmit' => Carbon::now()
+            ]);
+            foreach($report->reportDetail as $key => $value){
+                $value->update([
+                    'points' => $request->points[$key],
+                    ]);
+            }
+            // Send email to Process owner and Department Head
             Mail::to([$report->processOwner,$report->departmentHead,$report->inspector])->send(new AreaOwnerApprovedReport($report->process_owner_id, $report->id));
 
             DB::commit();

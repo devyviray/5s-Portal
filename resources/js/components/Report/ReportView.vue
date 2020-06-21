@@ -102,7 +102,15 @@
                                         <td class="col-sm-1">{{  c + 1 }}</td>
                                         <td class="col-sm-8" style="white-space:normal">{{ checklist.name }}</td>
                                         <td class="col-sm-1"><strong> {{checklist.criticality }}</strong></td>
-                                        <td class="col-sm-2"><strong>{{ checklist.points }}</strong></td>
+                                        <td class="col-sm-2">
+                                            <select class="form-control select-points" v-model="checklist.points"  v-if="reportsPerUser[0].inspector_id == userId && reportsPerUser[0].status == 2">
+                                                <option value="N/A"> N/A </option>
+                                                <option value="0"> 0 </option>
+                                                <option value="1"> 1 </option>
+                                                <option value="2"> 2 </option>
+                                            </select>
+                                            <span v-else><strong>{{ checklist.points }}</strong></span>
+                                        </td>
                                     </tr>
                                     <tr style="height: 200px">
                                         <td class="col-sm-12">
@@ -291,7 +299,8 @@ export default {
             keywords: '',
             loading: false,
             attachment_link: '',
-            non_acceptance_reason: ''
+            non_acceptance_reason: '',
+            points: []
         }
     },
     created(){
@@ -413,9 +422,16 @@ export default {
         },
         reviseReport(){
             this.loading = true;
+            let t = this;
+            this.reportsPerUser[0].report_detail.filter(function(item,index) {
+                if(item.points !== null){
+                    t.points.push(item.points);
+                }
+            });
             axios.post('/revise-report',{
                 id: this.reportsPerUser[0].id,
-                final_rating: this.final_rating
+                final_rating: this.final_rating,
+                points: t.points
             })
             .then(response => {
                 this.loading = false;
