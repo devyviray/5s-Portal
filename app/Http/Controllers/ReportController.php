@@ -735,11 +735,11 @@ class ReportController extends Controller
      */
     public function inspectionHistoryData(Report $report){
 
-        $report = Report::with('company','location','department','category','operationLine', 'area', 'inspector',
+        $data = Report::with('company','location','department','category','operationLine', 'area', 'inspector',
         'processOwner','departmentHead','reportDetail.uploadedFiles')
         ->where('company_id', $report->company_id)
         ->where('location_id', $report->location_id)
-        ->when($report->operation_line_id, function ($q) { 
+        ->when($report->operation_line_id, function ($q) use($report){ 
             $q->where('operation_line_id', $report->operation_line_id);
         })
         ->where('category_id', $report->category_id)
@@ -750,7 +750,7 @@ class ReportController extends Controller
         ->take('3')
         ->get();
 
-        return $report;
+        return $data;
     }
 
     /**
