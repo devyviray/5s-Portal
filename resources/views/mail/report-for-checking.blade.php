@@ -15,5 +15,5 @@
             You have 24 – 72 hours to respond to the report otherwise, final rating will be posted.
         </span>
     </h1><br>
-    <a href="{{ url('validate-report', ['reportId' => $report->id]) }}">View Your report here</a><br>
+    <a href="{{ url('view-report', ['reportId' => $report->id]) }}">View Your report here</a><br>
 </div>

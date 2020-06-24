@@ -48,7 +48,7 @@ Route::group(['middleware' => ['auth', 'role:inspector']], function () {
 });
 
 // Accessible routes for admin , inspector and IT
-Route::group(['middleware' => ['auth', 'role:it|administrator|group president|inspector|process owner|department member']], function () {
+Route::group(['middleware' => ['auth', 'role:it|administrator|group president|inspector|area owner|department member|department head|bu head']], function () {
 
     // Home page
     Route::get('/home-page', 'HomePageController@index');
