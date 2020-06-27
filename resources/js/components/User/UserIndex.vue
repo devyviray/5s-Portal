@@ -148,9 +148,15 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="role">Role*</label> 
-                                    <select class="form-control" v-model="user.role">
-                                        <option v-for="(role,r) in roles" v-bind:key="r" :value="role.id"> {{ role.name }}</option>
-                                    </select>
+                                      <multiselect
+                                            v-model="user.role"
+                                            :options="roles"
+                                            :multiple="true"
+                                            track-by="id"
+                                            :custom-label="customLabelRoles"
+                                            placeholder="Select Roles"
+                                        >
+                                    </multiselect>
                                     <span class="text-danger" v-if="errors.role">{{ errors.role[0] }}</span>
                                 </div>
                             </div>
@@ -225,9 +231,15 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="role">Role*</label> 
-                                    <select class="form-control" v-model="user_copied.role_id">
-                                        <option v-for="(role,r) in roles" v-bind:key="r" :value="role.id"> {{ role.name }}</option>
-                                    </select>
+                                    <multiselect
+                                            v-model="user_copied.roles"
+                                            :options="roles"
+                                            :multiple="true"
+                                            track-by="id"
+                                            :custom-label="customLabelRoles"
+                                            placeholder="Select Roles"
+                                        >
+                                    </multiselect>
                                     <span class="text-danger" v-if="errors.role">{{ errors.role[0] }}</span>
                                 </div>
                             </div>
@@ -267,7 +279,6 @@
                 </div>
             </div>
         </div>
-
 </div>
 </template>
 <style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
@@ -320,8 +331,8 @@
             showLoader(){
                this.loading = true;
             },
-            customLabelLocation (company) {
-                return `${company.name}`
+            customLabelRoles (role) {
+                return `${role.name}`
             },
             copyObject(user){
                 this.errors = [];
@@ -330,7 +341,6 @@
                 this.user_copied = Object.assign({}, user);
                 this.user_copied.company_id = user.companies[0].id;
                 this.user_copied.location_id = user.location.id;
-                this.user_copied.role_id = user.roles[0].id
                 this.fetchCompanyLocation(user.location.id);
             },
             fetchUsers(){
@@ -374,13 +384,17 @@
                 this.user_added = false;
                 document.getElementById('add_btn').disabled = true;
                 this.errors = [];
+                var rolesId = [];
+                if(user.role){
+                    user.role.filter(item => rolesId.push(item.id));
+                }
                 axios.post('/user', {
                     name: user.name,
                     email: user.email,
                     company: user.company,
                     company_location: user.company_location,
                     department_id: user.department,
-                    role: user.role
+                    role: rolesId
                 })
                 .then(response => {
                     this.users.unshift(response.data);
@@ -402,13 +416,17 @@
                 this.user_updated = false;
                 this.errors = [];
                 var index = this.users.findIndex(item => item.id == user_copied.id);
+                var rolesId = [];
+                if(user_copied.roles){
+                    user_copied.roles.filter(item => rolesId.push(item.id));
+                }
                 axios.post(`/user/${user_copied.id}`, {
                     name: user_copied.name,
                     email: user_copied.email,
                     company: user_copied.company_id,
                     company_location: user_copied.location_id,
                     department_id: user_copied.department_id,
-                    role: user_copied.role_id,
+                    role: rolesId,
                     _method: 'PATCH'
                 })
                 .then(response => {

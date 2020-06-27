@@ -694,24 +694,15 @@ body, #app, .py-4, .wrap-div{
     width: 100%;
 }
 .wrap-div {
-    background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
-    background-image: url('../img/new_design/login3.png');
+    background-image: url('../img/new_design/login.png');
 }
 .row{
     width: 98%;
 }
 .row-margin{
     margin: 0 auto !important;
-}
-.img-login1{
-    height: 100%;
-    width: 100%;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-image: url('../img/new_design/login1.png');
 }
 .div-logo{
     position: absolute;

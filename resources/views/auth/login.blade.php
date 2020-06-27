@@ -3,8 +3,8 @@
 @section('content')
 <div class="justify-content-center wrap-div">
     <div class="row" style="height: 100%">
-        <div class="col-md-11 img-login1" style="position:relative">
-            <div class="row" style="height: 100%; margin-right: -15px; margin-left: -15px;">
+        <div class="col-md-12 img-login1" style="position:relative">
+            <div class="row" style="height: 100%;">
                 <div class="col-md-2"></div>
                 <div class="col-md-3">
                     <div style="height:65%"></div>
@@ -55,13 +55,10 @@
                         </div>
                     </form>
                 </div>
+                <div class="col-md-7"></div>
             </div>
-            </div>
-            <div class="div-logo">
-                <img src="{{ asset('img/new_design/lafil-logo.png')}}">
             </div>
         </div>
-        <div class="col-md-1"></div>
     </div>
 </div>
 @endsection

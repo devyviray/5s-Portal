@@ -30,7 +30,7 @@
                 <div class="card-header">
                     <div class="row ml-2">
                         <div class="col-md-8"></div>
-                        <div class="col-md-4" v-if="userRoleLevel > 2">
+                        <div class="col-md-4" v-if="userRoleLevel.includes(3)">
                             <button class="btn btn-sm btn-primary" @click="createReport"> Create Report</button>
                             <a target="_blank"  :href="trendAndAnalysis" class="btn btn-sm btn-primary"> Trend and Analysis</a>
                         </div>  
@@ -95,9 +95,9 @@
                                         <i class="fa fa-ellipsis-v"></i>
                                     </a>
                                     <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
-                                        <a v-if="report.status == 1 && userRoleLevel > 2" class="dropdown-item" target="_blank" :href="editReportLink+report.id">Edit</a>
+                                        <a v-if="report.status == 1 && userId == report.inspector_id" class="dropdown-item" target="_blank" :href="editReportLink+report.id">Edit</a>
                                         <a class="dropdown-item" target="_blank" :href="viewReportLink+report.id">View</a>
-                                        <a v-if="report.status == 2 && userRoleLevel > 2 && userId == report.inspector_id" class="dropdown-item" target="_blank" :href="verifiedReportLink+report.id">Validate</a>
+                                        <a v-if="report.status == 2 && userId == report.inspector_id" class="dropdown-item" target="_blank" :href="verifiedReportLink+report.id">Validate</a>
                                         <!-- <a class="dropdown-item" data-toggle="modal" data-target="#deleteModal" style="cursor: pointer" @click="copyObject(report)">Delete</a> -->
                                     </div>
                                 </div> 

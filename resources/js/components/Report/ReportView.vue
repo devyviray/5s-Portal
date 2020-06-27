@@ -9,7 +9,7 @@
             <div v-if="reportsPerUser[0]">
                 <div class="row">
                     <div class="col-md-3 ml-4">
-                        <a v-if="this.userRoleLevel == 3" :href="publicPath + '/reports-my-drafts'"><h3><i class="fas fa-chevron-circle-left"></i> Back to Draft</h3></a>
+                        <a v-if="this.userRoleLevel.includes(3)" :href="publicPath + '/reports-my-drafts'"><h3><i class="fas fa-chevron-circle-left"></i> Back to Draft</h3></a>
                     </div>
                     <div class="col-md-7 text-center">
                         <h1 class="text-primary">REPORT PREVIEW</h1>
@@ -51,7 +51,7 @@
                                 <tbody>
                                     <tr class="d-flex">
                                         <td class="col-sm-1">Business Unit</td>
-                                        <td class="col-sm-2"><strong>: {{ reportsPerUser[0].company.name }}</strong></td>
+                                        <td class="col-sm-2" style="white-space: normal"><strong>: {{ reportsPerUser[0].company.name }}</strong></td>
                                         <td class="col-sm-1">Date of Inspection</td>
                                         <td class="col-sm-2"><strong>: {{ moment(this.reportsPerUser[0].date_of_inspection).format('LL') }}</strong></td>
                                         <td class="col-sm-1">Accompanied by</td>
@@ -61,7 +61,7 @@
                                     </tr>
                                     <tr class="d-flex">
                                         <td class="col-sm-1">Department</td>
-                                        <td class="col-sm-2"><strong>: {{ reportsPerUser[0].department.name }}</strong></td>
+                                        <td class="col-sm-2" style="white-space: normal"><strong>: {{ reportsPerUser[0].department.name }}</strong></td>
                                         <td class="col-sm-1">Time of Inspection</td>
                                         <td class="col-sm-2"><strong>: {{ moment( this.reportsPerUser[0].start_time_of_inspection, "hh").format('LT') + ' - ' + moment( this.reportsPerUser[0].end_time_of_inspection, "hh").format('LT') }}</strong></td>
                                         <td class="col-sm-1">Area Owner</td>
@@ -135,12 +135,14 @@
                 </div>
                 <div class="row row-margin">
                     <div class="col-md-7 pl-4 mt-3">
-                        <span>NOTES:</span><br>
-                        <span>If there are for correction on the report, click “I DO NOT ACCEPT” button – to prevent relay of report, this function is one-time only.<br>
-                            For any objection on the report, discuss with inspector and agree on the final rating.
-                        </span><br><br>
-                        <span>If report is acknowledged, click “ACCEPT” button</span><br>
-                        <span><strong>You have 24 - 72 hours to respond to the report otherwise, final rating will be posted</strong></span>
+                        <div v-if="reportsPerUser[0].status != 4">
+                            <span>NOTES:</span><br>
+                            <span>If there are for correction on the report, click “I DO NOT ACCEPT” button – to prevent relay of report, this function is one-time only.<br>
+                                For any objection on the report, discuss with inspector and agree on the final rating.
+                            </span><br><br>
+                            <span>If report is acknowledged, click “ACCEPT” button</span><br>
+                            <span><strong>You have 24 - 72 hours to respond to the report otherwise, final rating will be posted</strong></span>
+                        </div>
                     </div>
                     <div class="col-md-5 mt-3 text-right">
                         <div v-if="reportsPerUser[0].inspector_id == userId && reportsPerUser[0].is_draft">

@@ -62,7 +62,7 @@ class UserController extends Controller
                 // Assigning of role
                 $user->syncRoles($request->role);
                 // Send email to user
-                Mail::to($user)->send(new UserCreation(Role::findOrFail($request->role)->name, $default_password));
+                Mail::to($user)->send(new UserCreation(Role::whereIn('id',$request->role)->pluck('name'), $default_password));
             
                 DB::commit();
 

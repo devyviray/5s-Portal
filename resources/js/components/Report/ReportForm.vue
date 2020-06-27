@@ -111,19 +111,17 @@
                                     <thead class="thead-light">
                                         <tr class="d-flex">
                                             <th scope="col" class="col-1">ID</th>
-                                            <th scope="col" class="col-5">Requirement</th>
-                                            <th scope="col" class="col-1">Previous Rating</th>
+                                            <th scope="col" class="col-4">Requirement</th>
                                             <th scope="col" class="col-2">Upload Picture</th>
                                             <th scope="col" class="col-1">Rating</th>
-                                            <th scope="col" class="col-1">Recurrence No.</th>
-                                            <th scope="col" class="col-1">Criticality</th>
+                                            <th scope="col" class="col-2">Recurrence No.</th>
+                                            <th scope="col" class="col-2">Criticality</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr v-for="(checklist, c) in selected_checklist" v-bind:key="c" class="d-flex">
                                             <td scope="row" class="col-sm-1">{{ c + 1 }}</td>
-                                            <td class="col-sm-5" style="white-space: inherit;">{{ checklist.requirement +' - '+ checklist.description  }}</td>
-                                            <td class="col-sm-1">Previous Rating</td>
+                                            <td class="col-sm-4" style="white-space: inherit;">{{ checklist.requirement +' - '+ checklist.description  }}</td>
                                             <td class="col-sm-2">
                                                 <input type="file" multiple="multiple" :id="'attachments'+c"  class="attachments" accept="image/*" placeholder="Attach file" @change="uploadFileChange($event,c,checklist.id)"><br>
                                             </td>
@@ -138,7 +136,7 @@
                                                     <span class="text-danger" v-if="points_error == c"> This field is required </span>
                                                 </div>
                                             </td>
-                                            <td class="col-sm-1">
+                                            <td class="col-sm-2">
                                                 <select class="form-control select-points recurrence_number" :id="'recurrence-'+c" disabled v-model="checklist.recurrence_number">
                                                     <option value="0"> 0 </option>
                                                     <option value="1"> 1 </option>
@@ -158,7 +156,7 @@
                                                     <span class="text-danger" v-if="recurrence_number_error == c"> This field is required </span>
                                                 </div>
                                             </td>
-                                            <td class="col-sm-1">
+                                            <td class="col-sm-2">
                                                 <select class="form-control select-points criticality" :id="'criticality-'+c" disabled v-model="checklist.criticality">
                                                     <option value="Critical"> Critical </option>
                                                     <option value="Non - critical"> Non - critical </option>

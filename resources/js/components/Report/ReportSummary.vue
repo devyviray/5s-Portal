@@ -242,62 +242,86 @@
                                                 </td>
                                                 <td>
                                                     <span v-for="(rp, p) in report" :key="p">
-                                                        <span v-if="rp.reporting_month == '1'">{{  numberFormat(rp.ratings) }}</span>
+                                                        <span v-if="rp.reporting_month == '1'">
+                                                            <a :href="publicPath+'/view-report/'+rp.id">{{ numberFormat(rp.ratings) }}</a>
+                                                        </span>
                                                     </span>
                                                 </td>
                                                 <td>
                                                     <span v-for="(rp, p) in report" :key="p">
-                                                        <span v-if="rp.reporting_month == '2'">{{  numberFormat(rp.ratings) }}</span>
+                                                        <span v-if="rp.reporting_month == '2'">
+                                                            <a :href="publicPath+'/view-report/'+rp.id" target="_blank">{{ numberFormat(rp.ratings) }}</a>
+                                                        </span>
                                                     </span>
                                                 </td>
                                                 <td>
                                                     <span v-for="(rp, p) in report" :key="p">
-                                                        <span v-if="rp.reporting_month == '3'">{{  numberFormat(rp.ratings) }}</span>
+                                                        <span v-if="rp.reporting_month == '3'">
+                                                            <a :href="publicPath+'/view-report/'+rp.id" target="_blank">{{ numberFormat(rp.ratings) }}</a>
+                                                        </span>
                                                     </span>
                                                 </td>
                                                 <td>
                                                     <span v-for="(rp, p) in report" :key="p">
-                                                        <span v-if="rp.reporting_month == '4'">{{  numberFormat(rp.ratings) }}</span>
+                                                        <span v-if="rp.reporting_month == '4'">
+                                                            <a :href="publicPath+'/view-report/'+rp.id" target="_blank">{{ numberFormat(rp.ratings) }}</a>
+                                                        </span>
                                                     </span>
                                                 </td>
                                                 <td>
                                                     <span v-for="(rp, p) in report" :key="p">
-                                                        <span v-if="rp.reporting_month == '5'">{{  numberFormat(rp.ratings) }}</span>
+                                                        <span v-if="rp.reporting_month == '5'">
+                                                            <a :href="publicPath+'/view-report/'+rp.id" target="_blank">{{ numberFormat(rp.ratings) }}</a>
+                                                        </span>
                                                     </span>
                                                 </td>
                                                 <td>
                                                     <span v-for="(rp, p) in report" :key="p">
-                                                        <span v-if="rp.reporting_month == '6'">{{  numberFormat(rp.ratings) }}</span>
+                                                        <span v-if="rp.reporting_month == '6'">
+                                                            <a :href="publicPath+'/view-report/'+rp.id" target="_blank">{{ numberFormat(rp.ratings) }}</a>
+                                                        </span>
                                                     </span>
                                                 </td>
                                                 <td>
                                                     <span v-for="(rp, p) in report" :key="p">
-                                                        <span v-if="rp.reporting_month == '7'">{{  numberFormat(rp.ratings) }}</span>
+                                                        <span v-if="rp.reporting_month == '7'">
+                                                            <a :href="publicPath+'/view-report/'+rp.id" target="_blank">{{ numberFormat(rp.ratings) }}</a>
+                                                        </span>
                                                     </span>
                                                 </td>
                                                 <td>
                                                     <span v-for="(rp, p) in report" :key="p">
-                                                        <span v-if="rp.reporting_month == '8'">{{  numberFormat(rp.ratings) }}</span>
+                                                        <span v-if="rp.reporting_month == '8'">
+                                                            <a :href="publicPath+'/view-report/'+rp.id" target="_blank">{{ numberFormat(rp.ratings) }}</a>
+                                                        </span>
                                                     </span>
                                                 </td>
                                                 <td>
                                                     <span v-for="(rp, p) in report" :key="p">
-                                                        <span v-if="rp.reporting_month == '9'">{{  numberFormat(rp.ratings) }}</span>
+                                                        <span v-if="rp.reporting_month == '9'">
+                                                            <a :href="publicPath+'/view-report/'+rp.id" target="_blank">{{ numberFormat(rp.ratings) }}</a>
+                                                        </span>
                                                     </span>
                                                 </td>
                                                 <td>
                                                     <span v-for="(rp, p) in report" :key="p">
-                                                        <span v-if="rp.reporting_month == '10'">{{  numberFormat(rp.ratings) }}</span>
+                                                        <span v-if="rp.reporting_month == '10'">
+                                                            <a :href="publicPath+'/view-report/'+rp.id" target="_blank">{{ numberFormat(rp.ratings) }}</a>
+                                                        </span>
                                                     </span>
                                                 </td>
                                                 <td>
                                                     <span v-for="(rp, p) in report" :key="p">
-                                                        <span v-if="rp.reporting_month == '11'">{{  numberFormat(rp.ratings) }}</span>
+                                                        <span v-if="rp.reporting_month == '11'">
+                                                            <a :href="publicPath+'/view-report/'+rp.id" target="_blank">{{ numberFormat(rp.ratings) }}</a>
+                                                        </span>
                                                     </span>
                                                 </td>
                                                 <td>
                                                     <span v-for="(rp, p) in report" :key="p">
-                                                        <span v-if="rp.reporting_month == '12'">{{  numberFormat(rp.ratings) }}</span>
+                                                        <span v-if="rp.reporting_month == '12'">
+                                                            <a :href="publicPath+'/view-report/'+rp.id" target="_blank">{{ numberFormat(rp.ratings) }}</a>
+                                                        </span>
                                                     </span>
                                                 </td>
                                                 <td>{{ countAverage(report) }}</td>
