@@ -51,7 +51,7 @@
                                             <td class="col-sm-1">Accompanied by</td>
                                             <td class="col-sm-2"><strong>: {{ reportsPerUser[0].accompanied_by }} </strong></td>
                                             <td class="col-sm-1">Total No. of NC</td>
-                                            <td class="col-sm-2"><strong>: 0</strong></td>
+                                            <td class="col-sm-2"><strong>: {{ countNonCriticality(reportsPerUser[0]) }}</strong></td>
                                         </tr>
                                         <tr class="d-flex">
                                             <td class="col-sm-1">Department</td>
@@ -61,7 +61,7 @@
                                             <td class="col-sm-1">Area Owner</td>
                                             <td class="col-sm-2"><strong>:  {{ reportsPerUser[0].process_owner.name }} </strong></td>
                                             <td class="col-sm-1">Total No. of Crititcal</td>
-                                            <td class="col-sm-2"><strong>: 0</strong></td>
+                                            <td class="col-sm-2"><strong>:{{ countCriticality(reportsPerUser[0]) }}</strong></td>
                                         </tr>
                                         <tr class="d-flex">
                                             <td class="col-sm-1">Area</td>
@@ -115,7 +115,7 @@
                                             <td class="col-sm-1">Accompanied by</td>
                                             <td class="col-sm-2"><strong>: {{ reportsPerUser[1].accompanied_by }} </strong></td>
                                             <td class="col-sm-1">Total No. of NC</td>
-                                            <td class="col-sm-2"><strong>: 0</strong></td>
+                                            <td class="col-sm-2"><strong>: {{ countNonCriticality(reportsPerUser[1]) }}</strong></td>
                                         </tr>
                                         <tr class="d-flex">
                                             <td class="col-sm-1">Department</td>
@@ -125,7 +125,7 @@
                                             <td class="col-sm-1">Area Owner</td>
                                             <td class="col-sm-2"><strong>:  {{ reportsPerUser[1].process_owner.name }} </strong></td>
                                             <td class="col-sm-1">Total No. of Crititcal</td>
-                                            <td class="col-sm-2"><strong>: 0</strong></td>
+                                            <td class="col-sm-2"><strong>: {{ countCriticality(reportsPerUser[1]) }}</strong></td>
                                         </tr>
                                         <tr class="d-flex">
                                             <td class="col-sm-1">Area</td>
@@ -179,7 +179,7 @@
                                             <td class="col-sm-1">Accompanied by</td>
                                             <td class="col-sm-2"><strong>: {{ reportsPerUser[2].accompanied_by }} </strong></td>
                                             <td class="col-sm-1">Total No. of NC</td>
-                                            <td class="col-sm-2"><strong>: 0</strong></td>
+                                            <td class="col-sm-2"><strong>: {{ countNonCriticality(reportsPerUser[2]) }}</strong></td>
                                         </tr>
                                         <tr class="d-flex">
                                             <td class="col-sm-1">Department</td>
@@ -189,7 +189,7 @@
                                             <td class="col-sm-1">Area Owner</td>
                                             <td class="col-sm-2"><strong>:  {{ reportsPerUser[2].process_owner.name }} </strong></td>
                                             <td class="col-sm-1">Total No. of Crititcal</td>
-                                            <td class="col-sm-2"><strong>: 0</strong></td>
+                                            <td class="col-sm-2"><strong>: {{ countCriticality(reportsPerUser[2]) }}</strong></td>
                                         </tr>
                                         <tr class="d-flex">
                                             <td class="col-sm-1">Area</td>
@@ -360,6 +360,24 @@ export default {
             });
             this.final_rating = total_points / (denominator * 2) * 100;
             return  this.final_rating.toFixed(2);
+        },
+        countNonCriticality(report){
+            var nc = 0;
+            report.report_detail.filter(report_detail => { 
+                if(report_detail.uploaded_files.length > 0){
+                    nc = nc + report_detail.uploaded_files.length;
+                }
+            });
+            return nc;
+        },
+        countCriticality(report){
+            var criticality = 0;
+            report.report_detail.filter(report_detail => { 
+                if(report_detail.criticality == 'Critical'){
+                    criticality = criticality + 1;
+                }
+            });
+            return criticality;
         },
     },
     computed:{

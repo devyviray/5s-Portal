@@ -107,8 +107,8 @@
             countNonCriticality(report){
                 var nc = 0;
                 report.report_detail.filter(report_detail => { 
-                    if(report_detail.criticality == 'Non - Critical'){
-                        nc = nc + 1;
+                    if(report_detail.uploaded_files.length > 0){
+                        nc = nc + report_detail.uploaded_files.length;
                     }
                 });
                 return nc;

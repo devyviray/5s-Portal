@@ -14,7 +14,7 @@
                                 <div class="card-header border-0">
                                     <div class="row align-items-center">
                                         <div class="col">
-                                            <h3 class="mb-0">Compamy List</h3>
+                                            <h3 class="mb-0">Company List</h3>
                                         </div> 
                                         <div class="col text-right">
                                             <a href="javascript.void(0)" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#addModal">Add new</a>
