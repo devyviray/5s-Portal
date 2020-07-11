@@ -93,13 +93,15 @@
                                         <span class="col-sm-2 ">Name:</span>
                                         <div class="col-sm-10">
                                             <input type="text" id="checklist_name" class="form-control" v-model="checklist_name" placeholder="Checklist name">
-                                            <span class="text-danger" v-if="errors.checklist_name">{{ errors.checklist_name[0] }}</span>
+                                            <span class="text-danger" v-if="errors.name">{{ errors.name[0] }}</span>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-md-2"></div>
                                 <div class="col-md-2">
-                                    <i @click="addRow('Add')" class="fa fa-plus-circle text-green" style="font-size:30px;cursor:pointer; margin-right:23px; float:right"></i>
+                                    <a @click="addRow('Add')">
+                                        <i class="fa fa-plus-circle text-green" style="font-size:30px; margin-right:23px; float:right"></i>
+                                    </a>
                                 </div>
                             </div>
                             <table class="table table-hover table-striped">
@@ -121,7 +123,9 @@
                                             <span class="text-danger" v-if="errors['checklistAdds.'+c+'.description']">This field is required</span>
                                         </td>
                                         <td>
-                                            <i @click="deleteRow(c,'','Add')" class="fa fa-times-circle text-red" style="font-size:30px;cursor:pointer"></i>
+                                            <a @click="deleteRow(c,'','Add')">
+                                                <i class="fa fa-times-circle text-red" style="font-size:30px;"></i>
+                                            </a>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -165,7 +169,9 @@
                                 </div>
                                 <div class="col-md-2"></div>
                                 <div class="col-md-2">
-                                    <i @click="addRow('Update')" class="fa fa-plus-circle text-green" style="font-size:30px;cursor:pointer; margin-right:23px; float:right"></i>
+                                    <a  @click="addRow('Update')">
+                                        <i class="fa fa-plus-circle text-green" style="font-size:30px; margin-right:23px; float:right"></i>
+                                    </a>
                                 </div>
                             </div>
                             <table class="table table-hover table-striped">
@@ -187,7 +193,9 @@
                                             <span class="text-danger" v-if="errors['checklist_copieds.'+c+'.description']">This field is required</span>
                                         </td>
                                         <td>
-                                            <i @click="deleteRow(c,checklist_copied.id,'Update')" class="fa fa-times-circle text-red" style="font-size:30px;cursor:pointer"></i>
+                                            <a @click="deleteRow(c,checklist_copied.id,'Update')">
+                                                <i class="fa fa-times-circle text-red" style="font-size:30px;"></i>
+                                            </a>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -351,7 +359,7 @@
                     this.loading = false;
                 })
                 .catch(error => {
-                    this.errors = error.response.data;
+                    this.errors = error.response.data.errors;
                     this.checklist_added = false;
                     document.getElementById('add_btn').disabled = false;
                     this.loading = false;
@@ -384,6 +392,7 @@
                     window.location.reload();
                 })
                 .catch(error => {
+                    this.errors = error.response.data.errors;
                     this.checklist_updated = false;
                     document.getElementById('edit_btn').disabled = false;
                     this.loading = false;
