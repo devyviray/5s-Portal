@@ -104,7 +104,8 @@ Route::group(['middleware' => ['auth', 'role:it|administrator|group president|in
     Route::post('/checklist', 'ChecklistController@store');
     Route::patch('/checklist/{checklist}', 'ChecklistController@update');
     Route::delete('/checklist/{batchId}', 'ChecklistController@destroy');
-    Route::get('/checklists-per-category/{categoryName}', 'ChecklistController@getChecklistPerCategory');
+    Route::get('/checklists-per-category/{categoryName}', 'ChecklistController@checklistPerCategory');
+    Route::get('/checklists-download/{checklist_name}', 'ChecklistController@download');
 
     // faq
     Route::get('/faqs', 'FaqController@index')->name('faqs');

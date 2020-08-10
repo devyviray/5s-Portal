@@ -127,13 +127,24 @@ class ChecklistController extends Controller
     /**
      *  Get checklist base on category
      *
-     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function getChecklistPerCategory($categoryName){
+    public function checklistPerCategory($categoryName){
         
         return Checklist::where('name', $categoryName)
             ->orderBy('id','asc')
             ->get();
+    }
+
+    /**
+     *  Download Checklist excel file
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function download($checklist_name){
+        return response()
+            ->download(public_path('checkllists/'.$checklist_name.'.xlsx'),
+             $checklist_name.'.xlsx');
     }
 }

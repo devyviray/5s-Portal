@@ -11,38 +11,44 @@
                     <div class="alert alert-success text-center" v-if="email_sent">
                         <strong>Success!</strong> Email Succeffully sent
                     </div>
-                    <div class="w-100 mt-5">
-                        <div class="text-center" style="margin-bottom: 85px;">
-                            <h1 style="color: #003300;">Hi, {{ this.userName }}!</h1>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="text-center">
+                                <h1 style="color: #003300;">Hi, {{ this.userName }}!</h1>
+                            </div>
                         </div>
-                        <div class="contact-us">
-                            <img :src="publicPath +'/img/new_design/contact_us.png'">
-                            <div class="form-group">
-                                <div class="col-sm-12 col-md-12 col-lg-8" style="margin: 0 auto;">
-                                    <input type="text" class="form-control" id="subject" placeholder="Subject" v-model="contactUs.subject">
-                                    <span class="text-danger" v-if="errors.subject">{{ errors.subject[0] }}</span>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-sm-12 col-md-12 col-lg-8" style="margin: 0 auto;">
-                                    <textarea class="form-control" id="message" rows="7" placeholder="Message" v-model="contactUs.message"></textarea>
-                                    <span class="text-danger" v-if="errors.message">{{ errors.message[0] }}</span>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-sm-12 text-center">
-                                    <button class="btn btn-success" @click="contactUs">SUBMIT</button>
-                                </div>
-                            </div>
+                        <div class="col-md-12 contact-us">
                             <div>
-                                <p class="text-center">
-                                    CISCO Local Nos.:<br>
-                                    Manila – 2414 – 2415<br>
-                                    Iloilo – 3931 – 3932<br><br>
+                                <img :src="publicPath +'/img/new_design/contact_us.png'" class="w-100">
+                            </div>
+                            <div class="contact-us-form">
+                                <div class="form-group">
+                                    <div class="col-sm-12 col-md-12 col-lg-8" style="margin: 0 auto;">
+                                        <input type="text" class="form-control" id="subject" placeholder="Subject" v-model="contactUs.subject">
+                                        <span class="text-danger" v-if="errors.subject">{{ errors.subject[0] }}</span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-12 col-md-12 col-lg-8" style="margin: 0 auto;">
+                                        <textarea class="form-control" id="message" rows="7" placeholder="Message" v-model="contactUs.message"></textarea>
+                                        <span class="text-danger" v-if="errors.message">{{ errors.message[0] }}</span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-12 text-center">
+                                        <button class="btn btn-success" @click="contactUs">SUBMIT</button>
+                                    </div>
+                                </div>
+                                <div>
+                                    <p class="text-center">
+                                        CISCO Local Nos.:<br>
+                                        Manila – 2414 – 2415<br>
+                                        Iloilo – 3931 – 3932<br><br>
 
-                                    E-mail address:<br>
-                                    5sPortal@mail.lafilgroup.com
-                                </p>
+                                        E-mail address:<br>
+                                        5sPortal@mail.lafilgroup.com
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -116,24 +122,20 @@
                 <div class="modal-body">
                     <div class="col-md-12">
                         <div class="form-group">
-                            <label for="role">Please select Checklist</label> 
-                            <select class="form-control" v-model="selected_checklist" @change="fetchChecklist">
-                                <option value="Operations">Operation and Support Checklist</option>
-                                <option value="Offices"> Office Checklist </option>
+                            <label for="role">Please select Checklist</label>
+                    
+                            <select class="form-control" v-model="selected_checklist">
+                                <option value="Operation"> Operation Checklist </option>
+                                <option value="Office"> Office Checklist </option>
                                 <option value="Perimeter"> Perimeter Checklist </option>
+                                <option value="Perimeter"> Support Checklist </option>
                             </select>
                             <span class="text-danger" v-if="errors.role">{{ errors.role[0] }}</span>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <download-excel v-if="checklists.length > 0"
-                        :data   = "checklists"
-                        :fields = "json_fields"
-                        class   = "btn btn-sm btn-success"
-                        :name    =  "checklist_name">
-                        EXPORT TO EXCEL
-                    </download-excel>
+                    <button class="btn btn-sm btn-success" v-if="selected_checklist" @click="downloadChecklist">DOWNLOAD CHECKLIST</button>
                 </div>
                 </div>
             </div>
@@ -255,20 +257,9 @@
                     this.loading = false;
                 })
             },
-            fetchChecklist(){
-                this.errors = [];
-                this.loading = true;
-                axios.get(`/checklists-per-category/${this.selected_checklist}`)
-                .then(response => {
-                    this.checklists = response.data;
-                    this.checklist_name = this.selected_checklist == 'Operations' ? 'Operation and Support Checklist.xls' : this.selected_checklist+' Checklist.xls';
-                    this.loading = false;
-                })
-                .catch(error => { 
-                    this.errors = error.response.data.errors;
-                    this.loading = false;
-                })
-            },
+            downloadChecklist(){
+                window.location = window.location.origin+`/checklists-download/${this.selected_checklist}`;
+            }
         },
         computed:{
             publicPath(){

@@ -829,11 +829,10 @@ tbody{
 .contact-us{
     position: relative;
 }
-.contact-us > img {
-    position: absolute;
-    left: 9%;
-    width: 80%;
-    bottom: -9%;
+.contact-us-form {
+    position: absolute; 
+    top: 75px;
+    width:95%
 }
 .form-group-report{
     margin-bottom: 0.5rem !important;
