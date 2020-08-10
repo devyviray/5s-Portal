@@ -128,7 +128,7 @@
                                 <option value="Operation"> Operation Checklist </option>
                                 <option value="Office"> Office Checklist </option>
                                 <option value="Perimeter"> Perimeter Checklist </option>
-                                <option value="Perimeter"> Support Checklist </option>
+                                <option value="Support"> Support Checklist </option>
                             </select>
                             <span class="text-danger" v-if="errors.role">{{ errors.role[0] }}</span>
                         </div>
