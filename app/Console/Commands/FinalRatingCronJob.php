@@ -42,18 +42,20 @@ class FinalRatingCronJob extends Command
     public function handle()
     {
         $reports = Report::with('reportDetail')->where('created_at', '<=', Carbon::now()->subDays(3)->toDateTimeString())
-           ->whereNull('ratings')->get();
+           ->whereNull('ratings')
+           ->get();
    
            foreach($reports as $report){
-               $denominator = $report->reportDetail->count() * 2;
+               $denominator = 0;
                $total_points = 0;
                foreach($report->reportDetail as $r){
                    if($r->points != 'N/A'){
                         $total_points = $total_points + $r->points;
+                        $denominator = $denominator + 1;
                    }
                }
                $data = [
-                   'ratings' => $total_points / $denominator * 100,
+                    'ratings' => $total_points / ($denominator * 2) * 100,
                    'status' => 4
                ];
                $report->update($data);
