@@ -43,22 +43,23 @@ class FinalRatingCronJob extends Command
     {
         $reports = Report::with('reportDetail')->where('date_submitted', '<=', Carbon::now()->subDays(3)->toDateTimeString())
            ->whereNull('ratings')
-           ->whereNull('is_draft')
+        //    ->whereNull('is_draft')
            ->get();
-   
-           foreach($reports as $report){
-               $denominator = $report->reportDetail->count() * 2;
-               $total_points = 0;
-               foreach($report->reportDetail as $r){
-                   if($r->points != 'N/A'){
+           
+            foreach($reports as $report){
+                $denominator = 0;
+                $total_points = 0;
+                foreach($report->reportDetail as $r){
+                    if($r->points != 'N/A'){
                         $total_points = $total_points + $r->points;
-                   }
-               }
-               $data = [
-                   'ratings' => $total_points / $denominator * 100,
-                   'status' => 4
-               ];
-               $report->update($data);
-           }
+                        $denominator = $denominator + 1;
+                    }
+                }
+                $data = [
+                    'ratings' => $total_points / ($denominator * 2) * 100,
+                    'status' => 4
+                ];
+                $report->update($data);
+            }
     }
 }
