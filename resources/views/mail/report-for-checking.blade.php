@@ -7,5 +7,4 @@
     </p><br>
     <a href="{{ url('validate-report', ['reportId' => $report->id]) }}">PLEASE VISIT THE 5S PORTAL</a><br>
     <p>Thank you for using this application.</p><br><br>
-    <img src="{{ $message->embed($pathToImage) }}"  alt="QR" title="QR" style="width="200" height=200" data-auto-embed="attachment">
 </div>
