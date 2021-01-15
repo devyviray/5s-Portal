@@ -26,5 +26,4 @@
         @endif
     </h1><br>
     <a href="{{ url('view-report', ['reportId' => $report->id]) }}">View your report here</a><br><br>
-
 </div>

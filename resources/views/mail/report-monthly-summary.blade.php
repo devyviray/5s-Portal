@@ -25,5 +25,4 @@
     @endif
    <br>
    <a href="{{ url('reports-summary') }}">View summary and ranking here</a><br>
-
 </div>
