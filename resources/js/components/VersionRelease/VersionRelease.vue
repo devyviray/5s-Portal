@@ -1,5 +1,32 @@
 <template>
 	<div>
+		<!--begin::Nav Bar-->
+        <nav class="navbar navbar-default top-navbar" role="navigation" v-if="isAuthenticated">
+            <div class="row">
+                <div class="col-md-8"></div>
+                <div class="col-md-4">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <span class="span-username">Hi, {{ this.userName }}</span>
+                        </div>
+                        <div class="col-md-4">
+                            <navbarRight :user-role-level="userRoleLevel" :user-id="userId"></navbarRight>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+		<!--end::Nav Bar-->
+		<!--begin::Header-->
+        <div class="div-spacing" v-if="isAuthenticated"></div>     
+        <div class="header" v-if="isAuthenticated">
+            <h1 class="page-header">
+                <img class="lafil-logo" :src="logoLink">
+                <b>5S PORTAL - VERSION RELEASE</b>
+            </h1>
+            <breadcrumb :user-role-level="userRoleLevel"></breadcrumb>
+        </div>
+		<!--end::Header-->
 		<div class="btn btn-white p-3 m-8 float-right" v-if="isAdministrator" @click="toggleModal(true)">Add New Version</div>
 		<h1 class="p-10 text-white">Version Release History</h1>
 
@@ -114,7 +141,7 @@
 	export default {
 		name: "VersionRelease",
 
-		props: ['user-roles','authenticated'],
+		props: ['userId','userRoleLevel','userName'],
 		components: {FormModal,VersionItems},
 
 		data() {
@@ -206,14 +233,20 @@
 		},
 		computed: {
 			isAdministrator() {
-				return this.authenticated && (this.userRoles == "Administrator" || this.userRoles == "IT");
+				return this.isAuthenticated && this.userRoleLevel > 2;
+			},
+			isAuthenticated() {
+				return this.userId != 0 && this.userName != 'unauthenticated';
 			},
 			lastItem() {
 				let new_features = this.selectedVersion.release_note.new ? this.selectedVersion.release_note.new.length : 0;
 				let updates = this.selectedVersion.release_note.updates ? this.selectedVersion.release_note.updates.length : 0;
 				let fixes = this.selectedVersion.release_note.fixes ? this.selectedVersion.release_note.fixes.length : 0;
 				return new_features + updates + fixes <= 1;
-			}
+			},
+            logoLink(){
+                return window.location.origin+'/img/lafil-logo.png';
+            },
 		}
 	}
 </script>
