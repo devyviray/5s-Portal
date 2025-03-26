@@ -8,6 +8,8 @@
 require('./bootstrap');
 
 window.Vue = require('vue');
+import VModal from 'vue-js-modal';
+Vue.use(VModal);
 
 /**
  * The following block of code may be used to automatically register your
@@ -78,10 +80,14 @@ Vue.component('area-index', require('./components/Area/AreaIndex.vue').default);
 // company area page
 Vue.component('company-area-index', require('./components/CompanyArea/CompanyAreaIndex.vue').default);
 
+// version release page
+Vue.component('version-release', require('./components/VersionRelease/VersionRelease.vue').default);
+
 
 // components
 Vue.component('navbarRight', require('./components/NavbarRight.vue').default);
 Vue.component('breadcrumb', require('./components/Breadcrumb.vue').default);
+Vue.component('error-messages', require('./components/ErrorMessage.vue').default);
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application

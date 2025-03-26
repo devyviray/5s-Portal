@@ -21,6 +21,7 @@
                     <li v-if="userRoleLevel > 2"> <a :href="companyAreaLink"><i class="fa fa-building-o"></i> Company Areas</a> </li>
                     <li v-if="userRoleLevel > 2"> <a :href="checklistLink"><i class="fa fa-list-ol"></i> Checklist</a> </li> 
                     <li v-if="userRoleLevel > 2"> <a :href="faqLink"><i class="fa fa-info-circle"></i> FAQs</a> </li>
+                    <li v-if="userRoleLevel > 2"> <a :href="versionReleaseLink"><i class="fa fa-cog"></i> Version Release</a> </li>
                     <li class="divider"></li>
                     <li> <a href="#" @click="logoutForm"><i class="fa fa-sign-out fa-fw"></i> Logout</a> </li>
                 </ul>
@@ -163,6 +164,9 @@ export default {
         },
         companyAreaLink(){
               return window.location.origin+'/company-areas'
+        },
+        versionReleaseLink(){
+            return window.location.origin+'/version-release'
         }
     }
 }
