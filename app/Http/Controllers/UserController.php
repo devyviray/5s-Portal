@@ -8,11 +8,13 @@ use DB;
 use Config;
 use App\{
     User,
-    Role
+    Role,
+    UsersExport
 };
 use App\Mail\{
     UserCreation
 };
+use Maatwebsite\Excel\Facades\Excel;
 
 class UserController extends Controller
 {
@@ -174,5 +176,20 @@ class UserController extends Controller
         } catch (Exception $e) {
             DB::rollBack();
         }
+    }
+    
+    //Export list as excel file
+    public function export($filter) {
+        list($name, $company, $department, $role) = explode('&&', $filter);
+
+        $users = User::with('roles', 'companies', 'department', 'location')
+        ->where('name', 'like', '%'.$name.'%')
+        ->whereHas('companies', function($c) use($company) { $c->where('name', 'like', '%'.$company.'%'); })
+        ->whereHas('department', function($d) use($department) { $d->where('name', 'like', '%'.$department.'%'); })
+        ->whereHas('roles', function($r) use($role) { $r->where('name', 'like', '%'.$role.'%'); })
+        ->orderBy('id', 'desc')
+        ->get();
+
+        return Excel::download(new UsersExport($users), 'users.xlsx');
     }
 }

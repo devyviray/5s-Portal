@@ -33,6 +33,7 @@
                         </div> 
                         <div class="col text-right">
                             <a href="javascript.void(0)" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#addModal">Add new</a>
+                            <a href="javascript.void(0)" class="btn btn-sm btn-success" data-toggle="modal" data-target="#exportModal">Export List</a>
                         </div>
                     </div>
                     <!--Search Filters-->
@@ -301,6 +302,37 @@
                 </div>
             </div>
         </div>
+		<!-- Export Users Modal -->
+		<div class="modal fade" id="exportModal" tabindex="-1" role="dialog">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel" v-if="filteredUsers.length > 0">EXPORT USERS</h5>
+					<h5 class="modal-title" id="exampleModalLabel" v-else>TABLE IS EMPTY!</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div v-if="filteredUsers.length > 0">
+						<h3>Export {{ this.filteredUsers.length }} user/s to excel file?</h3><br>
+						<div v-if="keywords.name || keywords.company || keywords.department || keywords.role">
+							<h4>Search filters applied:</h4>
+							<div v-if="keywords.name">Name contains: {{ this.keywords.name }}</div>
+							<div v-if="keywords.company">Company: {{ this.keywords.company.name }}</div>
+							<div v-if="keywords.department">Department: {{ this.keywords.department.name }}</div>
+							<div v-if="keywords.role">Role: {{ this.keywords.role.name }}</div>
+						</div>
+					</div>
+					<div v-else>No entries found. Please check your search filters.</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					<a v-if="filteredUsers.length > 0" class="btn btn-success" :href="exportUrl" @click="closeModal('#exportModal')">Export</a>
+				</div>
+				</div>
+			</div>
+		</div>
 
 </div>
 </template>
@@ -343,7 +375,6 @@
                 keywords: {
                     name: '',
                     company: '',
-                    location: '',
                     department: '',
                     role: ''
                 },
@@ -488,6 +519,11 @@
                     this.errors = error.response.data.errors;
                 })
             },
+		    closeModal(name) {
+                $(name).modal('hide');
+		    	$('.modal-backdrop').remove();
+                this.loading = false;
+		    },
             setPage(pageNumber) {
                 this.currentPage = pageNumber;
             },
@@ -512,8 +548,6 @@
                 if (this.keywords.name) list = list.filter( e => e.name.toLowerCase().includes(this.keywords.name.toLowerCase()));
                 //filter by company name
                 if (this.keywords.company) list = list.filter( e => e.companies.some( f => f.name == this.keywords.company.name));
-                //filter by department name
-                if (this.keywords.location) list = list.filter( e => e.location.name  == this.keywords.location.name);
                 //filter by department name
                 if (this.keywords.department) list = list.filter( e => e.department.name  == this.keywords.department.name);
                 //filter by role
@@ -541,6 +575,15 @@
             logoLink(){
                 return window.location.origin+'/img/lafil-logo.png';
             },
+		    exportUrl() { //link for table export
+		    	let endpoint = '/users/export';
+		    	let filter = this.keywords;
+		    	endpoint += '/' + (filter.name? filter.name: '_');
+		    	endpoint += '&&' + (filter.company? filter.company.name: '_');
+		    	endpoint += '&&' + (filter.department? filter.department.name: '_');
+		    	endpoint += '&&' + (filter.role? filter.role.name: '_');
+		    	return endpoint;
+		    }
         }
     }
 </script>

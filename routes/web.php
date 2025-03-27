@@ -78,6 +78,7 @@ Route::group(['middleware' => ['auth', 'role:it|administrator|top management|ins
      Route::get('/user-process-owner/{companyId}/{locationId}', 'UserController@getProcessOwnerPerCompany');
      Route::get('/user-top-management', 'UserController@topManagementUser');
      Route::post('/change-password', 'UserController@changePassword');
+     Route::get('/users/export/{filter}', 'UserController@export');
 
     // roles
     Route::get('/roles', 'RoleController@index')->name('roles');
