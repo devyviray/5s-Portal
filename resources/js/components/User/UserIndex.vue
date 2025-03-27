@@ -35,10 +35,31 @@
                             <a href="javascript.void(0)" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#addModal">Add new</a>
                         </div>
                     </div>
-                    <div class="row align-items-center">
-                        <div class="col-xl-4 mb-2 mt-3 float-right">
-                            <input type="text" class="form-control" placeholder="Search" v-model="keywords" id="keywords">
-                        </div> 
+                    <!--Search Filters-->
+                    <div class="row align-items-center mt-4">
+                        <!--Username-->
+                        <div class="form-group col-2">
+                            <input type="text" class="form-control" placeholder="Search by name" v-model="keywords.name">
+                        </div>
+                        <!--Company-->
+                        <div class="form-group col-3">
+                            <multiselect v-model="keywords.company" :options="companies" :multiple="false"
+                            placeholder="Search by company" label="name" :show-labels="false" />
+                        </div>
+                        <!--Department-->
+                        <div class="form-group col-3">
+                            <multiselect v-model="keywords.department" :options="departments" :multiple="false"
+                            placeholder="Search by department" label="name" :show-labels="false" />
+                        </div>
+                        <!--Role-->
+                        <div class="form-group col-2">
+                            <multiselect v-model="keywords.role" :options="roles" :multiple="false"
+                            placeholder="Search by role" label="name" :show-labels="false" />
+                        </div>
+                        <!--Reset Search-->
+                        <div class="form-group col-1">
+                            <button class="btn btn-muted" @click="keywords = {}">Reset Search</button>
+                        </div>
                     </div>
                 </div>
                 <!-- Locations table -->
@@ -318,7 +339,13 @@
                 errors: [],
                 currentPage: 0,
                 itemsPerPage: 50,
-                keywords: '',
+                keywords: {
+                    name: '',
+                    company: '',
+                    location: '',
+                    department: '',
+                    role: ''
+                },
                 loading: false,
             }
         },
@@ -478,13 +505,23 @@
         },  
         computed:{
             filteredUsers(){
-                let self = this;
-                return self.users.filter(user => {
-                    return user.name.toLowerCase().includes(this.keywords.toLowerCase())
-                });
+                let list = this.users;
+
+                //filter by username
+                if (this.keywords.name) list = list.filter( e => e.name.toLowerCase().includes(this.keywords.name.toLowerCase()));
+                //filter by company name
+                if (this.keywords.company) list = list.filter( e => e.companies.some( f => f.name == this.keywords.company.name));
+                //filter by department name
+                if (this.keywords.location) list = list.filter( e => e.location.name  == this.keywords.location.name);
+                //filter by department name
+                if (this.keywords.department) list = list.filter( e => e.department.name  == this.keywords.department.name);
+                //filter by role
+                if (this.keywords.role) list = list.filter( e => e.roles.some( f => f.name == this.keywords.role.name));
+
+                return list;
             },
             totalPages() {
-                return Math.ceil(this.users.length / this.itemsPerPage);
+                return Math.ceil(this.filteredUsers.length / this.itemsPerPage);
             },
             filteredQueues() {
                 var index = this.currentPage * this.itemsPerPage;
