@@ -36,10 +36,11 @@
                         </div>
                     </div>
                     <!--Search Filters-->
-                    <div class="row align-items-center mt-4">
+                    <h4 class="mt-4 mb-2">Search:</h4>
+                    <div class="row align-items-center">
                         <!--Username-->
                         <div class="form-group col-2">
-                            <input type="text" class="form-control" placeholder="Search by name" v-model="keywords.name">
+                            <input type="text" class="form-control rounded" placeholder="Search by name" v-model="keywords.name">
                         </div>
                         <!--Company-->
                         <div class="form-group col-3">
@@ -47,7 +48,7 @@
                             placeholder="Search by company" label="name" :show-labels="false" />
                         </div>
                         <!--Department-->
-                        <div class="form-group col-3">
+                        <div class="form-group col-4">
                             <multiselect v-model="keywords.department" :options="departments" :multiple="false"
                             placeholder="Search by department" label="name" :show-labels="false" />
                         </div>
