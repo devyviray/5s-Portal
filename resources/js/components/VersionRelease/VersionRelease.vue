@@ -29,7 +29,7 @@
         </div>
 		<!--end::Header-->
 
-		<div class="container-fluid">
+		<div class="container-fluid my-4">
 			<div class="btn btn-white my-4" v-if="isAdministrator" @click="toggleModal('form_modal', true)">Add New Version</div>
 			<div class="d-flex flex-row">
 				<!--begin::Aside-->
@@ -171,7 +171,7 @@
 			:authenticated="isAuthenticated"
 			:formAction="formAction"
 			:feedbackId="feedbackId"
-			@formClose="closeModal()"/>
+			@formClose="toggleModal('feedback_modal', false)"/>
 		<!-- end:Feedback Modal -->
 	</div>
 </template>
@@ -224,6 +224,8 @@
 						this.errors = error.response.data.errors;
 					}
 				});
+
+				console.log('asd');
 			},
 			submit(data) {
 				axios.post(`/version-release/store`, data)
@@ -250,6 +252,7 @@
 				}
 				else {
 					this.errors = [];
+					this.formAction = 'add';
 					this.$modal.hide(name);
 				}
 			},

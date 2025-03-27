@@ -27,7 +27,7 @@
                     </div>
                     <div v-if="formAction == 'add'">
                         <label>Feedback:<span class="text-danger">*</span></label>
-                        <textarea class="form-control mb-2" v-model="feedback"></textarea>
+                        <textarea class="form-control my-2" v-model="feedback"></textarea>
                     </div>
                     <div v-else-if="formAction == 'delete'">
                         <div class="text-center">Press confirm to delete feedback.</div>
@@ -127,7 +127,7 @@
                 }
             },
             closeModal() {
-                this.$emit('fetchList');
+                this.$emit('formClose');
                 this.setDefaultData();
                 this.$modal.hide('feedback_modal');
             },
