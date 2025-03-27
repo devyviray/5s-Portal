@@ -30,22 +30,24 @@
 		<!--end::Header-->
 
 		<div class="container-fluid my-4">
-			<div class="btn btn-white my-4" v-if="isAdministrator" @click="toggleModal('form_modal', true)">Add New Version</div>
+			<div class="text-right">
+				<div class="btn btn-white my-4" v-if="isAdministrator" @click="toggleModal('form_modal', true)">Add New Version</div>
+			</div>
 			<div class="d-flex flex-row">
 				<!--begin::Aside-->
-				<div class="flex-row offcanvas-mobile w-300px w-xl-350px min-h-550px" id="kt_profile_aside">
+				<div class="flex-row col-3 offcanvas-mobile w-300px w-xl-350px min-h-550px" id="kt_profile_aside">
 					<!--begin::Profile Card-->
 					<div class="card card-custom card-stretch shadow-sm">
-						<div class="card-header border-0">
+						<div class="card-header border-0 pt-10 pl-15">
 							<h3 class="card-title font-weight-bolder text-dark">Version Release</h3>
 						</div>
 						<!--begin::Body-->
-						<div class="card-body pt-4 position-relative">
+						<div class="card-body pt-4 table-responsive" style="max-height: 400px;">
 
 							<!--begin::Nav-->
-							<div class="navi navi-bold navi-hover navi-active navi-link-rounded">
-								<div class="navi-item mb-1" v-for="(item, index) in items" :key="index">
-									<a class="btn active border-0 navi-link py-1 pr--2" @click="viewVersion(item)">
+							<div class="navi navi-bold navi-hover navi-active navi-link-rounded pb-8">
+								<div class="navi-item mb-1" v-for="(item, index) in filteredQueues" :key="index">
+									<a class="navi-link cursor-pointer py-1 pr--2" @click="viewVersion(item)">
 										<span class="navi-icon mr-2">
 											<span class="svg-icon">
 												<!--begin::Svg Icon | path:assets/media/svg/icons/Design/Layers.svg-->
@@ -76,15 +78,25 @@
 							<!--end::Nav-->
 						</div>
 						<!--end::Body-->
-						
+						<div class="card-footer py-2">
+							<!--begin::Pagination-->
+                         	<div class="d-flex justify-content-center align-items-center mb-2" v-if="filteredQueues.length">
+                         	    <button v-if="!onFirstPage" class="btn btn-muted btn-sm" v-on:click="currentPage--">
+ 									<i class="fa fa-angle-left"></i></button>
+                         	    <span class="text-dark">Page {{ this.currentPage + 1 }} of {{ this.totalPages }}</span>
+                         	    <button v-if="!onLastPage" class="btn btn-muted btn-sm" v-on:click="currentPage++">
+ 									<i class="fa fa-angle-right"></i></button>
+                         	</div>
+							<!--end::Pagination-->
+						</div>
 					</div>
 					<!--end::Profile Card-->
 				</div>
 				<!--end::Aside-->
 				<!--begin::Content-->
-				<div class="flex-row-fluid col-9">
+				<div class="flex-row col-9 p-0">
 					<!--begin::Advance Table: Widget 7-->
-					<div class="card card-custom card-stretch px-8 shadow-sm">
+					<div class="card card-custom card-stretch px-2 shadow-sm">
 						<!--begin::Header-->
 						<div class="card-header border-0 pt-10">
 							<h3 class="card-title align-items-start flex-column">
@@ -94,7 +106,7 @@
 						</div>
 						<!--end::Header-->
 						<!--begin::Body-->
-						<div class="card-body">
+						<div class="card-body table-responsive" style="max-height: 400px;">
 							<div class="mb-10" v-if="!isEmpty(selectedVersion)">
 								<!--New features-->
 								<VersionItems type="new" :version_release_id="selectedVersion.id"
@@ -120,7 +132,7 @@
 				</div>
 				<!--end::Content-->
 			</div>
-			<div class="card card-custom card-stretch my-4">
+			<div class="card card-custom card-stretch my-3">
 				<div class="card-body">
 					<!--begin::Feedbacks Table-->
 					<div v-if="!isEmpty(selectedVersion.feedbacks)">
@@ -198,6 +210,8 @@
 				errors: [],
 				formAction: 'add',
 				loading: false,
+ 				currentPage: 0,
+ 				itemsPerPage: 10,
 				feedbackId: 0 //for feedback deletion
 			}
 		},
@@ -305,6 +319,26 @@
             logoLink(){
                 return window.location.origin+'/img/lafil-logo.png';
             },
+ 			//Pagination
+ 			onFirstPage() {
+ 				return this.currentPage == 0;
+ 			},
+ 			onLastPage() {
+ 				return this.currentPage == this.totalPages - 1;
+ 			},
+             totalPages() {
+                 return Math.ceil(Object.values(this.items).length / this.itemsPerPage)
+             },
+             filteredQueues() {
+                 var index = this.currentPage * this.itemsPerPage;
+                 var queues_array = this.items.slice(index, index + this.itemsPerPage);
+ 
+                 if(this.currentPage >= this.totalPages) this.currentPage = this.totalPages - 1;
+ 
+                 if(this.currentPage < 0) this.currentPage = 0;
+ 
+                 return queues_array;
+             },
 		}
 	}
 </script>

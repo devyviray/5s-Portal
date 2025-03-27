@@ -33,7 +33,7 @@ class VersionReleaseController extends Controller
             ->with('feedbacks.user')
             ->orderBy('release_date', 'desc')
             ->orderBy('id','desc') //in case release date doesnt sort properly
-            ->paginate(10);
+            ->paginate();
 
         $versionRelease->getCollection()->transform(function($item) {
             $data = [];

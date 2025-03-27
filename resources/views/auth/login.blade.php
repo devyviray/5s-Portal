@@ -18,7 +18,7 @@
                             <div class="title">{{ __('Sign in your account') }}</div>
                             <div class="mb-2 text-center">
                                 <a class="text-muted text-xs" href="{{ route('version-release') }}" target="_blank">
-                                    {{ __('Check Version History') }}
+                                    {{ __('Check the latest version') }}
                                 </a>
                             </div>
                         </div>
