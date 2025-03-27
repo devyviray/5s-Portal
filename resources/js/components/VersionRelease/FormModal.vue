@@ -135,6 +135,7 @@ import moment from 'moment';
             },
             closeModal() {
                 this.setDefaultData();
+                this.$modal.hide('form_modal');
             },
             newItem(itemType) {
                 this.formData[itemType].push({description: null});

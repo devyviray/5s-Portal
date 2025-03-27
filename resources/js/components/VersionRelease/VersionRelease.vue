@@ -30,7 +30,7 @@
 		<!--end::Header-->
 
 		<div class="container-fluid">
-			<div class="btn btn-white my-4" v-if="isAdministrator" @click="toggleModal(true)">Add New Version</div>
+			<div class="btn btn-white my-4" v-if="isAdministrator" @click="toggleModal('form_modal', true)">Add New Version</div>
 			<div class="d-flex flex-row">
 				<!--begin::Aside-->
 				<div class="flex-row offcanvas-mobile w-300px w-xl-350px min-h-550px" id="kt_profile_aside">
@@ -120,6 +120,42 @@
 				</div>
 				<!--end::Content-->
 			</div>
+			<div class="card card-custom card-stretch my-4">
+				<div class="card-body">
+					<!--begin::Feedbacks Table-->
+					<div v-if="!isEmpty(selectedVersion.feedbacks)">
+						<h3>Vsn {{ selectedVersion.version || "0000.00.00" }} Feedback</h3>
+						<div style="max-height: 360px" class="table-responsive my-4">
+							<table class="table table-head-custom table-vertical-center mb-4">
+ 							    <thead>
+ 							    	<tr class="text-uppercase">
+										<th class="col-2">Username</th>
+										<th class="col-2">Email</th>
+ 										<th class="col-2">Date</th>
+ 										<th class="col-8">Feedback Notes</th>
+ 							    	</tr>
+ 							    </thead>
+ 							    <tbody>
+ 							        <tr v-for="feedback in selectedVersion.feedbacks">
+										<td>{{ feedback.user.name }}</td>
+										<td>{{ feedback.user.email }}</td>
+ 									    <td>{{ feedback.created_at.slice(0, 10) }}</td>
+ 									    <td>{{ feedback.feedback }}</td>
+										<td>
+											<a href="javascript:;" @click="deleteFeedback(feedback.id)">
+												<i class="fa fa-trash font-size-sm text-danger"></i>
+											</a>
+										</td>
+ 							        </tr>
+ 							    </tbody>
+ 							</table>
+						</div>
+					</div>
+					<!--end::Feedbacks Table-->
+					<span>Comments? Suggestions? </span>
+					<a href="javascript:;" @click="toggleModal('feedback_modal', true)">Send your feedback!</a>
+				</div>
+			</div>
 		</div>
 
 		<!-- begin:Add Modal -->
@@ -129,11 +165,20 @@
 			:formAction="formAction"
 			@submit="submit"/>
 		<!-- end:Add Modal -->
+		<!-- begin:Feedback Modal -->
+		<feedback-modal
+			:versionReleaseId="selectedVersion.id"
+			:authenticated="isAuthenticated"
+			:formAction="formAction"
+			:feedbackId="feedbackId"
+			@formClose="closeModal()"/>
+		<!-- end:Feedback Modal -->
 	</div>
 </template>
 
 <script>
 	import FormModal from './FormModal.vue';
+	import FeedbackModal from './FeedbackModal.vue';
     import loader from '../Loader';
     import navbarRight from '../NavbarRight';
 	import VersionItems from './VersionItems.vue';
@@ -143,7 +188,7 @@
 		name: "VersionRelease",
 
 		props: ['userId','userRoleLevel','userName'],
-		components: {FormModal,VersionItems,loader,navbarRight},
+		components: {FormModal,FeedbackModal,VersionItems,loader,navbarRight},
 
 		data() {
 			return {
@@ -152,7 +197,8 @@
 				selectedVersion: {},
 				errors: [],
 				formAction: 'add',
-				loading: false
+				loading: false,
+				feedbackId: 0 //for feedback deletion
 			}
 		},
 		created() {
@@ -184,7 +230,7 @@
 				.then( result => {
 					if (result) {
 						this.fetchList();
-						this.toggleModal(false);
+						this.toggleModal('form_modal', false);
 					}
 				}).catch(error => {
 					if(error.response.status === 422) {
@@ -198,13 +244,13 @@
 			isEmpty(data) {
 				return _.isEmpty(data);
 			},
-			toggleModal(toggle) {
+			toggleModal(name, toggle) {
 				if (toggle) {
-					this.$modal.show("form_modal");
+					this.$modal.show(name);
 				}
 				else {
 					this.errors = [];
-					this.$modal.hide("form_modal");
+					this.$modal.hide(name);
 				}
 			},
 			deleteVersion(data = null) {
@@ -231,6 +277,11 @@
             	  	}
             	});
         	},
+			deleteFeedback(feedbackId) {
+				this.formAction = 'delete';
+				this.feedbackId = feedbackId;
+				this.toggleModal('feedback_modal', true);
+			},
 			showLoader() {
 				this.loading = true;
 			}

@@ -6,11 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
-class VersionReleaseFeedback extends Model implements Auditable
+class VersionReleaseFeedback extends Model
 {
     protected $table = 'version_release_feedbacks';
 
-    use SoftDeletes,\OwenIt\Auditing\Auditable;
+    use SoftDeletes;
 
     protected $fillable = [
         'version_release_id','user_id','feedback'

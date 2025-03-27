@@ -24,6 +24,8 @@ Route::group(['prefix' => 'version-release'], function () {
     Route::get('/all', 'VersionReleaseController@all');
     Route::post('/submit-feedback', 'VersionReleaseController@submitFeedback');
     Route::post('/delete-feedback', 'VersionReleaseController@deleteFeedback');
+    Route::post('/submit-feedback', 'VersionReleaseController@submitFeedback');
+    Route::post('/delete-feedback', 'VersionReleaseController@deleteFeedback');
 });
 
 Route::group(['middleware' => 'auth'], function(){
