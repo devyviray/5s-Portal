@@ -1,6 +1,7 @@
 <template>
 	<div>
 		<!--begin::Nav Bar-->
+        <loader v-if="loading"></loader>
         <nav class="navbar navbar-default top-navbar" role="navigation" v-if="isAuthenticated">
             <div class="row">
                 <div class="col-md-8"></div>
@@ -27,10 +28,9 @@
             <breadcrumb :user-role-level="userRoleLevel"></breadcrumb>
         </div>
 		<!--end::Header-->
-		<div class="btn btn-white p-3 m-8 float-right" v-if="isAdministrator" @click="toggleModal(true)">Add New Version</div>
-		<h1 class="p-10 text-white">Version Release History</h1>
 
 		<div class="container-fluid">
+			<div class="btn btn-white my-4" v-if="isAdministrator" @click="toggleModal(true)">Add New Version</div>
 			<div class="d-flex flex-row">
 				<!--begin::Aside-->
 				<div class="flex-row offcanvas-mobile w-300px w-xl-350px min-h-550px" id="kt_profile_aside">
@@ -98,15 +98,15 @@
 							<div class="mb-10" v-if="!isEmpty(selectedVersion)">
 								<!--New features-->
 								<VersionItems type="new" :version_release_id="selectedVersion.id"
-								:items="selectedVersion.release_note.new" @submitSuccess="submitSuccess"
+								:items="selectedVersion.release_note.new" @submitSuccess="fetchList"
 								:lastItem="lastItem" :isAdministrator="isAdministrator"/>
 								<!--Updates-->
 								<VersionItems type="updates" :version_release_id="selectedVersion.id"
-								:items="selectedVersion.release_note.updates" @submitSuccess="submitSuccess"
+								:items="selectedVersion.release_note.updates" @submitSuccess="fetchList"
 								:lastItem="lastItem" :isAdministrator="isAdministrator"/>
 								<!--Fixes-->
 								<VersionItems type="fixes" :version_release_id="selectedVersion.id"
-								:items="selectedVersion.release_note.fixes" @submitSuccess="submitSuccess"
+								:items="selectedVersion.release_note.fixes" @submitSuccess="fetchList"
 								:lastItem="lastItem" :isAdministrator="isAdministrator"/>
 							</div>
 							<div v-else>
@@ -127,14 +127,15 @@
 			:data="data"
 			:formErrors="errors"
 			:formAction="formAction"
-			@submit="submit"
-			@formClose="toggleModal(false)"/>
+			@submit="submit"/>
 		<!-- end:Add Modal -->
 	</div>
 </template>
 
 <script>
 	import FormModal from './FormModal.vue';
+    import loader from '../Loader';
+    import navbarRight from '../NavbarRight';
 	import VersionItems from './VersionItems.vue';
 	import Swal from 'sweetalert2';
 
@@ -142,7 +143,7 @@
 		name: "VersionRelease",
 
 		props: ['userId','userRoleLevel','userName'],
-		components: {FormModal,VersionItems},
+		components: {FormModal,VersionItems,loader,navbarRight},
 
 		data() {
 			return {
@@ -150,7 +151,8 @@
 				items: [],
 				selectedVersion: {},
 				errors: [],
-				formAction: 'add'
+				formAction: 'add',
+				loading: false
 			}
 		},
 		created() {
@@ -178,15 +180,17 @@
 				});
 			},
 			submit(data) {
-				if(this.formAction == 'add') {
-					axios.post(`/version-release/store`, data).then( result => {
-						if (result) window.location.reload();
-					});
-				} else {
-					axios.put(`/version-release/update/${data.id}`, data).then (result => {
-						if (result) window.location.reload();
-					});
-				}
+				axios.post(`/version-release/store`, data)
+				.then( result => {
+					if (result) {
+						this.fetchList();
+						this.toggleModal(false);
+					}
+				}).catch(error => {
+					if(error.response.status === 422) {
+						this.errors = error.response.data.errors;
+					}
+				});
 			},
 			viewVersion(version) {
 				this.selectedVersion = version;
@@ -202,9 +206,6 @@
 					this.errors = [];
 					this.$modal.hide("form_modal");
 				}
-			},
-			submitSuccess() {
-				this.fetchList();
 			},
 			deleteVersion(data = null) {
             if(_.isEmpty(data)) return;
@@ -229,7 +230,10 @@
             	    	});
             	  	}
             	});
-        	}
+        	},
+			showLoader() {
+				this.loading = true;
+			}
 		},
 		computed: {
 			isAdministrator() {

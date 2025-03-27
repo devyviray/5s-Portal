@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class VersionRelease extends Model implements Auditable
+class VersionRelease extends Model
 {
-    use SoftDeletes,\OwenIt\Auditing\Auditable;
+    use SoftDeletes;
 
     protected $fillable = [
         'version',

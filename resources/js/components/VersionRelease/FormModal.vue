@@ -14,7 +14,6 @@
                         VERSION RELEASE
                     </h4>
                 </div>
-                <!-- <span class="pt-8" @click="closeModal()"><i class="far fa-window-close"></i></span> -->
             </div>
             <div class="card-body">
                 <div class="row">
@@ -136,7 +135,6 @@ import moment from 'moment';
             },
             closeModal() {
                 this.setDefaultData();
-                this.$emit('formClose');
             },
             newItem(itemType) {
                 this.formData[itemType].push({description: null});
@@ -146,20 +144,14 @@ import moment from 'moment';
                 this.formData[itemType].splice(index, 1);
             },
             setDefaultData() {
-                if(this.formAction == 'edit') {
-                    this.formData = this.data;
-                    this.version = this.data.version;
-                    this.currentYear = this.data.year;
-                } else {
-                    this.version = '';
-                    this.currentYear = moment().format('YYYY');
-                    this.formData = {
-                        new_features: [ {description: null} ],
-                        updates: [ {description: null} ],
-                        fixes: [ {description: null} ]
-                    };
-                    this.currentYear = moment().format('YY');
-                }
+                this.version = '';
+                this.currentYear = moment().format('YYYY');
+                this.formData = {
+                    new_features: [ {description: null} ],
+                    updates: [ {description: null} ],
+                    fixes: [ {description: null} ]
+                };
+                this.currentYear = moment().format('YY');
             },
             clearEmptyFields(data) { //Clears all additional empty fields in the data sheet
                 if (data.length > 1) {

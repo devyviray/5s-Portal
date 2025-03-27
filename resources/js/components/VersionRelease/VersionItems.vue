@@ -17,7 +17,7 @@
                     <span>{{ item.description }}</span>
                     <a href="javascript:;" @click="toggleInput(item)" v-if="isAdministrator">
                         <i class="fa fa-edit text-primary"></i></a>
-                    <a href="javascript:;" @click="deleteItem(item)" v-if="isAdministrator">
+                    <a href="javascript:;" @click="deleteItem(item)" v-if="isAdministrator && !lastItem">
                         <i class="fa fa-trash text-danger"></i></a>
                 </span>
             </li>
@@ -66,68 +66,42 @@ export default {
                 id: this.selectedItem.id,
                 version_release_id: this.version_release_id,
                 type: this.type,
-                description,
+                description: description,
             }
-            axios.post('/version-release/submit-item',data)
+            
+            axios.post('/version-release/submit-item', data)
             .then(res => {
                 this.toggleInput();
                 this.$emit('submitSuccess');
-            })
+            });
         },
         deleteItem(data = null){
             if(_.isEmpty(data)) return;
             
             this.selectedItem = data;
-            if (this.lastItem) this.deleteVersion();
-            else this.deleteNote();
-        },
-        deleteNote() {
+            
             Swal.fire({
-              title: "Delete from " + this.selectedItem.type + "?",
-              text: "'" + this.selectedItem.description + "'",
-              icon: "warning",
-              showCancelButton: true,
-              confirmButtonColor: "#e24444",
-              cancelButtonColor: "#666666",
-              confirmButtonText: "Delete",
+                title: "Delete from " + this.selectedItem.type + "?",
+                text: "'" + this.selectedItem.description + "'",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#e24444",
+                cancelButtonColor: "#666666",
+                confirmButtonText: "Delete",
             }).then((result) => {
                 if (result.isConfirmed) {
-                  axios.delete(`/version-release/delete-item/${this.selectedItem.id}`);
-                  Swal.fire({
-                    title: "Note deleted!",
-                    icon: "success",
-                    confirmButtonColor: "666666",
-                    confirmButtonText: "Close",
-                  }).then((result) => {
-                      if (result.isConfirmed) window.location.reload();
-                  });
+                    axios.delete(`/version-release/delete-item/${this.selectedItem.id}`);
+                    Swal.fire({
+                        title: "Note deleted!",
+                        icon: "success",
+                        confirmButtonColor: "666666",
+                        confirmButtonText: "Close",
+                    }).then((result) => {
+                        if (result.isConfirmed) window.location.reload();
+                    });
                 }
             });
         },
-        deleteVersion() {
-            Swal.fire({
-              title: "Deleting last item!",
-              text: "This is the last item on the list. Deleting this will erase the entire version. Proceed?",
-              icon: "warning",
-              showCancelButton: true,
-              confirmButtonColor: "#e24444",
-              cancelButtonColor: "#666666",
-              confirmButtonText: "Delete",
-            }).then((result) => {
-                if (result.isConfirmed) {
-                  axios.delete(`/version-release/delete-item/${this.selectedItem.id}`);
-                  axios.delete(`/version-release/delete/${this.selectedItem.version_release_id}`);
-                  Swal.fire({
-                    title: "Version deleted!",
-                    icon: "success",
-                    confirmButtonColor: "666666",
-                    confirmButtonText: "Close",
-                  }).then((result) => {
-                      if (result.isConfirmed) window.location.reload();
-                  });
-                }
-            });
-        }
 
     },
     watch:{
