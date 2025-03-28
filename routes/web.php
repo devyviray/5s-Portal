@@ -89,6 +89,7 @@ Route::group(['middleware' => ['auth', 'role:it|administrator|top management|ins
     // checklist
     Route::get('/checklists', 'ChecklistController@index')->name('checklists');
     Route::get('/checklists-all', 'ChecklistController@indexData');
+    Route::get('/checklist-export', 'ChecklistController@export');
     Route::post('/checklist', 'ChecklistController@store');
     Route::patch('/checklist/{checklist}', 'ChecklistController@update');
     Route::delete('/checklist/{batchId}', 'ChecklistController@destroy');

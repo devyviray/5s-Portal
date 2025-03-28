@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use DB;
 use App\{
-    Checklist
+    Checklist,
+    ChecklistExport
 };
+use Maatwebsite\Excel\Facades\Excel;
 
 class ChecklistController extends Controller
 {
@@ -139,5 +141,12 @@ class ChecklistController extends Controller
         })->when($categoryName == 'Offices', function ($q){
             $q->where('name', 'Offices');
         })->orderBy('id','asc')->get()->groupBy('batch');
+    }
+    
+    //Export as excel file
+    public function export() {
+        $list = Checklist::orderBy('id','asc')->get()->groupBy('batch');
+
+        return Excel::download(new ChecklistExport($list), 'checklist.xlsx');
     }
 }
