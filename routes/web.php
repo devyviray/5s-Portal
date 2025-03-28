@@ -97,6 +97,7 @@ Route::group(['middleware' => ['auth', 'role:it|administrator|top management|ins
     // faq
     Route::get('/faqs', 'FaqController@index')->name('faqs');
     Route::get('/faqs-all', 'FaqController@indexData');
+    Route::get('/faqs-export', 'FaqController@export');
     Route::post('/faq', 'FaqController@store');
     Route::patch('/faq/{faq}', 'FaqController@update');
     Route::delete('/faq/{faq}', 'FaqController@destroy');
