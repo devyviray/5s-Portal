@@ -8,14 +8,15 @@ use Maatwebsite\Excel\Concerns\FromView;
 
 class UsersExport implements FromView
 {
-    protected $users;
+    protected $users, $filter;
 
-    public function __construct($users) {
+    public function __construct($users, $filter) {
         $this->users = $users;
+        $this->filter = $filter;
     }
 
     public function view(): View
     {
-        return view('user.export', ['users' => $this->users]);
+        return view('user.export', ['users' => $this->users, 'filter' => $this->filter]);
     }
 }

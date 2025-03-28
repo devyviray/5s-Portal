@@ -189,7 +189,12 @@ class UserController extends Controller
         ->whereHas('roles', function($r) use($role) { $r->where('name', 'like', '%'.$role.'%'); })
         ->orderBy('id', 'desc')
         ->get();
+        
+        $filtersUsed = array('name' =>  'Name: '.($name != '_'? $name: 'All'),
+        'company' => 'Company: '.($company != '_'? $company: 'All'),
+        'department' => 'Department: '.($department != '_'? $department: 'All'),
+        'role' => 'Role: '.($role != '_'? $role: 'All'));
 
-        return Excel::download(new UsersExport($users), 'users.xlsx');
+        return Excel::download(new UsersExport($users, $filtersUsed), 'users.xlsx');
     }
 }
