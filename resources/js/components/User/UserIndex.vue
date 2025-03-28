@@ -65,7 +65,7 @@
                     </div>
                 </div>
                 <!-- Locations table -->
-                <table class="table align-items-center table-flush">
+                <table class="table align-items-center table-responsive table-flush mt-2">
                     <thead class="thead-light">
                         <tr>
                             <th></th>
@@ -75,6 +75,8 @@
                             <th scope="col">Company</th>
                             <th scope="col">Department</th>
                             <th scope="col">Role</th>
+                            <th scope="col">Created at</th>
+                            <th scope="col">Last Login</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -105,6 +107,8 @@
                                     {{ role.name }} <br/>
                                 </span> 
                             </td>
+                            <td>{{ user.created_at }}</td>
+                            <td>{{ user.last_login_at? user.last_login_at: '--' }}</td>
                         </tr>
                     </tbody>
                 </table>

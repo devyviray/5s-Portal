@@ -20,6 +20,8 @@
 		<th style="font-weight: bold">COMPANIES</th>
 		<th style="font-weight: bold">DEPARTMENT</th>
 		<th style="font-weight: bold">ROLE</th>
+		<th style="font-weight: bold">CREATED AT</th>
+		<th style="font-weight: bold">LAST LOGIN</th>
     </tr>
     </thead>
     <tbody>
@@ -39,6 +41,8 @@
 		    	<span>{{ $role->name }}<br></span>
                 @endforeach
 		    </td>
+			<td style="width: 150px">{{ $user->created_at }}</td>
+			<td style="width: 150px">{{ $user->last_login_at? $user->last_login_at: '--' }}</td>
         </tr>
     @endforeach
     </tbody>
