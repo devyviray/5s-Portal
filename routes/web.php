@@ -151,6 +151,7 @@ Route::group(['middleware' => ['auth', 'role:it|administrator|top management|ins
     // company categories
     Route::get('/company-areas', 'CompanyCategoryController@index')->name('company-categories');
     Route::get('/company-areas-all', 'CompanyCategoryController@indexData');
+    Route::get('/company-areas-export', 'CompanyCategoryController@export');
     Route::post('/company-area', 'CompanyCategoryController@store');
     Route::patch('/company-area/{companyCategory}', 'CompanyCategoryController@update');
     Route::delete('/company-area/{companyCategory}', 'CompanyCategoryController@destroy');

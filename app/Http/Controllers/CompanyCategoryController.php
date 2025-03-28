@@ -7,8 +7,10 @@ use App\Rules\CompanyAreaRule;
 use DB;
 use App\{
     CompanyCategory,
-    Report
+    Report,
+    CompanyCategoryExport
 };
+use Maatwebsite\Excel\Facades\Excel;
 
 class CompanyCategoryController extends Controller
 {
@@ -150,5 +152,12 @@ class CompanyCategoryController extends Controller
             $q->where('operation_line_id', $operationLineId);
         })->get();
 
+    }
+    
+    //Export as excel file
+    public function export() {
+        $list = CompanyCategory::with('company', 'location', 'operationLine', 'category', 'areas')->orderBy('id','desc')->get();
+
+        return Excel::download(new CompanyCategoryExport($list), 'company_areas.xlsx');
     }
 }
