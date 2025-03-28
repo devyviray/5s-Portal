@@ -143,9 +143,16 @@ class ChecklistController extends Controller
         })->orderBy('id','asc')->get()->groupBy('batch');
     }
     
-    //Export as excel file
-    public function export() {
-        $list = Checklist::orderBy('id','asc')->get()->groupBy('batch');
+    //Export batch as excel file
+    public function export($batchId) {
+        $list = Checklist::where('batch', $batchId)->orderBy('id','asc')->get();
+
+        return Excel::download(new ChecklistExport($list), 'checklist_batch_'.$batchId.'.xlsx');
+    }
+
+    //Export all as excel file
+    public function exportAll() {
+        $list = Checklist::orderBy('batch','asc')->get();
 
         return Excel::download(new ChecklistExport($list), 'checklist.xlsx');
     }

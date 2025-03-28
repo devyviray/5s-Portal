@@ -33,7 +33,7 @@
                         </div> 
                         <div class="col text-right">
                             <a href="javascript.void(0)" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#addModal">Add new</a>
-                            <a href="javascript.void(0)" class="btn btn-sm btn-success" data-toggle="modal" data-target="#exportModal">Export</a>
+                            <a href="javascript.void(0)" class="btn btn-sm btn-success" data-toggle="modal" data-target="#exportModal" @click="checklist_copieds_batch = ''">Export</a>
                         </div>
                     </div>
                     <div class="row align-items-center">
@@ -62,6 +62,7 @@
                                     </a>
                                     <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
                                         <a class="dropdown-item" data-toggle="modal" data-target="#editModal" style="cursor: pointer" @click="copyObject(checklist,c)">Edit</a>
+                                        <a class="dropdown-item" data-toggle="modal" data-target="#exportModal" style="cursor: pointer" @click="copyObject(checklist,c)">Export</a>
                                         <a class="dropdown-item" data-toggle="modal" data-target="#deleteModal" style="cursor: pointer" @click="copyObject(checklist,c)">Delete</a>
                                     </div>
                                 </div>
@@ -259,14 +260,14 @@
                    <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
-                                Export checklist as excel file?
+                                Export {{this.checklist_copieds_batch?'batch '+this.checklist_copieds_batch:'all'}} as excel file?
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" data-dismiss='modal'>Close</button>
-					<a class="btn btn-success" href="/checklist-export" @click="exportSuccess">Export</a>
+					<a class="btn btn-success" :href="exportUrl" @click="exportSuccess">Export</a>
                 </div>
                 </div>
             </div>
@@ -310,6 +311,7 @@
                     requirement: '',
                     description: '',
                 }],
+                checklist_copieds_batch: '',
                 checklist_copieds_index: '', 
                 companies: [],
                 company:[],
@@ -447,8 +449,8 @@
                 })
             },
             exportSuccess(){
-                    this.loading = false;
-                    $('#exportModal').modal('hide');
+                this.loading = false;
+                $('#exportModal').modal('hide');
             },
             fetchChecklists (){
                 axios.get('/checklists-all')
@@ -493,6 +495,12 @@
             logoLink(){
                 return window.location.origin+'/img/lafil-logo.png';
             },
+            exportUrl(){
+                let link = '/checklist-export';
+                let batch = this.checklist_copieds_batch;
+                link += batch ? '/' + batch : '-all';
+                return link;
+            }
         }
     }
 </script>
