@@ -155,9 +155,20 @@ class CompanyCategoryController extends Controller
     }
     
     //Export as excel file
-    public function export() {
-        $list = CompanyCategory::with('company', 'location', 'operationLine', 'category', 'areas')->orderBy('id','desc')->get();
+    public function export($filter) {
+        list($company, $category, $area) = explode('&&', $filter);
 
-        return Excel::download(new CompanyCategoryExport($list), 'company_areas.xlsx');
+        $list = CompanyCategory::with('company', 'location', 'operationLine', 'category', 'areas')
+        ->whereHas('company', function($e) use($company) { $e->where('name', 'like', '%'.$company.'%'); })
+        ->whereHas('category', function($e) use($category) { $e->where('name', 'like', '%'.$category.'%'); })
+        ->whereHas('areas', function($e) use($area) { $e->where('name', 'like', '%'.$area.'%'); })
+        ->orderBy('id','desc')
+        ->get();
+
+        $filtersUsed = 'Company: '.($company != '_'? $company: 'All')
+        .', Category: '.($category != '_'? $category: 'All')
+        .', Area: '.($area != '_'? $area: 'All');
+
+        return Excel::download(new CompanyCategoryExport($list, $filtersUsed), 'company_areas.xlsx');
     }
 }

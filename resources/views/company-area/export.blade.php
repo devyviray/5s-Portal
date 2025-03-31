@@ -1,13 +1,26 @@
 <table>
     <thead>
-    <tr>
-        <th style="font-weight: bold">ID</th>
-        <th style="font-weight: bold">NAME</th>
-        <th style="font-weight: bold">LOCATION</th>
-        <th style="font-weight: bold">CATEGORY</th>
-        <th style="font-weight: bold">OPERATION LINE</th>
-        <th style="font-weight: bold">AREA</th>
-    </tr>
+ 		<tr>
+ 			<td style="font-weight: bold">Total Items:</td>
+ 			<td style="text-align: left">{{ count($list) }}</td>
+ 		</tr>
+ 		@if($filter)
+ 		<tr>
+ 			<td style="font-weight: bold">Filtered by:</td>
+ 			<td colspan="2" style="text-align: left">
+ 				{{ $filter }}
+ 			</td>
+ 		</tr>
+ 		<tr></tr>
+ 		@endif
+        <tr>
+            <th style="font-weight: bold">ID</th>
+            <th style="font-weight: bold">NAME</th>
+            <th style="font-weight: bold">LOCATION</th>
+            <th style="font-weight: bold">CATEGORY</th>
+            <th style="font-weight: bold">OPERATION LINE</th>
+            <th style="font-weight: bold">AREA</th>
+        </tr>
     </thead>
     <tbody>
     @foreach($list as $item)
