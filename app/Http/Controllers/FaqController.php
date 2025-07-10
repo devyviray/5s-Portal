@@ -6,8 +6,10 @@ use Illuminate\Http\Request;
 use DB;
 use Auth;
 use App\{
-    Faq
+    Faq,
+    FaqsExport
 };
+use Maatwebsite\Excel\Facades\Excel;
 
 class FaqController extends Controller
 {
@@ -106,5 +108,12 @@ class FaqController extends Controller
         if($faq->delete()){
             return $faq;
         }
+    }
+    
+    //Export as excel file
+    public function export() {
+        $list = Faq::with('user')->orderBy('id','desc')->get();
+
+        return Excel::download(new FaqsExport($list), 'faqs.xlsx');
     }
 }
