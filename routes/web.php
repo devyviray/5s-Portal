@@ -19,6 +19,15 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
+Route::group(['prefix' => 'version-release'], function () {
+    Route::get('/', 'VersionReleaseController@index')->name('version-release');
+    Route::get('/all', 'VersionReleaseController@all');
+    Route::post('/submit-feedback', 'VersionReleaseController@submitFeedback');
+    Route::post('/delete-feedback', 'VersionReleaseController@deleteFeedback');
+    Route::post('/submit-feedback', 'VersionReleaseController@submitFeedback');
+    Route::post('/delete-feedback', 'VersionReleaseController@deleteFeedback');
+});
+
 Route::group(['middleware' => 'auth'], function(){
     // faq
     Route::get('/faqs-page', 'FaqController@indexPage');
@@ -159,4 +168,11 @@ Route::group(['middleware' => ['auth', 'role:it|administrator|top management|ins
     Route::delete('/company-area/{companyCategory}', 'CompanyCategoryController@destroy');
     Route::get('/company-areas-per-company/{companyId}/{locationId}/{categoryId}/{operationLineId}', 'CompanyCategoryController@companyAreaPerCompany');
 
+    // Version Release
+    Route::group(['prefix' => 'version-release'], function () {
+        Route::post('/store', 'VersionReleaseController@store');
+        Route::post('/submit-item', 'VersionReleaseController@submitItem');
+        Route::delete('/delete/{id}', 'VersionReleaseController@delete');
+        Route::delete('/delete-item/{id}', 'VersionReleaseController@deleteItem');
+    });
 });
