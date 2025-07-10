@@ -7,8 +7,10 @@ use App\Rules\CompanyAreaRule;
 use DB;
 use App\{
     CompanyCategory,
-    Report
+    Report,
+    CompanyCategoryExport
 };
+use Maatwebsite\Excel\Facades\Excel;
 
 class CompanyCategoryController extends Controller
 {
@@ -150,5 +152,23 @@ class CompanyCategoryController extends Controller
             $q->where('operation_line_id', $operationLineId);
         })->get();
 
+    }
+    
+    //Export as excel file
+    public function export($filter) {
+        list($company, $category, $area) = explode('&&', $filter);
+
+        $list = CompanyCategory::with('company', 'location', 'operationLine', 'category', 'areas')
+        ->whereHas('company', function($e) use($company) { $e->where('name', 'like', '%'.$company.'%'); })
+        ->whereHas('category', function($e) use($category) { $e->where('name', 'like', '%'.$category.'%'); })
+        ->whereHas('areas', function($e) use($area) { $e->where('name', 'like', '%'.$area.'%'); })
+        ->orderBy('id','desc')
+        ->get();
+
+        $filtersUsed = 'Company: '.($company != '_'? $company: 'All')
+        .', Category: '.($category != '_'? $category: 'All')
+        .', Area: '.($area != '_'? $area: 'All');
+
+        return Excel::download(new CompanyCategoryExport($list, $filtersUsed), 'company_areas.xlsx');
     }
 }

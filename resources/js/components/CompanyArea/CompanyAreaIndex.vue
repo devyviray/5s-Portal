@@ -33,12 +33,30 @@
                         </div> 
                         <div class="col text-right">
                             <a href="javascript.void(0)" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#addModal">Add new</a>
+                            <a href="javascript.void(0)" class="btn btn-sm btn-success" data-toggle="modal" data-target="#exportModal">Export</a>
                         </div>
                     </div>
-                    <div class="row align-items-center">
-                        <div class="col-xl-4 mb-2 mt-3 float-right">
-                            <input type="text" class="form-control" placeholder="Search" v-model="keywords" id="keywords">
-                        </div> 
+                    <!--Search Filters-->
+                    <div class="row align-items-center mb-2 mt-3">
+                        <!--Company name-->
+                        <div class="form-group col-5">
+                            <multiselect v-model="keywords.company" :options="companies" :multiple="false"
+                            placeholder="Search by company" label="name" :show-labels="false" />
+                        </div>
+                        <!--Category-->
+                        <div class="form-group col-3">
+                            <multiselect v-model="keywords.category" :options="categories" :multiple="false"
+                            placeholder="Search by category" label="name" :show-labels="false" />
+                        </div>
+                        <!--Area-->
+                        <div class="form-group col-3">
+                            <multiselect v-model="keywords.area" :options="areas" :multiple="false"
+                            placeholder="Search by area" label="name" :show-labels="false" />
+                        </div>
+                        <!--Reset Search-->
+                        <div class="form-group col-1">
+                            <button class="btn btn-muted" @click="keywords = {}">Reset Search</button>
+                        </div>
                     </div>
                 </div>
                 <!-- Locations table -->
@@ -295,6 +313,37 @@
             </div>
         </div>
 
+        <!-- Export Modal -->
+        <div class="modal fade" id="exportModal" tabindex="-1" role="dialog" data-backdrop="static">
+            <span class="closed" data-dismiss="modal">&times;</span>
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addCompanyLabel">Export Company Area</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+ 					<div v-if="filteredCompanyAreas.length > 0">
+ 						<h3>Export {{ this.filteredCompanyAreas.length }} item/s to excel file?</h3><br>
+ 						<div v-if="keywords.company || keywords.category|| keywords.area">
+ 							<h4>Search filters applied:</h4>
+ 							<div v-if="keywords.company">Company: {{ this.keywords.company.name }}</div>
+ 							<div v-if="keywords.category">Category: {{ this.keywords.category.name }}</div>
+ 							<div v-if="keywords.area">Area: {{ this.keywords.area.name }}</div>
+ 						</div>
+ 					</div>
+ 					<div v-else>No entries found. Please check your search filters.</div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-dismiss='modal'>Close</button>
+					<a class="btn btn-success" v-if="filteredCompanyAreas.length > 0" :href="exportUrl" @click="exportSuccess">Export</a>
+                </div>
+                </div>
+            </div>
+        </div>
+
 </div>
 </template>
 <style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
@@ -328,7 +377,11 @@
                 errors: [],
                 currentPage: 0,
                 itemsPerPage: 10,
-                keywords: '',
+                keywords: {
+                    company: '',
+                    category: '',
+                    area: ''
+                },
                 loading: false,
                 show_operation_line: false
             }
@@ -499,6 +552,10 @@
                     this.loading = false;
                 })
             },
+            exportSuccess(){
+                $('#exportModal').modal('hide');
+                this.loading = false;
+            },
             setPage(pageNumber) {
                 this.currentPage = pageNumber;
             },
@@ -514,13 +571,15 @@
         },  
         computed:{
             filteredCompanyAreas(){
-                let self = this;
-                return self.company_areas.filter(company_area => {
-                    return company_area.company.name.toLowerCase().includes(this.keywords.toLowerCase())
-                });
+                let list = this.company_areas;
+                if (this.keywords.company) list = list.filter(e => e.company.name == this.keywords.company.name);
+                if (this.keywords.category) list = list.filter(e => e.category.name == this.keywords.category.name);
+                if (this.keywords.area) list = list.filter(e => e.areas.some(f => f.name == this.keywords.area.name));
+
+                return list;
             },
             totalPages() {
-                return Math.ceil(this.company_areas.length / this.itemsPerPage);
+                return Math.ceil(this.filteredCompanyAreas.length / this.itemsPerPage);
             },
             filteredQueues() {
                 var index = this.currentPage * this.itemsPerPage;
@@ -539,6 +598,14 @@
             logoLink(){
                 return window.location.origin+'/img/lafil-logo.png';
             },
+            exportUrl(){
+ 		    	let endpoint = "/company-areas-export";
+ 		    	let filter = this.keywords;
+ 		    	endpoint += '/' + (filter.company? filter.company.name: '_');
+ 		    	endpoint += '&&' + (filter.category? filter.category.name: '_');
+ 		    	endpoint += '&&' + (filter.area? filter.area.name: '_');
+ 		    	return endpoint;
+            }
         }
     }
 </script>
