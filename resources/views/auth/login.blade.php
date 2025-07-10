@@ -16,6 +16,11 @@
                     <div class="panel-heading">
                         <div class="card-title">
                             <div class="title">{{ __('Sign in your account') }}</div>
+                            <div class="mb-2 text-center">
+                                <a class="text-muted text-xs" href="{{ route('version-release') }}" target="_blank">
+                                    {{ __('Check the latest version') }}
+                                </a>
+                            </div>
                         </div>
                     </div>
                     <div class="panel-body">
