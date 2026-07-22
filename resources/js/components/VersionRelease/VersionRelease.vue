@@ -33,11 +33,11 @@
 			<div class="text-right">
 				<div class="btn btn-white my-4" v-if="isAdministrator" @click="toggleModal('form_modal', true)">Add New Version</div>
 			</div>
-			<div class="d-flex flex-row">
+			<div class="d-flex flex-row align-items-stretch">
 				<!--begin::Aside-->
-				<div class="flex-row col-3 offcanvas-mobile w-300px w-xl-350px min-h-550px" id="kt_profile_aside">
+				<div class="flex-row col-3 offcanvas-mobile w-300px w-xl-350px min-h-550px d-flex" id="kt_profile_aside">
 					<!--begin::Profile Card-->
-					<div class="card card-custom card-stretch shadow-sm">
+					<div class="card card-custom card-stretch shadow-sm w-100 h-100">
 						<div class="card-header border-0 pt-10 pl-15">
 							<h3 class="card-title font-weight-bolder text-dark">Version Release</h3>
 						</div>
@@ -47,7 +47,9 @@
 							<!--begin::Nav-->
 							<div class="navi navi-bold navi-hover navi-active navi-link-rounded pb-8">
 								<div class="navi-item mb-1" v-for="(item, index) in filteredQueues" :key="index">
-									<a class="navi-link cursor-pointer py-1 pr--2" @click="viewVersion(item)">
+									<a class="navi-link cursor-pointer py-1 pr--2 version-link-row"
+									   :class="{ 'version-link-active': selectedVersion.id === item.id }"
+									   @click="viewVersion(item)">
 										<span class="navi-icon mr-2">
 											<span class="svg-icon">
 												<!--begin::Svg Icon | path:assets/media/svg/icons/Design/Layers.svg-->
@@ -61,12 +63,15 @@
 												<!--end::Svg Icon-->
 											</span>
 										</span>
-										<span class="navi-text font-size-lg">{{ `Vsn ${item.version}` }}</span>
-										<span class="navi-label" v-if="index == 0">
-											<span class="label p-1 label-inline text-white bg-success rounded">new</span>
+										<span class="navi-text font-size-lg version-link-text">{{ `Vsn ${item.version}` }}</span>
+										<span class="d-flex align-items-center ml-auto">
+											<span class="navi-label" v-if="index == 0">
+												<span class="label p-1 label-inline text-white bg-success rounded">new</span>
+											</span>
+											<span class="text-danger pl-2" @click.stop="deleteVersion(item)" v-if="isAdministrator" role="button" tabindex="0">
+												<i class="fa fa-trash text-danger"></i>
+											</span>
 										</span>
-										<a href="javascript:;" class="text-danger pl-2" @click="deleteVersion(item)" v-if="isAdministrator">
-											<i class="fa fa-trash text-danger"></i></a>
 									</a>
 								</div> 
 
@@ -94,9 +99,9 @@
 				</div>
 				<!--end::Aside-->
 				<!--begin::Content-->
-				<div class="flex-row col-9 p-0">
+				<div class="flex-row col-9 p-0 d-flex">
 					<!--begin::Advance Table: Widget 7-->
-					<div class="card card-custom card-stretch px-2 shadow-sm">
+					<div class="card card-custom card-stretch px-2 shadow-sm w-100 h-100">
 						<!--begin::Header-->
 						<div class="card-header border-0 pt-10">
 							<h3 class="card-title align-items-start flex-column">
@@ -148,7 +153,7 @@
  							    	</tr>
  							    </thead>
  							    <tbody>
- 							        <tr v-for="feedback in selectedVersion.feedbacks">
+								        <tr v-for="feedback in selectedVersion.feedbacks" :key="feedback.id">
 										<td>{{ feedback.user.name }}</td>
 										<td>{{ feedback.user.email }}</td>
  									    <td>{{ feedback.created_at.slice(0, 10) }}</td>
@@ -245,6 +250,14 @@
 				axios.post(`/version-release/store`, data)
 				.then( result => {
 					if (result) {
+						Swal.fire({
+            	    	  	title: "Version Release Saved!",
+            	    	  	icon: "success",
+            	    	  	confirmButtonColor: "#007bff",
+            	    	  	confirmButtonText: "Close",
+            	    	}).then((result) => {
+            	    	    if (result.isConfirmed) window.location.reload();
+            	    	});
 						this.fetchList();
 						this.toggleModal('form_modal', false);
 					}
@@ -286,7 +299,7 @@
             	    	Swal.fire({
             	    	  	title: "Version deleted!",
             	    	  	icon: "success",
-            	    	  	confirmButtonColor: "666666",
+            	    	  	confirmButtonColor: "#007bff",
             	    	  	confirmButtonText: "Close",
             	    	}).then((result) => {
             	    	    if (result.isConfirmed) window.location.reload();
@@ -345,5 +358,33 @@
 <style>
 	.swal2-popup {
 	    justify-items: center;
+	}
+
+	.version-link-active {
+		background-color: #eef5ff;
+		border-radius: 6px;
+	}
+
+	.version-link-active .navi-text {
+		color: #0f5ed7;
+		font-weight: 700;
+	}
+
+	.version-link-row {
+		display: flex;
+		align-items: center;
+		width: 100%;
+		white-space: nowrap;
+	}
+
+	.version-link-text {
+		flex: 1 1 auto;
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.version-link-row .ml-auto {
+		flex-shrink: 0;
 	}
 </style>

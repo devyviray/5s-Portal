@@ -94,7 +94,7 @@ export default {
                     Swal.fire({
                         title: "Note deleted!",
                         icon: "success",
-                        confirmButtonColor: "666666",
+                        confirmButtonColor: "#007bff",
                         confirmButtonText: "Close",
                     }).then((result) => {
                         if (result.isConfirmed) window.location.reload();

@@ -89,7 +89,7 @@
             	    	Swal.fire({
             	    	  	title: "Feedback Submitted!",
             	    	  	icon: "success",
-            	    	  	confirmButtonColor: "666666",
+            	    	  	confirmButtonColor: "#007bff",
             	    	  	confirmButtonText: "Close",
             	    	}).then((result) => {
             	    	    if (result.isConfirmed) window.location.reload();
@@ -113,7 +113,7 @@
             	    	Swal.fire({
             	    	  	title: "Feedback Deleted!",
             	    	  	icon: "success",
-            	    	  	confirmButtonColor: "666666",
+            	    	  	confirmButtonColor: "#007bff",
             	    	  	confirmButtonText: "Close",
             	    	}).then((result) => {
             	    	    if (result.isConfirmed) window.location.reload();
