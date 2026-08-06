@@ -63,8 +63,8 @@
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label class="form-control-label" for="role">Category</label>
-                                <select class="form-control" v-model="category"  @change="changeCategory()">
-                                    <option v-for="(category,c) in categories" v-bind:key="c" :value="category"> {{ category.name }}</option>
+                                <select class="form-control" v-model="filterData.category"  @change="searchKeyUp">
+                                    <option v-for="(category,c) in categories" v-bind:key="c" :value="category.id"> {{ category.name }}</option>
                                 </select>
                                 <span class="text-danger" v-if="errors.category  ">{{ errors.category[0] }}</span>
                             </div>
@@ -72,8 +72,8 @@
                         <div class="col-md-2" v-if="show_operation_line">
                             <div class="form-group">
                                 <label class="form-control-label" for="role">Operation Line</label>
-                                <select class="form-control" v-model="operation_line" @change="changeCategory()">
-                                    <option v-for="(operation_line,o) in operation_lines" v-bind:key="o" :value="operation_line"> {{ operation_line.name }}</option>
+                                <select class="form-control" v-model="filterData.operation_line" @change="searchKeyUp">
+                                    <option v-for="(operation_line,o) in operation_lines" v-bind:key="o" :value="operation_line.id"> {{ operation_line.name }}</option>
                                 </select>
                                 <span class="text-danger" v-if="errors.operation_line  ">{{ errors.operation_line[0] }}</span>
                             </div>
@@ -81,14 +81,27 @@
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label class="form-control-label" for="role">AREA</label>
-                                <select class="form-control" v-model="area"  @change="changeCategory()">
-                                    <option v-for="(area,a) in areas" v-bind:key="a" :value="area"> {{ area.name }}</option>
+                                <select class="form-control" v-model="area"  @change="searchKeyUp">
+                                    <option v-for="(area,a) in areas" v-bind:key="a" :value="area.id"> {{ area.name }}</option>
                                 </select>
                                 <span class="text-danger" v-if="errors.area  ">{{ errors.area[0] }}</span>
                             </div>
                         </div>
                         <div class="col-md-2">
+                            <div class="form-group">
+                                <label class="form-control-label" for="role">Status</label>
+                                <select class="form-control" v-model="filterData.status"  @change="searchKeyUp">
+                                    <option value="1"> {{ reportStatus(1) }}</option>
+                                    <option value="2"> {{ reportStatus(2) }}</option>
+                                    <option value="3"> {{ reportStatus(3) }}</option>
+                                    <option value="4"> {{ reportStatus(4) }}</option>
+                                </select>
+                                <span class="text-danger" v-if="errors.status  ">{{ errors.status[0] }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-2 mt-2">
                             <button class="btn btn-sm btn-primary mt-4" @click="fetchFilteredReport"> Filter</button>
+                            <button class="btn btn-sm btn-warning mt-4" @click="resetFilters"> Reset</button>
                         </div>
                     </div>
                 </div>
@@ -108,44 +121,58 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(report, r) in filteredQueues" v-bind:key="r">
-                            <td class="text-right">
-                                <div class="dropdown">
-                                    <a class="btn btn-sm btn-icon-only text-light" href="#" role="button"
-                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <i class="fa fa-ellipsis-v"></i>
-                                    </a>
-                                    <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
-                                        <a v-if="report.status == 1 && userRoleLevel > 2" class="dropdown-item" target="_blank" :href="editReportLink+report.id">Edit</a>
-                                        <a class="dropdown-item" target="_blank" :href="viewReportLink+report.id">View</a>
-                                        <a v-if="report.status == 2 && userRoleLevel > 2 && userId == report.inspector_id" class="dropdown-item" target="_blank" :href="verifiedReportLink+report.id">Validate</a>
-                                        <!-- <a class="dropdown-item" data-toggle="modal" data-target="#deleteModal" style="cursor: pointer" @click="copyObject(report)">Delete</a> -->
-                                    </div>
-                                </div> 
+                        <tr v-if="isProcessing">
+                            <td colspan="9" class="text-center">
+                                <!-- <table-spinner /> -->
+                                <h4 class="text-warning">Loading... Please wait...</h4>
                             </td>
-                            <td scope="row">{{ report.id }}</td>
-                            <td>{{ report.process_owner.name }}</td>
-                            <td>{{ report.company.name + ' ' + report.location.name }}</td>
-                            <td>{{ report.category.name }} </td>
-                            <td v-if="report.operation_line">{{ report.operation_line.name }}</td>
-                            <td v-else></td>
-                            <td>{{ report.area.name }} </td>
-                            <td>{{ report.inspector.name }}</td>
-                            <td>{{ reportStatus(report.status) }} </td>
                         </tr>
+                        <tr v-if="!isProcessing && !items.length">
+                            <td colspan="9" class="py-10">
+                                No results found
+                            </td>
+                        </tr>
+                        <template v-if="!isProcessing">
+                            <tr v-for="(report, r) in items" v-bind:key="r">
+                                <td class="text-right">
+                                    <div class="dropdown">
+                                        <a
+                                            class="btn btn-sm btn-icon-only text-light"
+                                            href="#"
+                                            role="button"
+                                            data-toggle="dropdown"
+                                            aria-haspopup="true"
+                                            aria-expanded="false"
+                                            @click.prevent="toggleDropdown($event)"
+                                        >
+                                            <i class="fa fa-ellipsis-v"></i>
+                                        </a>
+                                        <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
+                                            <a v-if="report.status == 1 && userRoleLevel > 2" class="dropdown-item" target="_blank" :href="editReportLink+report.id">Edit</a>
+                                            <a class="dropdown-item" target="_blank" :href="viewReportLink+report.id">View</a>
+                                            <a v-if="report.status == 2 && userRoleLevel > 2 && userId == report.inspector_id" class="dropdown-item" target="_blank" :href="verifiedReportLink+report.id">Validate</a>
+                                            <!-- <a class="dropdown-item" data-toggle="modal" data-target="#deleteModal" style="cursor: pointer" @click="copyObject(report)">Delete</a> -->
+                                        </div>
+                                    </div> 
+                                </td>
+                                <td scope="row">{{ report.id }}</td>
+                                <td>{{ report.process_owner.name }}</td>
+                                <td>{{ report.company.name + ' ' + report.location.name }}</td>
+                                <td>{{ report.category.name }} </td>
+                                <td v-if="report.operation_line">{{ report.operation_line.name }}</td>
+                                <td v-else></td>
+                                <td>{{ report.area.name }} </td>
+                                <td>{{ report.inspector.name }}</td>
+                                <td>{{ reportStatus(report.status) }} </td>
+                            </tr>
+                        </template>
                     </tbody>
                 </table>
             </div>
-        </div>
-        <div class="row mb-3 mt-3 ml-3" v-if="filteredQueues.length ">
-            <div class="col-6">
-                <button :disabled="!showPreviousLink()" class="btn btn-default btn-sm btn-fill" v-on:click="setPage(currentPage - 1)"> Previous </button>
-                    <span class="text-dark">Page {{ currentPage + 1 }} of {{ totalPages }}</span>
-                <button :disabled="!showNextLink()" class="btn btn-default btn-sm btn-fill" v-on:click="setPage(currentPage + 1)"> Next </button>
-            </div>
-            <div class="col-6 text-right">
-                <span>{{ filteredQueues.length }} Filtered Report(s)</span><br>
-                <span>{{ this.reports.length }} Total Report(s)</span>
+            <div class="row mt-3">
+                <div class="col-12">
+                    <table-pagination v-if="items.length > 0" :pagination="pagination" v-on:updatePage="goToPage" v-on:doChangeLimit="changePageCount"/>
+                </div>
             </div>
         </div>
     </div>
@@ -170,6 +197,7 @@
             return {
                 performanceEvaluationRating: [],
                 reports: [],
+                items: [],
                 companies : [],
                 locations: [],
                 operation_lines: [],
@@ -186,7 +214,15 @@
                 itemsPerPage: 15,
                 keywords: '',
                 loading: false,
-                show_operation_line: false
+                show_operation_line: false,
+                filterData: {},
+
+                //pagination =====
+				pagination: {},
+				page_limit: 10,
+				currentPageToGo: 1,
+
+                isProcessing: false,
             }
         },
         created(){
@@ -202,6 +238,9 @@
             },
             createReport(){
                 return window.location.href = window.location.origin+'/create-report';
+            },
+            toggleDropdown(event) {
+                $(event.currentTarget).dropdown('toggle');
             },
             // changeCompany(company,action){
             //     if(action == 'getCompanies'){
@@ -236,9 +275,23 @@
                 }
             },
             fetchReports(){
-                 axios.get(`/reports-all/${this.companyId }/${this.locationId }`)
+                this.isProcessing = true;
+                 axios.get(`/reports-all/${this.companyId}/${this.locationId}`, {
+                     params: {
+                        ...this.filterData,
+                         page: this.currentPageToGo,
+                         page_limit: this.page_limit
+                     }
+                 })
                  .then(response => {
-                    this.reports = response.data;
+                    this.items = response.data.data;
+
+                    this.pagination = response.data;
+					this.isProcessing = false;
+					this.currentPageToGo = 1
+
+					//Set pagination page count
+					this.setPaginationPageRange(this.pagination.current_page, this.pagination.last_page);
                 })
                 .catch(error => { 
                     this.errors = error.response.data.errors;
@@ -373,35 +426,54 @@
                
                 return result;
             },
-            setPage(pageNumber) {
-                this.currentPage = pageNumber;
+
+            resetFilters(){
+                this.filterData = {};
+                this.area = '';
+                this.operation_line = '';
+                this.category = '';
+                this.fetchReports();
             },
-            resetStartRow() {
-                this.currentPage = 0;
+
+            searchKeyUp() {
+				clearTimeout(this.keyTimeout);
+                this.keyTimeout = setTimeout(() => {
+					this.isProcessing = true;
+					this.fetchReports();
+                }, 500)
+			},
+            //Pagination methods =============================
+            goToPage(page) {
+				this.currentPageToGo = page;
+                this.fetchReports();
             },
-            showPreviousLink() {
-                return this.currentPage == 0 ? false : true;
+            changePageCount(pageLimit) {
+                this.page_limit = pageLimit;
+                this.fetchReports();
             },
-            showNextLink() {
-                return this.currentPage == (this.totalPages - 1) ? false : true;
-            }  
+            setPaginationPageRange(page, pageCount) {
+
+                let start = page - 2,
+                    end = page + 2;
+
+                if (end > pageCount) {
+                    start -= (end - pageCount);
+                    end = pageCount;
+                }
+
+                if (start <= 0) {
+                    end += ((start - 1) * (-1));
+                    start = 1;
+                }
+
+                end = end > pageCount ? pageCount : end;
+
+                return this.pagination.range = Array(end - start + 1).fill().map((_, idx) => start + idx)
+
+            },
+			//================================================
         },
         computed:{
-            totalPages() {
-                return Math.ceil(this.reports.length / this.itemsPerPage);
-            },
-            filteredQueues() {
-                var index = this.currentPage * this.itemsPerPage;
-                var queues_array = this.reports.slice(index, index + this.itemsPerPage);
-
-                if(this.currentPage >= this.totalPages) {
-                    this.currentPage = this.totalPages - 1
-                }
-                if(this.currentPage == -1) {
-                    this.currentPage = 0;
-                }
-                return queues_array;
-            },
             logoLink(){
                 return window.location.origin+'/img/lafil-logo.png';
             },

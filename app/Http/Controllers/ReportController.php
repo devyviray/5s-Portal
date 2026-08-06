@@ -44,7 +44,7 @@ class ReportController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function indexData($company, $location)
+    public function indexData(Request $request, $company, $location)
     {
         $user = Auth::user();
         return Report::with('company', 'location', 'operationLine', 'category', 'area', 'inspector', 'processOwner', 'reportDetail')
@@ -62,7 +62,19 @@ class ReportController extends Controller
                 ->where('location_id', $user->location->id);
                 
             })
-            ->orderBy('id', 'desc')->get();
+            ->when($request->category, function($q) use ($request){
+                $q->where('category_id', $request->category);
+            })->when($request->operation_line, function($q) use ($request){
+                return $q->whereHas('operationLine', function($q) use ($request){
+                    $q->where('id', $request->operation_line);
+                });
+            })->when($request->area, function($q) use ($request){
+                $q->where('area_id', $request->area);
+            })->when($request->status, function($q) use ($request){
+                $q->where('status', $request->status);
+            })
+            ->orderBy('id', 'desc')
+            ->paginate($request->page_limit ?? 10);
     }
 
     /**
