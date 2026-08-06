@@ -3,7 +3,15 @@
         <loader v-if="loading"></loader>
         <ul class="nav navbar-top-links navbar-right">
             <li class="dropdown">
-                <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
+                <a
+                    ref="userMenuToggle"
+                    class="dropdown-toggle"
+                    href="#"
+                    role="button"
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                    @click.prevent="toggleUserMenu"
+                >
                     <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
                 </a>
                 <ul class="dropdown-menu dropdown-user">
@@ -90,6 +98,9 @@ export default {
         }
     },
     methods:{
+        toggleUserMenu(){
+            $(this.$refs.userMenuToggle).dropdown('toggle');
+        },
         logoutForm(){
             this.$parent.showLoader();
             axios.post('/logout')
