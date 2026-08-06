@@ -88,6 +88,7 @@ Vue.component('version-release', require('./components/VersionRelease/VersionRel
 Vue.component('navbarRight', require('./components/NavbarRight.vue').default);
 Vue.component('breadcrumb', require('./components/Breadcrumb.vue').default);
 Vue.component('error-messages', require('./components/ErrorMessage.vue').default);
+Vue.component('table-pagination', require('./components/TablePagination.vue').default);
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
