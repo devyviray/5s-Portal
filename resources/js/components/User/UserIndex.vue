@@ -26,102 +26,111 @@
                 <breadcrumb :user-role-level="userRoleLevel"></breadcrumb>
             </div>
             <div id="page-inner">
-                <div class="card-header border-0">
-                    <div class="row align-items-center">
-                        <div class="col">
-                            <h3 class="mb-0">User List</h3>
-                        </div> 
-                        <div class="col text-right">
-                            <a href="javascript.void(0)" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#addModal">Add new</a>
-                            <a href="javascript.void(0)" class="btn btn-sm btn-success" data-toggle="modal" data-target="#exportModal">Export List</a>
+                <div class="card">
+                    <div class="card-header border-0">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <h3 class="mb-0">User List</h3>
+                            </div> 
+                            <div class="col text-right">
+                                <a href="javascript.void(0)" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#addModal">Add new</a>
+                                <a href="javascript.void(0)" class="btn btn-sm btn-success" data-toggle="modal" data-target="#exportModal">Export List</a>
+                            </div>
+                        </div>
+                        <!--Search Filters-->
+                        <h4 class="mt-4 mb-2">Search:</h4>
+                        <div class="row align-items-center">
+                            <!--Username-->
+                            <div class="form-group col-2">
+                                <input type="text" class="form-control rounded" placeholder="Search by name" v-model="keywords.name" @keyup="searchKeyUp">
+                            </div>
+                            <!--Company-->
+                            <div class="form-group col-3">
+                                <multiselect v-model="keywords.company" :options="companies" :multiple="false"
+                                placeholder="Search by company" label="name" :show-labels="false" @input="searchKeyUp" />
+                            </div>
+                            <!--Department-->
+                            <div class="form-group col-4">
+                                <multiselect v-model="keywords.department" :options="departments" :multiple="false"
+                                placeholder="Search by department" label="name" :show-labels="false" track-by="id" @input="searchKeyUp" />
+                            </div>
+                            <!--Role-->
+                            <div class="form-group col-2">
+                                <multiselect v-model="keywords.role" :options="roles" :multiple="false"
+                                placeholder="Search by role" label="name" :show-labels="false" track-by="id" @input="searchKeyUp" />
+                            </div>
+                            <!--Reset Search-->
+                            <div class="form-group col-1">
+                                <button class="btn btn-muted" @click="keywords = {}">Reset Search</button>
+                            </div>
                         </div>
                     </div>
-                    <!--Search Filters-->
-                    <h4 class="mt-4 mb-2">Search:</h4>
-                    <div class="row align-items-center">
-                        <!--Username-->
-                        <div class="form-group col-2">
-                            <input type="text" class="form-control rounded" placeholder="Search by name" v-model="keywords.name">
-                        </div>
-                        <!--Company-->
-                        <div class="form-group col-3">
-                            <multiselect v-model="keywords.company" :options="companies" :multiple="false"
-                            placeholder="Search by company" label="name" :show-labels="false" />
-                        </div>
-                        <!--Department-->
-                        <div class="form-group col-4">
-                            <multiselect v-model="keywords.department" :options="departments" :multiple="false"
-                            placeholder="Search by department" label="name" :show-labels="false" />
-                        </div>
-                        <!--Role-->
-                        <div class="form-group col-2">
-                            <multiselect v-model="keywords.role" :options="roles" :multiple="false"
-                            placeholder="Search by role" label="name" :show-labels="false" />
-                        </div>
-                        <!--Reset Search-->
-                        <div class="form-group col-1">
-                            <button class="btn btn-muted" @click="keywords = {}">Reset Search</button>
-                        </div>
+                    <!-- Locations table -->
+                    <table class="table align-items-center table-flush">
+                        <thead class="thead-light">
+                            <tr>
+                                <th></th>
+                                <th scope="col">ID</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Company</th>
+                                <th scope="col">Department</th>
+                                <th scope="col">Role</th>
+                                <th scope="col">Created at</th>
+                                <th scope="col">Last Login</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-if="isProcessing">
+                                <td colspan="9" class="text-center">
+                                    <!-- <table-spinner /> -->
+                                    <h4 class="text-warning">Loading... Please wait...</h4>
+                                </td>
+                            </tr>
+                            <tr v-if="!isProcessing && !items.length">
+                                <td colspan="9" class="py-10">
+                                    No results found
+                                </td>
+                            </tr>
+                            <template v-if="!isProcessing">
+                                <tr v-for="(user, u) in items" v-bind:key="u">
+                                    <td class="text-right">
+                                        <div class="dropdown">
+                                            <a class="btn btn-sm btn-icon-only text-light" href="#" role="button"
+                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <i class="fa fa-ellipsis-v"></i>
+                                            </a>
+                                            <div class="dropdown-menu dropdown-menu-left dropdown-menu-arrow">
+                                                <a class="dropdown-item" data-toggle="modal" data-target="#editModal" style="cursor: pointer" @click="copyObject(user)">Edit</a>
+                                                <a class="dropdown-item" data-toggle="modal" data-target="#deleteModal" style="cursor: pointer" @click="copyObject(user)">Delete</a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td scope="row">{{ user.id }}</td>
+                                    <td>{{ user.name }}</td>
+                                    <td>{{ user.email }}</td>
+                                    <td>
+                                        <span v-for="(company, c) in user.companies" :key="c">
+                                            {{ company.name + ' - ' + user.location.name }} <br/>
+                                        </span>
+                                    </td>
+                                    <td>{{ user.department.name }} </td>
+                                    <td>
+                                        <span v-for="(role, r) in user.roles" :key="r">
+                                            {{ role.name }} <br/>
+                                        </span> 
+                                    </td>
+                                    <td>{{ user.created_at }}</td>
+                                    <td>{{ user.last_login_at? user.last_login_at: '--' }}</td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <table-pagination v-if="items.length > 0" :pagination="pagination" v-on:updatePage="goToPage" v-on:doChangeLimit="changePageCount"/>
                     </div>
-                </div>
-                <!-- Locations table -->
-                <table class="table align-items-center table-responsive table-flush mt-2">
-                    <thead class="thead-light">
-                        <tr>
-                            <th></th>
-                            <th scope="col">ID</th>
-                            <th scope="col">Name</th>
-                            <th scope="col">Email</th>
-                            <th scope="col">Company</th>
-                            <th scope="col">Department</th>
-                            <th scope="col">Role</th>
-                            <th scope="col">Created at</th>
-                            <th scope="col">Last Login</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(user, u) in filteredQueues" v-bind:key="u">
-                            <td class="text-right">
-                                <div class="dropdown">
-                                    <a class="btn btn-sm btn-icon-only text-light" href="#" role="button"
-                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <i class="fa fa-ellipsis-v"></i>
-                                    </a>
-                                    <div class="dropdown-menu dropdown-menu-left dropdown-menu-arrow">
-                                        <a class="dropdown-item" data-toggle="modal" data-target="#editModal" style="cursor: pointer" @click="copyObject(user)">Edit</a>
-                                        <a class="dropdown-item" data-toggle="modal" data-target="#deleteModal" style="cursor: pointer" @click="copyObject(user)">Delete</a>
-                                    </div>
-                                </div>
-                            </td>
-                            <td scope="row">{{ user.id }}</td>
-                            <td>{{ user.name }}</td>
-                            <td>{{ user.email }}</td>
-                            <td>
-                                <span v-for="(company, c) in user.companies" :key="c">
-                                    {{ company.name + ' - ' + user.location.name }} <br/>
-                                </span>
-                            </td>
-                            <td>{{ user.department.name }} </td>
-                            <td>
-                                <span v-for="(role, r) in user.roles" :key="r">
-                                    {{ role.name }} <br/>
-                                </span> 
-                            </td>
-                            <td>{{ user.created_at }}</td>
-                            <td>{{ user.last_login_at? user.last_login_at: '--' }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="row mb-3 mt-3 ml-3" v-if="filteredQueues.length ">
-                <div class="col-6">
-                    <button :disabled="!showPreviousLink()" class="btn btn-default btn-sm btn-fill" v-on:click="setPage(currentPage - 1)"> Previous </button>
-                        <span class="text-dark">Page {{ currentPage + 1 }} of {{ totalPages }}</span>
-                    <button :disabled="!showNextLink()" class="btn btn-default btn-sm btn-fill" v-on:click="setPage(currentPage + 1)"> Next </button>
-                </div>
-                <div class="col-6 text-right">
-                    <span>{{ filteredQueues.length }} Filtered User(s)</span><br>
-                    <span>{{ users.length }} Total User(s)</span>
                 </div>
             </div>
         </div>
@@ -311,15 +320,15 @@
 			<div class="modal-dialog" role="document">
 				<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title" id="exampleModalLabel" v-if="filteredUsers.length > 0">EXPORT USERS</h5>
+					<h5 class="modal-title" id="exampleModalLabel" v-if="items.length > 0">EXPORT USERS</h5>
 					<h5 class="modal-title" id="exampleModalLabel" v-else>TABLE IS EMPTY!</h5>
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 					</button>
 				</div>
 				<div class="modal-body">
-					<div v-if="filteredUsers.length > 0">
-						<h3>Export {{ this.filteredUsers.length }} user/s to excel file?</h3><br>
+					<div v-if="items.length > 0">
+						<h3>Export {{ this.pagination.total }} user/s to excel file?</h3><br>
 						<div v-if="keywords.name || keywords.company || keywords.department || keywords.role">
 							<h4>Search filters applied:</h4>
 							<div v-if="keywords.name">Name contains: {{ this.keywords.name }}</div>
@@ -332,7 +341,7 @@
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-					<a v-if="filteredUsers.length > 0" class="btn btn-success" :href="exportUrl" @click="closeModal('#exportModal')">Export</a>
+					<a v-if="items.length > 0" class="btn btn-success" :href="exportUrl" @click="closeModal('#exportModal')">Export</a>
 				</div>
 				</div>
 			</div>
@@ -360,6 +369,7 @@
         data(){
             return {
                 users : [],
+                items : [],
                 user: [],
                 user_copied: [],
                 user_id: '',
@@ -376,6 +386,7 @@
                 errors: [],
                 currentPage: 0,
                 itemsPerPage: 50,
+				keyTimeout: null,
                 keywords: {
                     name: '',
                     company: '',
@@ -383,6 +394,13 @@
                     role: ''
                 },
                 loading: false,
+
+                //pagination =====
+				pagination: {},
+				page_limit: 10,
+				currentPageToGo: 1,
+
+                isProcessing: false,
             }
         },
         created(){
@@ -409,9 +427,32 @@
                 this.fetchCompanyLocation(user.location.id);
             },
             fetchUsers(){
-                axios.get('/users-all')
+                this.isProcessing = true;
+                const searchPayload = {
+                    company: this.keywords.company ? this.keywords.company.id : '',
+                    department: this.keywords.department ? this.keywords.department.id : '',
+                    role: this.keywords.role ? this.keywords.role.id : '',
+                    location: this.keywords.location ? this.keywords.location.id : '',
+                    name: this.keywords.name ? this.keywords.name : ''
+                };
+
+                axios.get('/users-all', {
+                    params: {
+                        ...searchPayload,
+                        page: this.currentPageToGo,
+                        page_limit: this.page_limit
+                    }
+                })
                 .then(response => { 
-                    this.users = response.data;
+                    this.items = response.data.data;
+
+                    this.pagination = response.data;
+					this.isProcessing = false;
+					this.currentPageToGo = 1
+
+					//Set pagination page count
+					this.setPaginationPageRange(this.pagination.current_page, this.pagination.last_page);
+
                 })
                 .catch(error => { 
                     this.errors = error.response.data.errors;
@@ -528,54 +569,46 @@
 		    	$('.modal-backdrop').remove();
                 this.loading = false;
 		    },
-            setPage(pageNumber) {
-                this.currentPage = pageNumber;
-            },
+            searchKeyUp() {
+				clearTimeout(this.keyTimeout);
+                this.keyTimeout = setTimeout(() => {
+					this.isProcessing = true;
+					this.fetchUsers();
+                }, 500)
+			},
 
-            resetStartRow() {
-                this.currentPage = 0;
+            //Pagination methods =============================
+            goToPage(page) {
+				this.currentPageToGo = page;
+                this.fetchUsers();
             },
-
-            showPreviousLink() {
-                return this.currentPage == 0 ? false : true;
+            changePageCount(pageLimit) {
+                this.page_limit = pageLimit;
+                this.fetchUsers();
             },
+            setPaginationPageRange(page, pageCount) {
 
-            showNextLink() {
-                return this.currentPage == (this.totalPages - 1) ? false : true;
-            }   
+                let start = page - 2,
+                    end = page + 2;
+
+                if (end > pageCount) {
+                    start -= (end - pageCount);
+                    end = pageCount;
+                }
+
+                if (start <= 0) {
+                    end += ((start - 1) * (-1));
+                    start = 1;
+                }
+
+                end = end > pageCount ? pageCount : end;
+
+                return this.pagination.range = Array(end - start + 1).fill().map((_, idx) => start + idx)
+
+            },
+			//================================================ 
         },  
         computed:{
-            filteredUsers(){
-                let list = this.users;
-
-                //filter by username
-                if (this.keywords.name) list = list.filter( e => e.name.toLowerCase().includes(this.keywords.name.toLowerCase()));
-                //filter by company name
-                if (this.keywords.company) list = list.filter( e => e.companies.some( f => f.name == this.keywords.company.name));
-                //filter by department name
-                if (this.keywords.department) list = list.filter( e => e.department.name  == this.keywords.department.name);
-                //filter by role
-                if (this.keywords.role) list = list.filter( e => e.roles.some( f => f.name == this.keywords.role.name));
-
-                return list;
-            },
-            totalPages() {
-                return Math.ceil(this.filteredUsers.length / this.itemsPerPage);
-            },
-            filteredQueues() {
-                var index = this.currentPage * this.itemsPerPage;
-                var queues_array = this.filteredUsers.slice(index, index + this.itemsPerPage);
-
-                if(this.currentPage >= this.totalPages) {
-                    this.currentPage = this.totalPages - 1
-                }
-
-                if(this.currentPage == -1) {
-                    this.currentPage = 0;
-                }
-
-                return queues_array;
-            },
             logoLink(){
                 return window.location.origin+'/img/lafil-logo.png';
             },

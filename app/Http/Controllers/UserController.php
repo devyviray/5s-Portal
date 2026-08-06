@@ -34,8 +34,31 @@ class UserController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function indexData(){
-        return User::with('companies', 'location', 'roles', 'department')->orderBy('id','desc')->get();
+    public function indexData(Request $request){
+        $users = User::with('companies', 'location', 'roles', 'department')
+            ->when(isset($request->name), function ($query) use ($request) {
+                return $query->where('name', 'like', '%'.$request->name.'%');
+            })
+            ->when(isset($request->company), function ($query) use ($request) {
+                return $query->whereHas('companies', function ($q) use ($request) {
+                    $q->where('companies.id', $request->company);
+                });
+            })
+            ->when(isset($request->department), function ($query) use ($request) {
+                return $query->where('department_id', $request->department);
+            })
+            ->when(isset($request->location), function ($query) use ($request) {
+                return $query->whereHas('location', function ($q) use ($request) {
+                    $q->where('id', $request->location);
+                });
+            })
+            ->when(isset($request->role), function ($query) use ($request) {
+                return $query->whereHas('roles', function ($q) use ($request) {
+                    $q->where('roles.id', $request->role);
+                });
+            })
+            ->orderBy('id','desc')->paginate($request->page_limit);
+        return $users;
     }
 
     /**
